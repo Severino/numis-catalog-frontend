@@ -14,89 +14,80 @@
 <body>
     <div class="form">
         <h2>Neue Münze</h2>
+
+
+        <h3>Grunddaten</h3>
         <label for="">Typnummer</label>
         <input type="text">
 
         <label for="">Treadwell-Id</label>
         <input type="text">
 
-        <label for="">Besonderheiten</label>
-        <textarea></textarea>
-
-        <label for="">Varianten</label>
-        <textarea></textarea>
-
-
-        <hr>
-        <h3>Grunddaten</h3>
 
         <label for="">Material</label>
+        <div class="data-select" data-select="material" style="position: relative;">
+            <input type="search" name="" id="">
+            <span style="display:block; position: absolute; top:0; right:0; z-index: 1000;">SEARCH</span>
+        </div>
+
+        <label for="">Münzstätte</label>
         <input type="text">
 
-        <label for="">Münzstette</label>
-        <input type="text">
-
-        <label for="">Ort</label>
-        <input type="text">
-
-        <label for="">Jahr</label>
-        <input type="date">
-
-        <label for="">Literatur</label>
-        <textarea></textarea>
-
-        <label for="">Exemplare</label>
-        <div class="exemplare list">
-            <button>+</button>
-            <div class="list-item"><input type="text"><button>-</button></div>
-            <div class="list-item"><input type="text"><button>-</button></div>
-
+        <label for="">Prägejahr</label>
+        <div class="synchronized-calendar">
+            <div class="calendar">
+                <label for="">Arabisch</label><input type="text" data-arabic>
+            </div>
+            <div class="calendar">
+                <label for="">Gregorianisch</label><input type="text" data-gregorian>
+            </div>
         </div>
 
         <h3>Islamische Münze</h3>
 
         <label for="">Nominal</label>
-        <select>
-            <option>Dinar</option>
-            <option>Dirham</option>
-            <option>Fals</option>
-        </select>
+        <div class="data-select" style="position: relative;">
+            <input type="search" name="" id="">
+            <span style="display:block; position: absolute; top:0; right:0; z-index: 1000;">SEARCH</span>
+        </div>
 
         <label for="">Münzherr</label>
-        <input type="text">
+        <div class="reigner">
+            <label for="">Titel</label>
+            <input type="text">
+
+            <label for="">Person</label>
+            <input type="text">
+        </div>
 
         <label for="">Kalif</label>
         <input type="text">
 
-
-        <label for="">Oberherren</label>
-        <div class="oberherren list" data-type="person" data-num=4>
-            <button>+</button>
-            <div class="list-item"><input type="text"><button>-</button></div>
-            <div class="list-item"><input type="text"><button>-</button></div>
-
-        </div>
-
         <div class="conditional-field">
-            <div class="label"><input type="checkbox" id="is-designated"><label for="is-designated">Disignierter
+            <div class="label"><input type="checkbox" id="is-designated"><label for="is-designated">Designierter
                     Nachfolger?</label></div>
             <div class="conditional hidden">
                 <input type="text" name="" id="">
             </div>
         </div>
-        <div class="conditional-field">
-            <div class="label"><input type="checkbox" id="is-stempelm"><label
-                    for="is-stempelm">Stempelschneider?</label></div>
-            <div class="conditional hidden">
-                <input type="text" name="" id="">
-            </div>
-        </div>
 
-        <div class="conditional-field">
-            <div class="label"><input type="checkbox" id="is-wardein"><label for="is-wardein">Münzwardein?</label></div>
-            <div class="conditional hidden">
-                <input type="text" name="" id="">
-            </div>
+        <label for="">Oberherren</label>
+        <div class="oberherren list" data-numbered data-type="person" data-num=4>
+            <button>+</button>
+            <div class="list-item"><input type="text"><button>-</button></div>
+            <div class="list-item"><input type="text"><button>-</button></div>
+
+        </div>
+        <span class="comment">* wobei 1 der höchste Oberherr ist</span>
+
+
+        <label for="">Weitere Personen</label>
+
+        <div class="oberherren list" data-type="type-person" data-num=1>
+            <button>+</button>
+            <div class="list-item"><input type="text" placeholder="Titel"><input type="text"><button>-</button></div>
+            <div class="list-item"><input type="text"><button>-</button></div>
+
         </div>
 
 
@@ -136,18 +127,70 @@
             <div class="list-item"><input type="text"><button>-</button></div>
 
         </div>
+
+        <hr>
+        <h3>Weitere Informationen</h3>
+        <label for="">Literatur</label>
+        <div class="literature list">
+            <button>+</button>
+            <div class="list-item"><input type="text"><button>-</button></div>
+            <div class="list-item"><input type="text"><button>-</button></div>
+        </div>
+
+        <label for="">Exemplare</label>
+        <div class="exemplare list">
+            <button>+</button>
+            <div class="list-item"><input type="text"><button>-</button></div>
+            <div class="list-item"><input type="text"><button>-</button></div>
+        </div>
+
+
+        <label for="">Varianten</label>
+        <div class="variants list">
+            <button>+</button>
+            <div class="list-item"><input type="text"><button>-</button></div>
+            <div class="list-item"><input type="text"><button>-</button></div>
+        </div>
+
+        <label for="">Besonderheiten</label>
+        <textarea></textarea>
+
+        <button id="submit">Speichern</button>
     </div>
 
+    <script src="https://rawgit.com/abdennour/hijri-date/master/cdn/hijri-date-latest.js"></script>
     <script>
+
+        submit.addEventListener("click", () => {
+            console.log("YOUR VALUES HAVE BEEN SAVED! GJ")
+            window.isDirty = false
+        })
+
+        // window.addEventListener("beforeunload", (event) => {
+        //     console.log("beforeunload")
+        //     // Message will be only shown for legacy browsers.
+        //     // Modern browsers provide a boilerplate message for preventing scam!
+        //     const msg = "Your changes may be lost."
+        //     if (window.isDirty)
+        //         event.returnValue = msg
+
+        //     return msg;
+        // })
 
         document.querySelectorAll(".list").forEach(initializeList)
         document.querySelectorAll(".conditional-field").forEach(initializeConditionalField)
 
+        document.querySelectorAll("input, textarea").forEach(el => {
+            el.addEventListener("input", setDirty)
+        })
+
+        function setDirty() {
+            window.isDirty = true
+        }
+
         function initializeConditionalField(el) {
             const checkbox = el.querySelector("input[type=checkbox]")
             const conditional = el.querySelector(".conditional")
-
-            console.log(checkbox, conditional)
 
             checkbox.addEventListener("input", event => {
                 if (event.target.checked == true) {
@@ -159,10 +202,108 @@
             })
         }
 
+        document.querySelectorAll(".synchronized-calendar").forEach(initializeSynchronizedCalendar)
+
+
+        function initializeSynchronizedCalendar(el) {
+            const gregorianTextField = el.querySelector("input[data-gregorian]")
+            const arabicTextField = el.querySelector("input[data-arabic]")
+
+            if (!gregorianTextField) console.error("Synchronized calendar is missing data-gregorian element.")
+            if (!arabicTextField) console.error("Synchronized calendar is missing data-arabic element.")
+
+            if (gregorianTextField && arabicTextField) {
+
+                function destructureDate(event) {
+                    const value = event.target.value
+                    const parts = value.split(".")
+
+                    while (parts.length < 3) {
+                        parts.unshift("XX")
+                    }
+
+                    let day = parts[0].toString().substr(-2).padStart(2, "0")
+                    let month = parts[1].toString().substr(-2).padStart(2, "0")
+                    const year = parts[2].toString().substr(-4).padStart(4, "0")
+
+                    return [
+                        day,
+                        month,
+                        year
+                    ]
+
+                }
+
+                function allowInput(event, regex) {
+                    if (event.key.length > 1) return
+
+                    if (event.target.value.length >= 10) event.preventDefault()
+                    else if (!regex.test(event.key)) {
+                        console.log("PREVENT")
+                        event.preventDefault()
+                    } else {
+
+                        if (event.target.value.length == 2 || event.target.value.length == 5) {
+                            if (event.key != ".") event.target.value += "."
+                        }
+                    }
+                }
+
+                [gregorianTextField, arabicTextField].forEach(field => {
+                    field.addEventListener("paste", (event) => {
+                        event.preventDefault()
+                    })
+
+                    field.addEventListener("keydown", (event) => {
+                        allowInput(event, /[0-9x]/g)
+                    })
+                })
+
+                gregorianTextField.addEventListener("change", (event) => {
+                    const destructuredDate = destructureDate(event)
+                    event.target.value = destructuredDate.join(".")
+
+
+                    const day = parseInt(destructuredDate[0]) - 1 || 1
+                    const month = parseInt(destructuredDate[1]) - 1 || 0
+                    const year = parseInt(destructuredDate[2]) || 0
+
+                    console.log({
+                        day, month, year
+                    })
+
+                    let date = new Date(year, month, day)
+
+                    const hijri = date.toHijri()
+                    arabicTextField.value = [hijri.getDate().toString().padStart(2, "0"), hijri.getMonth().toString().padStart(2, "0"), hijri.getFullYear().toString().padStart(4, "0")].join(".")
+                })
+
+                arabicTextField.addEventListener("change", (event) => {
+                    const destructuredDate = destructureDate(event)
+                    event.target.value = destructuredDate.join(".")
+
+
+                    const day = parseInt(destructuredDate[0]) + 1 || 1
+                    const month = parseInt(destructuredDate[1]) + 1 || 0
+                    const year = parseInt(destructuredDate[2]) || 0
+
+                    console.log({
+                        day, month, year
+                    })
+
+                    let date = new HijriDate(year, month, day)
+
+                    const hijri = date.toGregorian()
+                    gregorianTextField.value = [hijri.getDate().toString().padStart(2, "0"), hijri.getMonth().toString().padStart(2, "0"), hijri.getFullYear().toString().padStart(4, "0")].join(".")
+                })
+            }
+
+        }
 
         function initializeList(list) {
             list.innerHTML = ""
 
+            const numbered = list.hasAttribute("data-numbered") ? true : false
             const num = list.getAttribute("data-num") || 0
             const type = list.getAttribute("data-type") || "text"
 
@@ -181,14 +322,21 @@
             })
 
             for (let i = 0; i < num; i++) {
-                const listItem = createListItem(type)
+                const listItem = createListItem(type, (numbered) ? i + 1 : null)
                 listItems.appendChild(listItem)
             }
         }
 
-        function createListItem(type) {
+        function createListItem(type, numbered = null) {
             const wrapper = document.createElement("div")
             wrapper.className = "list-item"
+
+            if (numbered) {
+                let number = document.createElement("span")
+                number.innerText = numbered
+                wrapper.appendChild(number)
+            }
+
             switch (type) {
                 case "positional":
                     const positional = document.createElement("div")
@@ -199,9 +347,18 @@
                     positional.appendChild(pinput)
 
                     const textarea = document.createElement("textarea")
+                    textarea.setAttribute("dir", "rtl")
                     positional.appendChild(textarea)
                     break;
+
+                case "type-person":
+                    let typeInput = document.createElement("input")
+                    typeInput.placeholder = "Type"
+                    wrapper.appendChild(typeInput)
                 case "person":
+                    let titleInput = document.createElement("input")
+                    titleInput.placeholder = "Title"
+                    wrapper.appendChild(titleInput)
                 case "text":
                     let input = document.createElement("input")
                     wrapper.appendChild(input)
@@ -229,6 +386,69 @@
                 console.error("Could not remove list item.", listItem, event)
             }
         }
+
+
+
+        const data = {
+            material: [
+                "gold",
+                "silver",
+                "copper"
+            ],
+            person: [
+                "آدَم",
+                "أدْرِيَان",
+                "أليساندرو",
+                "دافيدي",
+                "إسْتَبْرَق"
+            ],
+            nominal: [
+                "dirham",
+                "halb-dirham"
+            ]
+        }
+
+
+        document.querySelectorAll(".data-select").forEach(dbSelect => {
+
+            dbSelect.style.position = "relative"
+
+            let preview = document.createElement("span")
+            preview.innerText = "preview"
+            dbSelect.appendChild(preview)
+            Object.assign(preview.style, {
+                fontFamily: "Arial",
+                fontSize: "13.33px",
+                padding: "7px",
+                display: "block",
+                position: "absolute",
+                top: 0,
+                left: 0,
+                pointerEvents: "none",
+                opacity: 0.3
+            })
+
+            if (dbSelect.hasAttribute("data-select")) {
+                const search = dbSelect.getAttribute("data-select")
+                const input = dbSelect.querySelector("input")
+
+                const targetData = data[search] || []
+
+                function filter(event) {
+                    const results = targetData.filter(text => text.match(event.target.value))
+                    if (results.length > 0)
+                        preview.innerText = results[0]
+                    else{
+                        preview.innerText = ""
+                    }
+                }
+
+                input.addEventListener("focus", filter)
+                input.addEventListener("input", filter)
+            } else {
+                console.error("Data select is missing a 'data-select' attribute.")
+            }
+        })
 
     </script>
 </body>

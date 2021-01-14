@@ -1,13 +1,18 @@
 html{
   font-family: 'Cabin Sketch', cursive;
-  font-size: 1.5em;
+  font-size: 1.5rem;
   color: darkblue;
   background-color: papayawhip;
+  padding: 10px;
 }
 
 body {
   max-width: 720px;
   margin: 0 auto;
+}
+
+h3 {
+  margin-top: 5em;
 }
 
 .form {
@@ -21,6 +26,11 @@ body {
 label,
 input {
   display: block;
+}
+
+
+textarea{
+  min-height: 150px;
 }
 
 .label,
@@ -100,3 +110,14 @@ textarea {
   display: none;
 }
 
+.synchronized-calendar {
+  display: flex;
+}
+
+.synchronized-calendar > .calendar{
+  flex: 1;
+}
+
+.calendar label {
+  font-size:0.75rem;
+}
