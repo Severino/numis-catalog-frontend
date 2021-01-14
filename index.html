@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Administration</title>
+
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Cabin+Sketch:wght@400;700&display=swap" rel="stylesheet">
+</head>
+
+<body>
+    <div class="form">
+        <h2>Neue Münze</h2>
+        <label for="">Typnummer</label>
+        <input type="text">
+
+        <label for="">Treadwell-Id</label>
+        <input type="text">
+
+        <label for="">Besonderheiten</label>
+        <textarea></textarea>
+
+        <label for="">Varianten</label>
+        <textarea></textarea>
+
+
+        <hr>
+        <h3>Grunddaten</h3>
+
+        <label for="">Material</label>
+        <input type="text">
+
+        <label for="">Münzstette</label>
+        <input type="text">
+
+        <label for="">Ort</label>
+        <input type="text">
+
+        <label for="">Jahr</label>
+        <input type="date">
+
+        <label for="">Literatur</label>
+        <textarea></textarea>
+
+        <label for="">Exemplare</label>
+        <div class="exemplare list">
+            <button>+</button>
+            <div class="list-item"><input type="text"><button>-</button></div>
+            <div class="list-item"><input type="text"><button>-</button></div>
+
+        </div>
+
+        <h3>Islamische Münze</h3>
+
+        <label for="">Nominal</label>
+        <select>
+            <option>Dinar</option>
+            <option>Dirham</option>
+            <option>Fals</option>
+        </select>
+
+        <label for="">Münzherr</label>
+        <input type="text">
+
+        <label for="">Kalif</label>
+        <input type="text">
+
+
+        <label for="">Oberherren</label>
+        <div class="oberherren list" data-type="person" data-num=4>
+            <button>+</button>
+            <div class="list-item"><input type="text"><button>-</button></div>
+            <div class="list-item"><input type="text"><button>-</button></div>
+
+        </div>
+
+        <div class="conditional-field">
+            <div class="label"><input type="checkbox" id="is-designated"><label for="is-designated">Disignierter
+                    Nachfolger?</label></div>
+            <div class="conditional hidden">
+                <input type="text" name="" id="">
+            </div>
+        </div>
+        <div class="conditional-field">
+            <div class="label"><input type="checkbox" id="is-stempelm"><label
+                    for="is-stempelm">Stempelschneider?</label></div>
+            <div class="conditional hidden">
+                <input type="text" name="" id="">
+            </div>
+        </div>
+
+        <div class="conditional-field">
+            <div class="label"><input type="checkbox" id="is-wardein"><label for="is-wardein">Münzwardein?</label></div>
+            <div class="conditional hidden">
+                <input type="text" name="" id="">
+            </div>
+        </div>
+
+
+        <hr>
+        <h3>Vorderseite</h3>
+
+        <label for="">Feld</label>
+        <div class="exemplare list" data-type="positional" data-num=1>
+            <button>+</button>
+            <div class="list-item">
+                <div class="positional"><input type="text"><textarea></textarea></div><button>-</button>
+            </div>
+        </div>
+
+        <label for="">Umschrift</label>
+        <div class="exemplare list" data-type="text" data-num=2>
+            <button>+</button>
+            <div class="list-item"><input type="text"><button>-</button></div>
+            <div class="list-item"><input type="text"><button>-</button></div>
+
+        </div>
+
+        <h3>Rückseite</h3>
+
+        <label for="">Feld</label>
+        <div class="exemplare list" data-type="positional" data-num=1>
+            <button>+</button>
+            <div class="list-item">
+                <div class="positional"><input type="text"><textarea></textarea></div><button>-</button>
+            </div>
+        </div>
+
+        <label for="">Umschrift</label>
+        <div class="exemplare list" data-type="text" data-num=2>
+            <button>+</button>
+            <div class="list-item"><input type="text"><button>-</button></div>
+            <div class="list-item"><input type="text"><button>-</button></div>
+
+        </div>
+    </div>
+
+    <script>
+
+        document.querySelectorAll(".list").forEach(initializeList)
+        document.querySelectorAll(".conditional-field").forEach(initializeConditionalField)
+
+        function initializeConditionalField(el) {
+            const checkbox = el.querySelector("input[type=checkbox]")
+            const conditional = el.querySelector(".conditional")
+
+            console.log(checkbox, conditional)
+
+            checkbox.addEventListener("input", event => {
+                if (event.target.checked == true) {
+                    conditional.classList.remove("hidden")
+                } else {
+                    conditional.classList.add("hidden")
+
+                }
+            })
+        }
+
+
+        function initializeList(list) {
+            list.innerHTML = ""
+
+            const num = list.getAttribute("data-num") || 0
+            const type = list.getAttribute("data-type") || "text"
+
+            let addBtn = document.createElement("button")
+            addBtn.innerText = "+"
+            list.appendChild(addBtn)
+
+
+            let listItems = document.createElement("div")
+            listItems.className = "list-items"
+            list.appendChild(listItems)
+
+            addBtn.addEventListener("click", () => {
+                const listItem = createListItem(type)
+                listItems.appendChild(listItem)
+            })
+
+            for (let i = 0; i < num; i++) {
+                const listItem = createListItem(type)
+                listItems.appendChild(listItem)
+            }
+        }
+
+        function createListItem(type) {
+            const wrapper = document.createElement("div")
+            wrapper.className = "list-item"
+            switch (type) {
+                case "positional":
+                    const positional = document.createElement("div")
+                    positional.className = "positional"
+                    wrapper.appendChild(positional)
+
+                    const pinput = document.createElement("input")
+                    positional.appendChild(pinput)
+
+                    const textarea = document.createElement("textarea")
+                    positional.appendChild(textarea)
+                    break;
+                case "person":
+                case "text":
+                    let input = document.createElement("input")
+                    wrapper.appendChild(input)
+                    break
+                default:
+                    console.error("Type '" + type + "' is not implemented yet.")
+            }
+
+            const deleteButton = document.createElement("button")
+            deleteButton.innerText = "-"
+            deleteButton.setAttribute("onclick", "deleteListItem(event)")
+
+            wrapper.appendChild(deleteButton)
+            return wrapper
+        }
+
+        function deleteListItem(event) {
+
+            const listItem = event.target.closest(".list-item")
+            if (listItem && listItem.parentNode) {
+                if (confirm("Do you really want to remove")) {
+                    listItem.parentNode.removeChild(listItem)
+                }
+            } else {
+                console.error("Could not remove list item.", listItem, event)
+            }
+        }
+
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,97 @@
+body{
+  font-family: 'Cabin Sketch', cursive;
+  font-size: 1.5em;
+  color: darkblue;
+  background-color: papayawhip;
+}
+
+.form {
+  display: block;
+}
+
+.form > * {
+  margin-bottom: 0.5em;
+}
+
+label,
+input {
+  display: block;
+}
+
+.label,
+button,
+textarea,
+input:not([type="checkbox"]) {
+  width: 100%;
+  box-sizing: border-box;
+}
+
+button,
+textarea,
+input:not([type="checkbox"]) {
+  padding: 5px;
+}
+
+textarea {
+  resize: vertical;
+}
+
+.list,
+.conditional-field {
+    padding: 5px;
+    border: 1px ridge black;
+    border-radius: 3px;
+}
+
+.list > * {
+  
+  margin-bottom: 5px;
+}
+
+.list-item {
+  display: flex;
+}
+
+.list-item input{
+  flex: 3;
+  
+}
+
+.list-item .positional {
+  flex: 1;
+  display: flex;
+}
+
+.list-item .positional textarea{
+  flex: 2;
+}
+
+.list-item .positional input{
+  align-self: flex-start;
+  flex:1;
+  box-sizing: border-box;
+  margin-right: 5px;
+}
+
+.list-item button {
+  width: 32px;
+  /* border-radius: 0; */
+  /* border-bottom-left-radius: 0;
+  border-top-left-radius: 0; */
+}
+
+.conditional-field .label {
+  display: flex;
+  align-items: center;
+}
+
+.conditional-field .label label {
+  display: block;
+  flex: 1;
+  user-select: none;
+}
+
+.hidden {
+  display: none;
+}
+
