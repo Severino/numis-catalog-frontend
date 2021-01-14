@@ -1,8 +1,13 @@
-body{
+html{
   font-family: 'Cabin Sketch', cursive;
   font-size: 1.5em;
   color: darkblue;
   background-color: papayawhip;
+}
+
+body {
+  max-width: 720px;
+  margin: 0 auto;
 }
 
 .form {
