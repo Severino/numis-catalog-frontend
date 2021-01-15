@@ -9,14 +9,32 @@
     <link rel="stylesheet" href="style.css">
     <link rel="preconnect" href="https://fonts.gstatic.com">
     <link href="https://fonts.googleapis.com/css2?family=Cabin+Sketch:wght@400;700&display=swap" rel="stylesheet">
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.6.0/gsap.min.js"></script>
 </head>
 
 <body>
+
+    <div class="preview">
+        <span>VORSCHAU</span>
+    </div>
+
     <div class="form">
         <h2>Neue Münze</h2>
 
+        <h3>WICHTIG</h3>
+        <p>Dies ist eine Vorschau, die zur Feststellung der Bedienbarkeit und der Nutzerfreundlichkeit dient.
+        </p>
+        <p>Das Design hat in keinster Weise Anspruch auf einen ästhetischen Wert und wird sich, den Anforderungen nach,
+            noch drastisch ändern.</p>
+        <p>Die Schrift hat diesen Zeichenstil nicht, weil dieser 'schön' sein soll, sondern um dies zu verdeutlichen!
+        </p>
+
+        <p class="important">Das Wichtige sind hier die Eingabefelder und deren Bedienbarkeit.</p>
+
 
         <h3>Grunddaten</h3>
+
         <label for="">Typnummer</label>
         <input type="text">
 
@@ -25,9 +43,7 @@
 
 
         <label for="">Material</label>
-        <div class="data-select" data-select="material" style="position: relative;">
-            <input type="search" name="" id="">
-            <span style="display:block; position: absolute; top:0; right:0; z-index: 1000;">SEARCH</span>
+        <div class="data-select" data-select="material" data-select-attribute="name" style="position: relative;">
         </div>
 
         <label for="">Münzstätte</label>
@@ -42,11 +58,22 @@
                 <label for="">Gregorianisch</label><input type="text" data-gregorian>
             </div>
         </div>
+        <p>
+            Die Jahreszahlen sind bidirectional synchronisiert. Wird ein Eingabefeld geändert, so wird das andere
+            geupdated.
+            Dieses 'update' passiert erst, wenn der außerhalb des Feldes geklickt oder ein neues Feld angewählt wird.
+        </p>
+        <p>
+            Es kann auch mit einem kleinen x gearbeitet werden, wenn entsprechende Daten nicht bekannt sind. Dann wird
+            das synchronisierte Feld 'falsch' aktualisiert.
+            Im Moment gehe ich davon aus, dass wenn ein x gesetzt wird, alle kleineren Werte des anderen Feldes nicht
+            mehr berechenbar sind.
+        </p>
 
         <h3>Islamische Münze</h3>
 
         <label for="">Nominal</label>
-        <div class="data-select" style="position: relative;">
+        <div class="data-select" data-select="nominal" data-select-attribute="name" style="position: relative;">
             <input type="search" name="" id="">
             <span style="display:block; position: absolute; top:0; right:0; z-index: 1000;">SEARCH</span>
         </div>
@@ -308,7 +335,7 @@
             const type = list.getAttribute("data-type") || "text"
 
             let addBtn = document.createElement("button")
-            addBtn.innerText = "+"
+            addBtn.textContent = "+"
             list.appendChild(addBtn)
 
 
@@ -333,7 +360,7 @@
 
             if (numbered) {
                 let number = document.createElement("span")
-                number.innerText = numbered
+                number.textContent = numbered
                 wrapper.appendChild(number)
             }
 
@@ -368,7 +395,7 @@
             }
 
             const deleteButton = document.createElement("button")
-            deleteButton.innerText = "-"
+            deleteButton.textContent = "-"
             deleteButton.setAttribute("onclick", "deleteListItem(event)")
 
             wrapper.appendChild(deleteButton)
@@ -388,67 +415,238 @@
         }
 
 
-
-        const data = {
+        let defaultData = {
             material: [
-                "gold",
-                "silver",
-                "copper"
+                { id: 0, name: "gold" },
+                { id: 1, name: "silver" },
+                { id: 2, name: "copper" },
             ],
             person: [
-                "آدَم",
-                "أدْرِيَان",
-                "أليساندرو",
-                "دافيدي",
-                "إسْتَبْرَق"
+                { id: 0, name: "آدَم" },
+                { id: 1, name: "أدْرِيَان" },
+                { id: 2, name: "أليساندرو" },
+                { id: 3, name: "دافيدي" },
+                { id: 4, name: "إسْتَبْرَق" },
             ],
             nominal: [
-                "dirham",
-                "halb-dirham"
+                { id: 0, name: "dirham" },
+                { id: 1, name: "halb-dirham" },
             ]
         }
+
+
+        const data = localStorage.getItem("data") || defaultData
 
 
         document.querySelectorAll(".data-select").forEach(dbSelect => {
 
             dbSelect.style.position = "relative"
 
-            let preview = document.createElement("span")
-            preview.innerText = "preview"
-            dbSelect.appendChild(preview)
-            Object.assign(preview.style, {
-                fontFamily: "Arial",
-                fontSize: "13.33px",
-                padding: "7px",
-                display: "block",
-                position: "absolute",
-                top: 0,
-                left: 0,
-                pointerEvents: "none",
-                opacity: 0.3
+            dbSelect.innerHTML = ""
+
+            const wrapper = document.createElement("div")
+            wrapper.setAttribute("type", "search")
+            dbSelect.appendChild(wrapper)
+
+
+            const searchField = document.createElement("input")
+            searchField.setAttribute("type", "search")
+            wrapper.appendChild(searchField)
+
+            const hiddenId = document.createElement("input")
+            hiddenId.className = "id-field"
+            hiddenId.setAttribute("readonly", true)
+            hiddenId.setAttribute("tabindex", -1)
+            wrapper.appendChild(hiddenId)
+
+            const addBtn = document.createElement("div")
+            addBtn.className = "button add-button"
+            addBtn.setAttribute("onclick", "addData(event)")
+
+            const txt = document.createElement("span")
+            txt.textContent = "+"
+            addBtn.appendChild(txt)
+
+
+            wrapper.appendChild(addBtn)
+
+
+
+            const previewList = document.createElement("div")
+            previewList.className = "preview-list"
+            dbSelect.appendChild(previewList)
+
+            const previewCount = 5
+            for (let i = 0; i < previewCount; i++) {
+                const listEntry = document.createElement("div")
+                listEntry.className = "list-item"
+                listEntry.setAttribute("onclick", "setListItemById(event)")
+                previewList.appendChild(listEntry)
+
+                const text = document.createElement("span")
+                text.textContent = "Hello World"
+                listEntry.appendChild(text)
+
+            }
+
+
+
+
+            function filter(event) {
+
+
+                const dbSelect = event.target.closest(".data-select")
+                if (dbSelect) {
+                    if (!dbSelect.hasAttribute("data-select"))
+                        console.error("Data select is missing a 'data-select' attribute.")
+
+                    if (!dbSelect.hasAttribute("data-select-attribute"))
+                        console.error("Data select is missing a 'data-select-attribute' attribute.")
+
+                    if (dbSelect.hasAttribute("data-select") && dbSelect.hasAttribute("data-select-attribute")) {
+                        const select = dbSelect.getAttribute("data-select")
+                        const attribute = dbSelect.getAttribute("data-select-attribute")
+
+                        let targetData = []
+
+                        if (data[select]) {
+                            targetData = data[select].map(obj => {
+                                console.log({
+                                    id: obj.id, value: obj[attribute]
+                                })
+                                return {
+                                    id: obj.id, value: obj[attribute]
+                                }
+                            })
+                        }
+
+                        console.log(data[select], targetData)
+                        const results = targetData.filter(obj => obj.value.match(event.target.value))
+
+
+                        const previewList = dbSelect.querySelector(".preview-list")
+                        previewList.style.display = "block"
+
+                        const listItems = previewList.querySelectorAll(".list-item")
+
+                        listItems.forEach((item, idx) => {
+                            if (idx < results.length) {
+                                item.setAttribute("data-id", results[idx].id)
+                                item.querySelector("span").textContent = results[idx].value
+
+                                item.style.display = "block"
+                            } else {
+                                item.removeAttribute("data-id")
+                                item.style.display = "none"
+                            }
+                        })
+                    }
+                } else {
+                    console.error("Could not find dbselect")
+                }
+            }
+
+
+
+            const input = dbSelect.querySelector("input")
+            input.addEventListener("focus", (event) => {
+                filter(event)
+                const previewList = dbSelect.querySelector(".preview-list")
+                previewList.style.opacity = 1;
+            })
+            input.addEventListener("input", (event) => {
+                filter(event)
+                updateId(event)
+
+                // if (!dbSelect.timeout) {
+                //     setTimeout()
+                // }
+            })
+            input.addEventListener("focusout", (event) => {
+
+                const dbSelect = event.target.closest(".data-select")
+
+                const previewList = dbSelect.querySelector(".preview-list")
+                console.log(previewList, event.target)
+                if (previewList.style.display != "none") {
+                    TweenLite.to(previewList, 0.3, {
+                        opacity: 0
+                    })
+                }
             })
 
-            if (dbSelect.hasAttribute("data-select")) {
-                const search = dbSelect.getAttribute("data-select")
-                const input = dbSelect.querySelector("input")
+        })
 
-                const targetData = data[search] || []
+        function updateId(event) {
+            const dbSelect = event.target.closest(".data-select")
 
-                function filter(event) {
-                    const results = targetData.filter(text => text.match(event.target.value))
-                    if (results.length > 0)
-                        preview.innerText = results[0]
-                    else{
-                        preview.innerText = ""
-                    }
+            if (!dbSelect.hasAttribute("data-select"))
+                console.error("Data select is missing a 'data-select' attribute.")
+
+            if (!dbSelect.hasAttribute("data-select-attribute"))
+                console.error("Data select is missing a 'data-select-attribute' attribute.")
+
+            if (dbSelect.hasAttribute("data-select") && dbSelect.hasAttribute("data-select-attribute")) {
+                const select = dbSelect.getAttribute("data-select")
+                const attribute = dbSelect.getAttribute("data-select-attribute")
+
+                const input = dbSelect.querySelector("input[type=search]")
+
+                const match = data[select].filter(el => el[attribute] == input.value)
+
+                const idField = dbSelect.querySelector(".id-field")
+                let button = dbSelect.querySelector(".button")
+                if (match.length == 1) {
+                    console.log("MATCH")
+                    button.style.display = "none"
+
+
+
+                    idField.value = match[0].id
+
+                } else {
+                    button.style.display = null
+                    idField.value = ""
                 }
 
-                input.addEventListener("focus", filter)
-                input.addEventListener("input", filter)
-            } else {
-                console.error("Data select is missing a 'data-select' attribute.")
             }
-        })
+        }
+
+        function setListItemById(event) {
+            const dbSelect = event.target.closest(".data-select")
+            const textField = dbSelect.querySelector("input:first-child")
+            textField.value = event.target.textContent
+            dbSelect.querySelector(".preview-list").style.display = "none"
+            updateId(event)
+        }
+
+        function addData(event) {
+            const dbSelect = event.target.closest(".data-select")
+            const field = dbSelect.querySelector("input")
+
+            const table = dbSelect.getAttribute("data-select")
+            const attribute = dbSelect.getAttribute("data-select-attribute")
+
+            const obj = data[table]
+            let id = 0;
+            obj.forEach(datapoint => {
+                if (datapoint.id >= id) {
+                    id = datapoint.id + 1
+                }
+            })
+
+            const created = {
+                id
+            }
+            created[attribute] = field.value
+
+
+            data[table].push(created)
+
+            localStorage.setItem("data", data)
+
+            updateId(event)
+        }
 
     </script>
 </body>

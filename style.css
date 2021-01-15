@@ -121,3 +121,85 @@ textarea {
 .calendar label {
   font-size:0.75rem;
 }
+
+.preview-list {
+  background-color: white;
+  
+  position: absolute;
+  box-sizing: border-box;
+  width: 100%;
+  display: none;
+}
+
+
+
+
+.data-select > div:first-child {
+  display: flex;
+  width: 100%;
+}
+
+
+.data-select > div:first-child > input:nth-child(1) {
+  flex: 1 1 100px;
+  
+  min-width: 64px;
+}
+
+.data-select > div:first-child > input:nth-child(2) {
+  user-select: none;
+  pointer-events: none;
+  background-color: greenyellow;
+  width: 64px;
+}
+
+.preview-list .list-item{
+  font-family: Arial;
+  color: black;
+  font-size: 13.33px;
+  padding: 10px;
+  border: 1px solid black;
+  border-top: 0;
+  user-select: none;
+  cursor: pointer;
+}
+
+.preview-list .list-item:hover {
+  background-color: gray;
+}
+
+.preview {
+  position: fixed;
+  background-color:  tomato;
+  color: white;
+  padding: 5px 100px;
+  right: 0;
+  top:0;
+  transform:  translateX(100px) translateY(50px) rotate(45deg);
+}
+
+.important {
+  color: red;
+}
+
+.add-button{
+  right: 0;
+  width: 64px;
+
+  font-weight: bold;
+  font-size: 1rem;
+  padding: 0;
+  line-height: 0;
+  
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  box-sizing: border-box;
+  /* opacity: 0.5; */
+  background-color: tomato;
+  /* box-shadow: 0 0 5px rgb(255, 0, 0); */
+  z-index: 100;
+  border: 1px solid darkred;
+  user-select: none;
+}
