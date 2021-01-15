@@ -435,7 +435,14 @@
         }
 
 
-        const data = localStorage.getItem("data") || defaultData
+        let loadedData 
+        try {
+            loadedData = JSON.parse(localStorage.getItem("data"))
+        } catch (err) {
+            console.error(err)
+        }
+
+        const data = loadedData || defaultData
 
 
         document.querySelectorAll(".data-select").forEach(dbSelect => {
@@ -643,7 +650,7 @@
 
             data[table].push(created)
 
-            localStorage.setItem("data", data)
+            localStorage.setItem("data", JSON.stringify(data))
 
             updateId(event)
         }
