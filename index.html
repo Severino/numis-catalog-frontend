@@ -47,7 +47,8 @@
         </div>
 
         <label for="">Münzstätte</label>
-        <input type="text">
+        <div class="data-select" data-select="staette" data-select-attribute="name" style="position: relative;">
+        </div>
 
         <label for="">Prägejahr</label>
         <div class="synchronized-calendar">
@@ -79,42 +80,27 @@
         </div>
 
         <label for="">Münzherr</label>
-        <div class="reigner">
-            <label for="">Titel</label>
-            <input type="text">
-
-            <label for="">Person</label>
-            <input type="text">
-        </div>
+        <div class="titled-person-select" master></div>
 
         <label for="">Kalif</label>
-        <input type="text">
+        <div class="titled-person-select"></div>
 
         <div class="conditional-field">
             <div class="label"><input type="checkbox" id="is-designated"><label for="is-designated">Designierter
                     Nachfolger?</label></div>
             <div class="conditional hidden">
-                <input type="text" name="" id="">
+                <div class="titled-person-select"></div>
             </div>
         </div>
 
         <label for="">Oberherren</label>
-        <div class="oberherren list" data-numbered data-type="person" data-num=4>
-            <button>+</button>
-            <div class="list-item"><input type="text"><button>-</button></div>
-            <div class="list-item"><input type="text"><button>-</button></div>
-
-        </div>
+        <div class="oberherren list" data-numbered data-type="person" data-num=4></div>
         <span class="comment">* wobei 1 der höchste Oberherr ist</span>
 
 
         <label for="">Weitere Personen</label>
 
-        <div class="oberherren list" data-type="type-person" data-num=1>
-            <button>+</button>
-            <div class="list-item"><input type="text" placeholder="Titel"><input type="text"><button>-</button></div>
-            <div class="list-item"><input type="text"><button>-</button></div>
-
+        <div class="other-persons list" data-type="type-person" data-num=1>
         </div>
 
 
@@ -130,7 +116,7 @@
         </div>
 
         <label for="">Umschrift</label>
-        <div class="exemplare list" data-type="text" data-num=2>
+        <div class="exemplare list reverse" data-type="text" dir="rtl" data-num=2>
             <button>+</button>
             <div class="list-item"><input type="text"><button>-</button></div>
             <div class="list-item"><input type="text"><button>-</button></div>
@@ -148,7 +134,7 @@
         </div>
 
         <label for="">Umschrift</label>
-        <div class="exemplare list" data-type="text" data-num=2>
+        <div class="exemplare list reverse" data-type="text" dir="rtl" data-num=2>
             <button>+</button>
             <div class="list-item"><input type="text"><button>-</button></div>
             <div class="list-item"><input type="text"><button>-</button></div>
@@ -187,6 +173,41 @@
 
     <script src="https://rawgit.com/abdennour/hijri-date/master/cdn/hijri-date-latest.js"></script>
     <script>
+
+
+
+        let defaultData = {
+            staette: [
+
+            ],
+            material: [
+                { id: 0, name: "gold" },
+                { id: 1, name: "silver" },
+                { id: 2, name: "copper" },
+            ],
+            person: [
+                { id: 0, name: "آدَم" },
+                { id: 1, name: "أدْرِيَان" },
+                { id: 2, name: "أليساندرو" },
+                { id: 3, name: "دافيدي" },
+                { id: 4, name: "إسْتَبْرَق" },
+            ],
+            nominal: [
+                { id: 0, name: "dirham" },
+                { id: 1, name: "halb-dirham" },
+            ]
+        }
+
+
+        let loadedData
+        try {
+            loadedData = JSON.parse(localStorage.getItem("data"))
+        } catch (err) {
+            console.error(err)
+        }
+
+        const data = loadedData || defaultData
+
 
         submit.addEventListener("click", () => {
             console.log("YOUR VALUES HAVE BEEN SAVED! GJ")
@@ -266,7 +287,6 @@
 
                     if (event.target.value.length >= 10) event.preventDefault()
                     else if (!regex.test(event.key)) {
-                        console.log("PREVENT")
                         event.preventDefault()
                     } else {
 
@@ -327,12 +347,75 @@
 
         }
 
+
+        function createProfessionesPersonSelect() {
+            const el = document.createElement("div")
+            el.className = "profession-person-select"
+
+
+            const dataSelect = createDataSelectField("profession")
+            initializeDataSelect(dataSelect)
+
+
+            el.appendChild(dataSelect)
+            el.appendChild(createTitledPersonSelect())
+
+            console.trace("CALLED TRACE")
+            const inputField = dataSelect.querySelector(".data-select-search")
+            console.log(inputField)
+            inputField.setAttribute("placeholder", "Tätigkeit")
+
+            return el
+        }
+
+
+        function createTitledPersonSelect() {
+            const el = document.createElement("div")
+            el.className = "titled-person-select"
+            initializeTitledPersonSelect(el)
+            return el
+        }
+
+        function initializeTitledPersonSelect(el) {
+            el.innerHTML = ""
+            el.appendChild(createTitleField())
+            el.appendChild(createPersonField())
+        }
+
+
+        function createDataSelectField(table, attribute = "name") {
+            const el = document.createElement("div")
+            el.className = "data-select"
+            el.setAttribute("data-select", table)
+            el.setAttribute("data-select-attribute", attribute)
+            return el
+        }
+
+        function createPersonField() {
+            const el = createDataSelectField("person")
+            initializeDataSelect(el)
+            const inputField = el.querySelector(".data-select-search")
+            inputField.setAttribute("dir", "rtl")
+            inputField.setAttribute("placeholder", "Name")
+            el.classList.add("person-select")
+            return el
+        }
+
+        function createTitleField() {
+            const el = createDataSelectField("title")
+            initializeDataSelect(el)
+            const inputField = el.querySelector(".data-select-search")
+            inputField.setAttribute("dir", "rtl")
+            inputField.setAttribute("placeholder", "Titel")
+            el.classList.add("title-select")
+            return el
+        }
+
+
         function initializeList(list) {
             list.innerHTML = ""
 
-            const numbered = list.hasAttribute("data-numbered") ? true : false
             const num = list.getAttribute("data-num") || 0
-            const type = list.getAttribute("data-type") || "text"
 
             let addBtn = document.createElement("button")
             addBtn.textContent = "+"
@@ -343,26 +426,19 @@
             listItems.className = "list-items"
             list.appendChild(listItems)
 
-            addBtn.addEventListener("click", () => {
-                const listItem = createListItem(type)
-                listItems.appendChild(listItem)
-            })
+            addBtn.addEventListener("click", addListItem)
 
             for (let i = 0; i < num; i++) {
-                const listItem = createListItem(type, (numbered) ? i + 1 : null)
+                const listItem = createListItem(list)
                 listItems.appendChild(listItem)
             }
+            listChanged(list)
         }
 
-        function createListItem(type, numbered = null) {
+        function createListItem(list) {
+            const type = list.getAttribute("data-type") || "text"
             const wrapper = document.createElement("div")
             wrapper.className = "list-item"
-
-            if (numbered) {
-                let number = document.createElement("span")
-                number.textContent = numbered
-                wrapper.appendChild(number)
-            }
 
             switch (type) {
                 case "positional":
@@ -379,15 +455,15 @@
                     break;
 
                 case "type-person":
-                    let typeInput = document.createElement("input")
-                    typeInput.placeholder = "Type"
-                    wrapper.appendChild(typeInput)
+                    wrapper.appendChild(createProfessionesPersonSelect())
+                    break;
                 case "person":
-                    let titleInput = document.createElement("input")
-                    titleInput.placeholder = "Title"
-                    wrapper.appendChild(titleInput)
+                    wrapper.appendChild(createTitledPersonSelect())
+                    break;
                 case "text":
+                    const dir = list.getAttribute("dir") || "ltr"
                     let input = document.createElement("input")
+                    input.setAttribute("dir", dir)
                     wrapper.appendChild(input)
                     break
                 default:
@@ -395,7 +471,10 @@
             }
 
             const deleteButton = document.createElement("button")
+
+            deleteButton.className = "button delete-button"
             deleteButton.textContent = "-"
+            deleteButton.setAttribute("tabindex", -1)
             deleteButton.setAttribute("onclick", "deleteListItem(event)")
 
             wrapper.appendChild(deleteButton)
@@ -404,48 +483,46 @@
 
         function deleteListItem(event) {
 
+            const list = event.target.closest(".list")
             const listItem = event.target.closest(".list-item")
             if (listItem && listItem.parentNode) {
-                if (confirm("Do you really want to remove")) {
-                    listItem.parentNode.removeChild(listItem)
-                }
+                listItem.parentNode.removeChild(listItem)
+                listChanged(list)
             } else {
                 console.error("Could not remove list item.", listItem, event)
             }
         }
 
+        function addListItem(event) {
 
-        let defaultData = {
-            material: [
-                { id: 0, name: "gold" },
-                { id: 1, name: "silver" },
-                { id: 2, name: "copper" },
-            ],
-            person: [
-                { id: 0, name: "آدَم" },
-                { id: 1, name: "أدْرِيَان" },
-                { id: 2, name: "أليساندرو" },
-                { id: 3, name: "دافيدي" },
-                { id: 4, name: "إسْتَبْرَق" },
-            ],
-            nominal: [
-                { id: 0, name: "dirham" },
-                { id: 1, name: "halb-dirham" },
-            ]
+            const list = event.target.closest(".list")
+            const listItems = list.querySelector(".list-items")
+            listItems.appendChild(createListItem(list))
+            listChanged(list)
+        }
+
+        function listChanged(list) {
+            if (list.hasAttribute("data-numbered")) {
+                const listItems = list.querySelector(".list-items")
+
+                Array.from(listItems.children).forEach((item, index) => {
+                    console.log("SPAN")
+                    const span = item.querySelector(":scope >span") || document.createElement("span")
+                    span.innerText = index + 1
+                    item.insertBefore(span, item.children[0])
+                })
+            }
         }
 
 
-        let loadedData 
-        try {
-            loadedData = JSON.parse(localStorage.getItem("data"))
-        } catch (err) {
-            console.error(err)
-        }
 
-        const data = loadedData || defaultData
+        document.querySelectorAll(".data-select").forEach(initializeDataSelect)
 
+        function initializeDataSelect(dbSelect) {
 
-        document.querySelectorAll(".data-select").forEach(dbSelect => {
+            if (dbSelect.hasAttribute("data-initialized")) return
+            dbSelect.setAttribute("data-initialized", true)
+
 
             dbSelect.style.position = "relative"
 
@@ -456,9 +533,15 @@
             dbSelect.appendChild(wrapper)
 
 
+            const searchFieldWrapper = document.createElement("div")
+            searchFieldWrapper.className = "data-select-search-wrapper"
+            wrapper.appendChild(searchFieldWrapper)
+
+
             const searchField = document.createElement("input")
             searchField.setAttribute("type", "search")
-            wrapper.appendChild(searchField)
+            searchField.className = "data-select-search"
+            searchFieldWrapper.appendChild(searchField)
 
             const hiddenId = document.createElement("input")
             hiddenId.className = "id-field"
@@ -481,7 +564,7 @@
 
             const previewList = document.createElement("div")
             previewList.className = "preview-list"
-            dbSelect.appendChild(previewList)
+            searchFieldWrapper.appendChild(previewList)
 
             const previewCount = 5
             for (let i = 0; i < previewCount; i++) {
@@ -500,8 +583,6 @@
 
 
             function filter(event) {
-
-
                 const dbSelect = event.target.closest(".data-select")
                 if (dbSelect) {
                     if (!dbSelect.hasAttribute("data-select"))
@@ -516,21 +597,16 @@
 
                         let targetData = []
 
-                        if (data[select]) {
-                            targetData = data[select].map(obj => {
-                                console.log({
-                                    id: obj.id, value: obj[attribute]
-                                })
-                                return {
-                                    id: obj.id, value: obj[attribute]
-                                }
-                            })
-                        }
+                        if (!data[select])
+                            data[select] = []
 
-                        console.log(data[select], targetData)
+                        targetData = data[select].map(obj => {
+                            return {
+                                id: obj.id, value: obj[attribute]
+                            }
+                        })
+
                         const results = targetData.filter(obj => obj.value.match(event.target.value))
-
-
                         const previewList = dbSelect.querySelector(".preview-list")
                         previewList.style.display = "block"
 
@@ -554,16 +630,87 @@
             }
 
 
+            function handleKeyboardInteraction(event) {
+
+                let dataSelect = event.target.closest(".data-select")
+                const previewList = dataSelect.querySelector(".preview-list")
+                const activeAttr = "data-active-preview"
+                if (event.key == "ArrowDown" || event.key == "ArrowUp") {
+                    let active = parseInt(previewList.getAttribute(activeAttr))
+                    if (isNaN(active)) active = -1
+                    let nextActive = (event.key == "ArrowDown") ? active + 1 : active - 1
+
+                    console.log(nextActive)
+                    nextActive = Math.min(Math.max(-1, nextActive), previewList.children.length - 1)
+                    previewList.setAttribute(activeAttr, nextActive)
+
+                    Array.from(previewList.children).forEach((child, idx) => {
+                        if (idx == nextActive) {
+                            child.classList.add("active")
+                        } else {
+                            child.classList.remove("active")
+                        }
+                    })
+
+                }
+
+                if (event.key == "Enter") {
+                    event.preventDefault()
+
+                    let active = parseInt(previewList.getAttribute(activeAttr))
+                    console.log("active", active)
+                    if (isNaN(active) || active < 0) {
+
+
+                        const match = getMatch(dbSelect)
+                        if (match)
+                            updateId(dbSelect)
+                        else
+                            addData(event)
+
+
+                    } else {
+                        applyListItem(previewList.children[parseInt(active)])
+                    }
+
+                    const tabables = document.querySelectorAll("input, button")
+                    let next = false
+                    let tabindex = 0
+                    for (let el of Array.from(tabables)) {
+                        if (next) {
+                            const otherTabindex = el.tabIndex || 0
+                            if (otherTabindex >= tabindex) {
+                                el.focus()
+                                next = false
+                                break;
+                            } else continue
+                        }
+
+                        if (event.target == el) {
+                            next = true
+                            tabindex = event.tabIndex || 0
+                            console.log(tabindex)
+                        }
+                    }
+                }
+            }
+
 
             const input = dbSelect.querySelector("input")
             input.addEventListener("focus", (event) => {
                 filter(event)
                 const previewList = dbSelect.querySelector(".preview-list")
                 previewList.style.opacity = 1;
+                previewList.style.pointerEvents = null
+
+                input.addEventListener("keydown", handleKeyboardInteraction)
+
             })
             input.addEventListener("input", (event) => {
                 filter(event)
-                updateId(event)
+
+                const dbSelect = event.target.closest(".data-select")
+                updateId(dbSelect)
 
                 // if (!dbSelect.timeout) {
                 //     setTimeout()
@@ -574,18 +721,44 @@
                 const dbSelect = event.target.closest(".data-select")
 
                 const previewList = dbSelect.querySelector(".preview-list")
-                console.log(previewList, event.target)
                 if (previewList.style.display != "none") {
                     TweenLite.to(previewList, 0.3, {
-                        opacity: 0
+                        opacity: 0,
+                        onComplete: () => {
+                            previewList.style.pointerEvents = "none"
+                        }
                     })
                 }
             })
 
-        })
+            updateId(dbSelect)
 
-        function updateId(event) {
-            const dbSelect = event.target.closest(".data-select")
+
+        }
+
+        function getMatch(dbSelect) {
+            if (!dbSelect.hasAttribute("data-select"))
+                console.error("Data select is missing a 'data-select' attribute.")
+
+            if (!dbSelect.hasAttribute("data-select-attribute"))
+                console.error("Data select is missing a 'data-select-attribute' attribute.")
+
+            if (dbSelect.hasAttribute("data-select") && dbSelect.hasAttribute("data-select-attribute")) {
+                const select = dbSelect.getAttribute("data-select")
+                const attribute = dbSelect.getAttribute("data-select-attribute")
+
+                const input = dbSelect.querySelector("input[type=search]")
+
+
+                if (!data[select])
+                    data[select] = []
+                const match = data[select].filter(el => el[attribute] == input.value)
+
+                return (match.length == 1) ? match[0] : null
+            }
+        }
+
+        function updateId(dbSelect) {
 
             if (!dbSelect.hasAttribute("data-select"))
                 console.error("Data select is missing a 'data-select' attribute.")
@@ -599,20 +772,19 @@
 
                 const input = dbSelect.querySelector("input[type=search]")
 
-                const match = data[select].filter(el => el[attribute] == input.value)
-
                 const idField = dbSelect.querySelector(".id-field")
                 let button = dbSelect.querySelector(".button")
-                if (match.length == 1) {
-                    console.log("MATCH")
+
+
+                const match = getMatch(dbSelect)
+                if (match) {
                     button.style.display = "none"
-
-
-
-                    idField.value = match[0].id
+                    idField.style.display = null
+                    idField.value = match.id
 
                 } else {
                     button.style.display = null
+                    idField.style.display = "none"
                     idField.value = ""
                 }
 
@@ -620,11 +792,15 @@
         }
 
         function setListItemById(event) {
-            const dbSelect = event.target.closest(".data-select")
+            applyListItem(event.target)
+        }
+
+        function applyListItem(item) {
+            const dbSelect = item.closest(".data-select")
             const textField = dbSelect.querySelector("input:first-child")
-            textField.value = event.target.textContent
+            textField.value = item.textContent
             dbSelect.querySelector(".preview-list").style.display = "none"
-            updateId(event)
+            updateId(dbSelect)
         }
 
         function addData(event) {
@@ -634,26 +810,39 @@
             const table = dbSelect.getAttribute("data-select")
             const attribute = dbSelect.getAttribute("data-select-attribute")
 
-            const obj = data[table]
-            let id = 0;
-            obj.forEach(datapoint => {
-                if (datapoint.id >= id) {
-                    id = datapoint.id + 1
+
+            if (field.value != "") {
+
+                if (!data[table])
+                    data[table] = []
+                const obj = data[table]
+
+
+                let id = 0;
+                obj.forEach(datapoint => {
+                    if (datapoint.id >= id) {
+                        id = datapoint.id + 1
+                    }
+                })
+
+                const created = {
+                    id
                 }
-            })
+                created[attribute] = field.value
 
-            const created = {
-                id
+
+                data[table].push(created)
+
+                localStorage.setItem("data", JSON.stringify(data))
+
+                updateId(dbSelect)
             }
-            created[attribute] = field.value
-
-
-            data[table].push(created)
-
-            localStorage.setItem("data", JSON.stringify(data))
-
-            updateId(event)
         }
+
+
+
+        document.querySelectorAll(".titled-person-select").forEach(initializeTitledPersonSelect)
+
 
     </script>
 </body>

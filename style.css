@@ -63,13 +63,29 @@ textarea {
   margin-bottom: 5px;
 }
 
+.list.reverse .list-item{
+  flex-direction: row-reverse;
+}
+
 .list-item {
   display: flex;
 }
 
-.list-item input{
-  flex: 3;
+.list-item > span {
+  width: 32px;
+}
+/* 
+.list-item > *:nth-child(2){
+  flex: 1;
+} */
+
+.list-item button {
+  margin-left: 5px;
+}
+
+.list[data-type=positional] .list-item button {
   
+  align-self: flex-start;
 }
 
 .list-item .positional {
@@ -116,6 +132,7 @@ textarea {
 
 .synchronized-calendar > .calendar{
   flex: 1;
+  margin-right: 5px;
 }
 
 .calendar label {
@@ -129,10 +146,34 @@ textarea {
   box-sizing: border-box;
   width: 100%;
   display: none;
+  z-index: 1000;
 }
 
 
+.list-item >.titled-person-select{
+  flex: 1;
+}
 
+ .titled-person-select {
+  display: flex;
+}
+
+.titled-person-select  > *{
+  flex:1;
+}
+/*
+.titled-person-select > .data-select:first-child{
+    flex: 1;
+}
+
+.titled-person-select > .data-select:nth-child(2){
+  flex: 3;
+} */
+
+
+.data-select:not(:last-child){
+  margin-right: 5px;
+}
 
 .data-select > div:first-child {
   display: flex;
@@ -153,6 +194,12 @@ textarea {
   width: 64px;
 }
 
+.data-select-search-wrapper {
+  position: relative;
+  flex: 1;
+}
+
+
 .preview-list .list-item{
   font-family: Arial;
   color: black;
@@ -162,6 +209,10 @@ textarea {
   border-top: 0;
   user-select: none;
   cursor: pointer;
+}
+
+.preview-list .list-item.active {
+  background-color: tomato;
 }
 
 .preview-list .list-item:hover {
@@ -176,10 +227,20 @@ textarea {
   right: 0;
   top:0;
   transform:  translateX(100px) translateY(50px) rotate(45deg);
+  
+  z-index: 10000;
 }
 
 .important {
   color: red;
+}
+
+
+button{
+  
+  font-family: 'Cabin Sketch', cursive;
+  font-size: 1.5rem;
+  line-height: 15px;
 }
 
 .add-button{
@@ -202,4 +263,22 @@ textarea {
   z-index: 100;
   border: 1px solid darkred;
   user-select: none;
+}
+
+
+
+.other-persons .titled-person-select {
+  flex: 2;
+}
+
+.other-persons .person-select {
+  flex: 1;
+}
+
+.profession-person-select {
+  display: flex;
+}
+
+.profession-person-select > .data-select {
+  flex: 1;
 }
