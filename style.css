@@ -6,6 +6,10 @@ html{
   padding: 10px;
 }
 
+p {
+  font-size: 0.75rem;
+}
+
 body {
   max-width: 720px;
   margin: 0 auto;

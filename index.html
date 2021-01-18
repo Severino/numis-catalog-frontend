@@ -37,6 +37,10 @@
 
         <label for="">Typnummer</label>
         <input type="text">
+        <p>
+            Das Arbeiten nur mit Tastatur ist meist schneller und angenehmer, als das ständige Wechseln zwischen Tastatur und Maus.
+            Daher ist es oft angenehmer, die Felder über die Tab-Taste zu wechseln.
+        </p>
 
         <label for="">Treadwell-Id</label>
         <input type="text">
@@ -45,6 +49,15 @@
         <label for="">Material</label>
         <div class="data-select" data-select="material" data-select-attribute="name" style="position: relative;">
         </div>
+
+        <p>
+            Felder mit einem + sind 'Datenbankfelder', wenn man Text in das Textfeld eingibt, werden vorhandene Daten durchsucht und passende Vorschläge angezeigt.
+            Mit Klick auf den Vorschlag wird dieser übernommen. Ist ein valider Wert angegeben, erscheint entweder eine Zahl und das rote Plus verschwindet. Oder man 
+            klickt auf das rote Plus (oder die Enter-Taste) um den Wert einzufügen.
+        </p>
+        <p class="important">
+            Dies verhindert das versehentlich falsche Werte in ein Textfeld eingegeben werden, außerdem erlaubt es flexibel neue Werte hinzuzufügen.
+        </p>
 
         <label for="">Münzstätte</label>
         <div class="data-select" data-select="staette" data-select-attribute="name" style="position: relative;">
@@ -79,9 +92,13 @@
             <span style="display:block; position: absolute; top:0; right:0; z-index: 1000;">SEARCH</span>
         </div>
 
+        <p>Bei 'Datenbankfeldern' kann die Vorschauliste mit den Pfeiltasten durchsucht werden. Das aktive Element kann mit "Enter" ausgewählt werden.</em></p>
+     
+
         <label for="">Münzherr</label>
         <div class="titled-person-select" master></div>
-
+        <p>Ist das gesuchte Feld nicht vorhanden, kann es mit "Enter" hinzuzufügen werden. Der Cursor springt dann automatisch in das nächste Feld.</em></p>
+     
         <label for="">Kalif</label>
         <div class="titled-person-select"></div>
 
