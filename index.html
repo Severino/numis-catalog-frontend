@@ -11,6 +11,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Cabin+Sketch:wght@400;700&display=swap" rel="stylesheet">
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.6.0/gsap.min.js"></script>
+    <script src="./node_modules/showdown/dist/showdown.min.js"></script>
 </head>
 
 <body>
@@ -26,8 +27,7 @@
         <p>Dies ist eine Vorschau, die zur Feststellung der Bedienbarkeit und der Nutzerfreundlichkeit dient.
         </p>
         <p>Das Design hat in keinster Weise Anspruch auf einen ästhetischen Wert und wird sich, den Anforderungen nach,
-            noch drastisch ändern.</p>
-        <p>Die Schrift hat diesen Zeichenstil nicht, weil dieser 'schön' sein soll, sondern um dies zu verdeutlichen!
+            noch drastisch ändern. Dies soll durch die skizzenhafte Schrift verdeutlicht werden!
         </p>
 
         <p class="important">Das Wichtige sind hier die Eingabefelder und deren Bedienbarkeit.</p>
@@ -38,7 +38,8 @@
         <label for="">Typnummer</label>
         <input type="text">
         <p>
-            Das Arbeiten nur mit Tastatur ist meist schneller und angenehmer, als das ständige Wechseln zwischen Tastatur und Maus.
+            Das Arbeiten nur mit Tastatur ist meist schneller und angenehmer, als das ständige Wechseln zwischen
+            Tastatur und Maus.
             Daher ist es oft angenehmer, die Felder über die Tab-Taste zu wechseln.
         </p>
 
@@ -51,12 +52,18 @@
         </div>
 
         <p>
-            Felder mit einem + sind 'Datenbankfelder', wenn man Text in das Textfeld eingibt, werden vorhandene Daten durchsucht und passende Vorschläge angezeigt.
-            Mit Klick auf den Vorschlag wird dieser übernommen. Ist ein valider Wert angegeben, erscheint entweder eine Zahl und das rote Plus verschwindet. Oder man 
+            Felder mit einem + sind 'Datenbankfelder', wenn man Text in das Textfeld eingibt, werden vorhandene Daten
+            durchsucht und passende Vorschläge angezeigt.
+            Mit Klick auf den Vorschlag wird dieser übernommen. Ist ein valider Wert angegeben, erscheint entweder eine
+            Zahl und das rote Plus verschwindet. Oder man
             klickt auf das rote Plus (oder die Enter-Taste) um den Wert einzufügen.
         </p>
         <p class="important">
-            Dies verhindert das versehentlich falsche Werte in ein Textfeld eingegeben werden, außerdem erlaubt es flexibel neue Werte hinzuzufügen.
+            Die Vorteile hiervon sind, dass vorhandene Werte durchsucht und angezeigt werden. Das verhindert Fehler wie:
+            silber, silver, Silber oder slber!
+            Zudem kann diese Menge an Elementen dynamisch erweitert werden (Potentiell nur von ausgewählten Nutzern).
+            Der Nachteil ist, dass man an das hinzuzufügen von Werten denken muss. Wobei fehlende Werte bei der
+            abschließenden Validierung auffallen und gemeldet werden!
         </p>
 
         <label for="">Münzstätte</label>
@@ -92,13 +99,15 @@
             <span style="display:block; position: absolute; top:0; right:0; z-index: 1000;">SEARCH</span>
         </div>
 
-        <p>Bei 'Datenbankfeldern' kann die Vorschauliste mit den Pfeiltasten durchsucht werden. Das aktive Element kann mit "Enter" ausgewählt werden.</em></p>
-     
+        <p>Bei 'Datenbankfeldern' kann die Vorschauliste mit den Pfeiltasten durchsucht werden. Das aktive Element kann
+            mit "Enter" ausgewählt werden.</em></p>
+
 
         <label for="">Münzherr</label>
         <div class="titled-person-select" master></div>
-        <p>Ist das gesuchte Feld nicht vorhanden, kann es mit "Enter" hinzuzufügen werden. Der Cursor springt dann automatisch in das nächste Feld.</em></p>
-     
+        <p>Ist das gesuchte Feld nicht vorhanden, kann es mit "Enter" hinzuzufügen werden. Der Cursor springt dann
+            automatisch in das nächste Feld.</em></p>
+
         <label for="">Kalif</label>
         <div class="titled-person-select"></div>
 
@@ -183,7 +192,54 @@
         </div>
 
         <label for="">Besonderheiten</label>
-        <textarea></textarea>
+        <textarea class="markdown" data-markdown-target="besonderheiten-preview"># Exzessives Beispiel
+## Zitate
+Dieser Abschnitt folgt dem "Styleguide" unten!
+**Plutarch zufolge** beendete der römische Staatsmann **Cato der Ältere** seine Reden immer mit:_"Ceterum censeo Carthaginem esse delendam."_
+        
++ Auflistungen
++ Sind Möglich
++ Aber 
+
+1. Auch mit Nummerierung
+2. Wäre das 
+3. Möglich
+
+Blockzitate sind auch möglich:
+
+> Jemand musste Josef K. verleumdet haben, 
+> denn ohne dass er etwas Böses getan hätte, wurde er eines Morgens verhaftet.
+> »Wie ein Hund!« sagte er, es war, 
+> als sollte die Scham ihn überleben. Als Gregor Samsa eines Morgens aus unruhigen 
+> Träumen erwachte, fand er sich in seinem Bett zu einem ungeheueren Ungeziefer verwandelt.
+
+### Auch Links
+[Hier ist ein Markdown Guide](https://www.markdownguide.org/basic-syntax/)
+
+### und Bilder
+![alt](https://source.unsplash.com/fNBB5KrqqDs/128x128)
+</textarea>
+
+        <div id="besonderheiten-preview" class="preview-field">
+
+        </div>
+
+        <p>
+            Dies ist ein Beispiel für die Nutzung von Markdown:
+
+        </p>
+
+        <p class="important">
+            Dies beinhaltet auch Nachteile. Je nachdem, was benutzt werden kann, können die Nutzer
+            diese Funktionalitäten inkonsitent oder übermßig einsetzen. Daher sollten nur bestimmte
+            Funktionen freigeschalten sein und die Verwendung dieser einem bestimmten "Style-Guide"*
+            folgen.
+        </p>
+
+        <p>* z.B. als Anmerkung unter dem Feld, z.B.: "Zitate sind in kursiv zu setzen und Herrscher sollten mit Fett
+            hervorgehoben werden" </p>
+
+
 
         <button id="submit">Speichern</button>
     </div>
@@ -231,16 +287,6 @@
             window.isDirty = false
         })
 
-        // window.addEventListener("beforeunload", (event) => {
-        //     console.log("beforeunload")
-        //     // Message will be only shown for legacy browsers.
-        //     // Modern browsers provide a boilerplate message for preventing scam!
-        //     const msg = "Your changes may be lost."
-        //     if (window.isDirty)
-        //         event.returnValue = msg
-
-        //     return msg;
-        // })
 
         document.querySelectorAll(".list").forEach(initializeList)
         document.querySelectorAll(".conditional-field").forEach(initializeConditionalField)
@@ -860,6 +906,32 @@
 
         document.querySelectorAll(".titled-person-select").forEach(initializeTitledPersonSelect)
 
+
+
+
+
+
+        function updateMarkdown(el) {
+            const targetId = el.getAttribute("data-markdown-target")
+            if (!targetId) console.error("No markdown target specified.")
+            else {
+                const converter = new showdown.Converter()
+                const html = converter.makeHtml(el.value)
+
+                const preview = document.getElementById(targetId)
+                if (preview) {
+                    preview.innerHTML = html
+                } else console.error("Preview dows not exist", el)
+            }
+        }
+
+        document.querySelectorAll(".markdown").forEach(el => {
+            console.log(el)
+            updateMarkdown(el)
+            el.addEventListener("input", (event)=>{
+                updateMarkdown(event.target)
+            })
+        })
 
     </script>
 </body>
