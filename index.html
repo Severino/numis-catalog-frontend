@@ -54,20 +54,35 @@
         <p>
             Felder mit einem + sind 'Datenbankfelder', wenn man Text in das Textfeld eingibt, werden vorhandene Daten
             durchsucht und passende Vorschläge angezeigt.
-            Mit Klick auf den Vorschlag wird dieser übernommen. Ist ein valider Wert angegeben, erscheint entweder eine
-            Zahl und das rote Plus verschwindet. Oder man
-            klickt auf das rote Plus (oder die Enter-Taste) um den Wert einzufügen.
+            Mit Klick auf den Vorschlag wird dieser übernommen. Ist ein valider Wert angegeben, erscheint eine
+            Zahl und das rote Plus verschwindet.
         </p>
-        <p class="important">
-            Die Vorteile hiervon sind, dass vorhandene Werte durchsucht und angezeigt werden. Das verhindert Fehler wie:
-            silber, silver, Silber oder slber!
-            Zudem kann diese Menge an Elementen dynamisch erweitert werden (Potentiell nur von ausgewählten Nutzern).
-            Der Nachteil ist, dass man an das hinzuzufügen von Werten denken muss. Wobei fehlende Werte bei der
-            abschließenden Validierung auffallen und gemeldet werden!
-        </p>
+
 
         <label for="">Münzstätte</label>
         <div class="data-select" data-select="staette" data-select-attribute="name" style="position: relative;">
+        </div>
+
+        <p>
+            Ist der Wert nicht angegeben, kann der derzeitige Wert über einen Klick auf das roten Plus Zeichens, oder
+            betätigen
+            der "Enter" Taste, hinzuzufügt werden.
+        </p>
+
+        <div class="important">
+            <p>
+                Warum so kompliziert?</p>
+            <ul>
+                <li>Vorhande Werte können schnell gefunden werden.</li>
+                <li>Fehlerprävention - z.B. folgende Fehler können verhindert werden: silber, silver, Silber oder slber!
+                </li>
+                <li>Nutzerfreundliche Interaktion, aber Werte können ohne Modifikation des Codes hinzugefügt werden. (Im
+                    Gegensatz zu einem festes Dropdown-Menu)</li>
+            </ul>
+            <p>
+                Nachteil: Mehraufwand (max. 1 Klick) um Werte anzulegen. Zudem muss daran gedacht werden, wobei
+                (natürlich) fehlende Werte bei der
+                abschließenden Validierung auffallen und gemeldet werden!</p>
         </div>
 
         <label for="">Prägejahr</label>
@@ -675,17 +690,20 @@ Blockzitate sind auch möglich:
 
                         const listItems = previewList.querySelectorAll(".list-item")
 
+                        let visible = 0
                         listItems.forEach((item, idx) => {
                             if (idx < results.length) {
                                 item.setAttribute("data-id", results[idx].id)
                                 item.querySelector("span").textContent = results[idx].value
-
+                                visible++
                                 item.style.display = "block"
                             } else {
                                 item.removeAttribute("data-id")
                                 item.style.display = "none"
                             }
                         })
+
+                        previewList.setAttribute("data-preview-visible", visible)
                     }
                 } else {
                     console.error("Could not find dbselect")
@@ -703,8 +721,9 @@ Blockzitate sind auch möglich:
                     if (isNaN(active)) active = -1
                     let nextActive = (event.key == "ArrowDown") ? active + 1 : active - 1
 
-                    console.log(nextActive)
-                    nextActive = Math.min(Math.max(-1, nextActive), previewList.children.length - 1)
+                    const listItems = previewList.getAttribute("data-preview-visible")
+
+                    nextActive = Math.min(Math.max(-1, nextActive), listItems - 1)
                     previewList.setAttribute(activeAttr, nextActive)
 
                     Array.from(previewList.children).forEach((child, idx) => {
@@ -928,7 +947,7 @@ Blockzitate sind auch möglich:
         document.querySelectorAll(".markdown").forEach(el => {
             console.log(el)
             updateMarkdown(el)
-            el.addEventListener("input", (event)=>{
+            el.addEventListener("input", (event) => {
                 updateMarkdown(event.target)
             })
         })
