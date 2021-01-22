@@ -1,0 +1,53 @@
+<template>
+  <div class="list-item">
+    <slot></slot>
+    <button @click="triggerRemove">
+      <Delete />
+    </button>
+  </div>
+</template>
+
+<script>
+import Delete from "vue-material-design-icons/Delete.vue";
+
+export default {
+  components: {
+    Delete,
+  },
+  name: "Section",
+  props: {
+    object: {
+      default: null,
+      required: true,
+    },
+  },
+  methods: {
+    triggerRemove: function () {
+      this.$emit("remove", this.$props.object);
+    },
+  },
+};
+</script>
+
+<!-- Add "scoped" attribute to limit CSS to this component only -->
+<style lang="scss" scoped>
+@import "@/scss/_import.scss";
+
+.list-item {
+  display: flex;
+  margin-bottom: $padding;
+}
+
+.list-item > :first-child {
+  flex: 1;
+  margin-right: 10px;
+}
+
+button {
+  color: whitesmoke;
+  background-color: rgb(231, 106, 106);
+  &:focus {
+    border-color: rgb(189, 81, 81);
+  }
+}
+</style> 

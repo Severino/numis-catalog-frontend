@@ -1,0 +1,24 @@
+{
+  "name": "administration",
+  "version": "0.0.1",
+  "description": "This is the catalogue backend for the numis project at the University of Tuebingen.",
+  "main": "index.js",
+  "dependencies": {
+    "hijri-date": "^0.2.2",
+    "showdown": "^1.9.1"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Severino/numis-catalog-frontend.git"
+  },
+  "author": "Severin Opel",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Severino/numis-catalog-frontend/issues"
+  },
+  "homepage": "https://github.com/Severino/numis-catalog-frontend#readme"
+}

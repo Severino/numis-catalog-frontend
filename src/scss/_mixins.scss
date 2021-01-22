@@ -1,0 +1,20 @@
+@mixin interactive() {
+  cursor: pointer;
+  user-select: none;
+}
+
+@mixin focus() {
+  &:focus {
+    outline: none;
+    border: 1px solid black;
+  }
+}
+
+@mixin input {
+  font-family: "Domine";
+  padding: 10px;
+  border: 1px solid whitesmoke;
+  transition: 0.2s border;
+  box-sizing: border-box;
+  @include focus();
+}
