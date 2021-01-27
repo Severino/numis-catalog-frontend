@@ -7,8 +7,8 @@
       :checked="checked"
       @input="checked = $event.target.checked"
     />
-    <label :for="id"
-      ><span>{{ text }}</span></label
+    <label :for="id" tabindex="0">
+      <span>{{ text }}</span></label
     >
   </div>
 </template>
@@ -58,6 +58,7 @@ label {
   align-items: center;
   justify-content: center;
   border: 1px solid black;
+  border-radius: $border-radius;
 
   span {
     display: block;

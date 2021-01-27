@@ -1,6 +1,8 @@
 <template>
   <div class="list-item">
-    <slot></slot>
+    <div class="slot">
+      <slot></slot>
+    </div>
     <button @click="triggerRemove">
       <Delete />
     </button>
@@ -35,6 +37,7 @@ export default {
 
 .list-item {
   display: flex;
+  align-items: center;
   margin-bottom: $padding;
 }
 
@@ -49,5 +52,9 @@ button {
   &:focus {
     border-color: rgb(189, 81, 81);
   }
+}
+
+#slot {
+  flex: 1;
 }
 </style> 

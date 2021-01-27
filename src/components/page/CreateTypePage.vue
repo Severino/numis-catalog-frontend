@@ -1,8 +1,8 @@
 <template>
-  <div id="app">
-    <Heading>Typenkatalog</Heading>
+  <div>
+    <Heading>{{ $t("general.type_catalogue") }}</Heading>
     <Row>
-      <LabeledInputContainer label="Typennummer">
+      <LabeledInputContainer :label="$tc('properties.type_id')">
         <input />
       </LabeledInputContainer>
 
@@ -12,42 +12,42 @@
     </Row>
 
     <Row>
-      <LabeledInputContainer label="Prägeort">
+      <LabeledInputContainer :label="$tc('properties.mint')">
         <DataSelectField table="Mint" attribute="name"></DataSelectField>
       </LabeledInputContainer>
 
-      <LabeledInputContainer label="Prägejahr">
+      <LabeledInputContainer :label="$t('properties.mint_year')">
         <RestrictedInputField pattern="^-?[0-9x]{0,3}$" />
       </LabeledInputContainer>
     </Row>
     <Row>
-      <LabeledInputContainer label="Nominal">
+      <LabeledInputContainer :label="$tc('properties.nominal')">
         <DataSelectField table="Nominal" attribute="name"></DataSelectField>
       </LabeledInputContainer>
-      <LabeledInputContainer label="Donativ">
+      <LabeledInputContainer :label="$tc('properties.donativ')">
         <Checkbox id="donativ" />
       </LabeledInputContainer>
     </Row>
 
     <Row>
-      <LabeledInputContainer label="Material">
+      <LabeledInputContainer :label="$tc('properties.material')">
         <DataSelectField table="Material" attribute="name"></DataSelectField>
       </LabeledInputContainer>
 
-      <LabeledInputContainer label="Herstellung">
-        <button-group
+      <LabeledInputContainer :label="$tc('properties.procedures.cast')">
+        <ButtonGroup
           id="production"
           :labels="productionLabels"
           :options="productionOptions"
-        ></button-group>
+        ></ButtonGroup>
       </LabeledInputContainer>
     </Row>
 
-    <LabeledInputContainer label="Münzherr">
+    <LabeledInputContainer :label="$t('properties.coin_master')">
       <DataSelectField table="MasterOfCoins" attribute="name"></DataSelectField>
     </LabeledInputContainer>
 
-    <LabeledInputContainer label="Oberherren">
+    <LabeledInputContainer :label="$tc('properties.overlord', 2)">
       <List v-on:add="addOberherr">
         <ListItem
           v-for="oberherr of oberherren"
@@ -60,26 +60,27 @@
       </List>
     </LabeledInputContainer>
 
-    <LabeledInputContainer label="Kalif">
+    <LabeledInputContainer :label="$t('properties.caliph')">
       <TitledPersonSelect />
     </LabeledInputContainer>
-    <LabeledInputContainer label="Weitere Personen"> </LabeledInputContainer>
+    <LabeledInputContainer :label="$t('properties.additional_persons')">
+    </LabeledInputContainer>
 
-    <Section title="Voderseite"> </Section>
-    <List v-on:add="addOtherPerson">
-      <ListItem
-        v-for="other in otherPersons"
-        :key="other.id"
-        v-on:remove="removeOtherPerson"
-        :object="other"
-      >
-        <RolePersonSelect role="other.role" person="other.person" />
-      </ListItem>
-    </List>
-    <Section title="Rückseite">
-      <CoinField> </CoinField>
+    <Section title="Voderseite">
+      <Heading>{{ $t("properties.sides.front") }}</Heading>
 
-      <LabeledInputContainer label="Umschrift">
+      <List v-on:add="addOtherPerson">
+        <ListItem
+          v-for="other in otherPersons"
+          :key="other.id"
+          v-on:remove="removeOtherPerson"
+          :object="other"
+        >
+          <RolePersonSelect role="other.role" person="other.person" />
+        </ListItem>
+      </List>
+
+      <LabeledInputContainer :label="$tc('properties.circular_text')">
         <List v-on:add="addUmschrift">
           <ListItem
             v-for="umschrift of umschriften"
@@ -111,32 +112,31 @@ import Checkbox from "../forms/Checkbox.vue";
 import ButtonGroup from "../forms/ButtonGroup.vue";
 import List from "../forms/List.vue";
 import ListItem from "../forms/ListItem.vue";
-import CoinField from "../forms/CoinField.vue";
 import TitledPersonSelect from "../TitledPersonSelect.vue";
 import RolePersonSelect from "../forms/RolePersonSelect.vue";
 
 export default {
-  name: "CreateCoinPage",
+  name: "CreateTypePage",
   components: {
     Heading,
     DataSelectField,
     LabeledInputContainer,
     Row,
-    // TitledPersonSelect,
-    // TitledPersonList,
     RestrictedInputField,
     Checkbox,
     ButtonGroup,
     List,
     ListItem,
-    CoinField,
     TitledPersonSelect,
     RolePersonSelect,
   },
   data: function () {
     return {
-      productionLabels: ["Gepresst", "Gegossen"],
-      productionOptions: ["gepresset", "gegossen"],
+      productionLabels: [
+        this.$t("procedures.pressed"),
+        this.$t("procedures.cast"),
+      ],
+      productionOptions: ["pressed", "cast"],
       umschriften: [],
       umschriftId: 0,
       oberherren: [],
@@ -147,14 +147,12 @@ export default {
   },
   methods: {
     addUmschrift: function () {
-      console.log("ADD UMSCHRIFT");
       this.umschriften.push({
         id: this.umschriftId++,
         text: "",
       });
     },
     addOberherr: function () {
-      console.log("ADD UMSCHRIFT");
       this.oberherren.push({
         id: this.oberherrenId++,
         text: "",
@@ -193,4 +191,8 @@ export default {
 </script>
 
 <style lang="scss">
+h3,
+label {
+  text-transform: capitalize;
+}
 </style>

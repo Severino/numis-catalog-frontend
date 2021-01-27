@@ -1,0 +1,13 @@
+{
+    "compilerOptions": {
+      "baseUrl": ".",
+      "paths": {
+        "~/*": ["./*"],
+        "@/*": ["./*"],
+        "~~/*": ["./*"],
+        "@@/*": ["./*"]
+      }
+    },
+    "include": ["node_modules/vue-material-design-icons/*"],
+    "exclude": ["node_modules", ".nuxt", "dist"],
+  }

@@ -13,8 +13,18 @@
 @mixin input {
   font-family: "Domine";
   padding: 10px;
+  color: gray;
   border: 1px solid whitesmoke;
   transition: 0.2s border;
   box-sizing: border-box;
+  background-color: white;
+
+  transition:  background-color 0.2s;
+
+  &:hover {
+    color: black;
+    background-color: whitesmoke;
+  }
+
   @include focus();
 }
