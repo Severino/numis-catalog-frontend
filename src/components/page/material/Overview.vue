@@ -10,6 +10,7 @@
       @select="editMaterial"
       @remove="removeMaterial"
       :items="materialList"
+      :loading="loading"
     />
   </div>
 </template>
@@ -17,6 +18,7 @@
 <script>
 import PlusCircleOutline from "vue-material-design-icons/PlusCircleOutline";
 import List from "../../layout/List.vue";
+import axios from "axios";
 
 export default {
   name: "MaterialOverviewPage",
@@ -24,9 +26,40 @@ export default {
     PlusCircleOutline,
     List,
   },
+  data: function () {
+    return {
+      loading: true,
+      materials: [],
+    };
+  },
+  mounted: function () {
+    axios({
+      url: "http://localhost:4000/graphql",
+      method: "post",
+      data: {
+        query: `
+          {
+            material {
+              id,
+              name
+            }
+          }
+        `,
+      },
+    })
+      .then((response) => {
+        this.$data.materials = response.data.data.material;
+        this.loading = false;
+      })
+      .catch(console.error);
+  },
   computed: {
     materialList: function () {
-      return this.$store.getters["material/list"];
+      if (this.$store.getters.local) {
+        return this.$store.getters["material/list"];
+      } else {
+        return this.$data.materials;
+      }
     },
   },
   methods: {
@@ -34,7 +67,37 @@ export default {
       this.$router.push({ name: "CreateMaterial" });
     },
     removeMaterial(id) {
-      this.$store.commit("material/remove", id);
+      if (this.$store.getters.local) {
+        this.$store.commit("material/remove", id);
+      } else {
+        const query = `
+          {
+            deleteMaterial(
+              id: ${id}
+            ){id}
+          }
+        `;
+
+        console.log(query);
+
+        axios({
+          url: "http://localhost:4000/graphql",
+          method: "post",
+          data: {
+            query,
+          },
+        })
+          .then(() => {
+            const idx = this.$data.materials.findIndex(
+              (material) => material.id == id
+            );
+            console.log(idx);
+            if (idx != -1) this.$data.materials.splice(idx, 1);
+          })
+          .catch((err) => {
+            console.error(err);
+          });
+      }
     },
     editMaterial(id) {
       this.$router.push({

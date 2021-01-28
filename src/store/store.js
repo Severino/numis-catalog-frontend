@@ -14,11 +14,19 @@ Vue.use(Vuex)
 const store = new Vuex.Store({
     mutations: {
         init(state, data) {
-            console.log(data)
-
-            for (let [i, val] of Object.entries(data)) {
-                Object.assign(state[i], val)
+            if (state.type != "api") {
+                for (let [i, val] of Object.entries(data)) {
+                    state[i] = val
+                }
             }
+        }
+    },
+    state: {
+        type: "api"
+    },
+    getters: {
+        local: function (state) {
+            return state.type == "local"
         }
     },
     modules: {

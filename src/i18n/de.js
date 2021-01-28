@@ -36,6 +36,10 @@ const attributes = {
     name: "Name | Namen"
 }
 
+const error = {
+    loading_element: "Das angefragte Element konnte nicht geladen werden. Gehe zur Liste zurück oder erstelle ein neues Element hier. Kontaktiere einen Admin, falls das Problem weiterhin besteht."
+}
+
 const warning = {
     list_is_empty: "Bisher sind keine Werte in dieser Liste."
 }
@@ -52,6 +56,7 @@ const navigation = {
 
 module.exports = {
     attributes,
+    error,
     form,
     general,
     navigation,

@@ -20,7 +20,6 @@ export default {
   name: "ListItem",
   props: {
     id: {
-      type: Number,
       required: true,
     },
   },

@@ -35,6 +35,10 @@ const attributes = {
     name: "name | names"
 }
 
+const error = {
+    loading_element: "Could not load requested element. You can create a new one or return to list. Request admin if this keeps happening."
+};
+
 const warning = {
     list_is_empty: "So far, there are no items in this list."
 }
@@ -52,6 +56,7 @@ const navigation = {
 
 module.exports = {
     attributes,
+    error,
     form,
     general,
     navigation,

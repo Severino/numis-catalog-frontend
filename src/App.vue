@@ -90,6 +90,8 @@ button[type="submit"] {
 
 .button,
 button {
+
+  text-transform: capitalize;
   color: gray;
   border-color: gray;
 
@@ -127,6 +129,7 @@ label {
 h1,
 h2,
 h3 {
+  font-weight: normal;
   text-transform: capitalize;
 }
 
@@ -198,5 +201,12 @@ a {
   > * {
     margin-bottom: $padding;
   }
+}
+
+.error {
+  font-size: 0.8rem;
+  padding: 20px;
+  background-color: rgb(255, 92, 92);
+  border: 1px solid rgb(192, 68, 68);
 }
 </style>

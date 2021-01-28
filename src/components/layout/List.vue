@@ -1,11 +1,13 @@
 <template>
   <div class="list">
-    <div v-if="items.length == 0" class="info">
-        <Information />
-        <p>
-            {{$t("warning.list_is_empty")}}
-        </p>
+    <div v-if="items.length == 0 && !loading" class="info">
+      <Information />
+      <p>
+        {{ $t("warning.list_is_empty") }}
+      </p>
     </div>
+
+    <LoadingSpinner class="loading-spinner" v-if="loading" />
 
     <ListItem
       @click="listItemClicked"
@@ -21,9 +23,15 @@
 <script>
 import Information from "vue-material-design-icons/Information";
 import ListItem from "./ListItem.vue";
+import LoadingSpinner from "../misc/LoadingSpinner.vue";
+
 export default {
-  components: { ListItem, Information },
+  components: { ListItem, Information, LoadingSpinner },
   props: {
+    loading: {
+      type: Boolean,
+      default: false,
+    },
     items: {
       id: String,
       name: String,
@@ -48,14 +56,18 @@ export default {
 }
 
 .info {
-    color: gray;
-    background-color: whitesmoke;
-    border-radius: $border-radius;
-    display: flex;
-    align-items: center;
+  color: gray;
+  background-color: whitesmoke;
+  border-radius: $border-radius;
+  display: flex;
+  align-items: center;
 
-    .material-design-icon{
-        margin-right: $padding*2;
-    }
+  .material-design-icon {
+    margin-right: $padding * 2;
+  }
+}
+
+.loading-spinner {
+  align-self: center;
 }
 </style>

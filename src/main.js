@@ -14,7 +14,6 @@ new Vue({
   i18n,
   render: h => h(App),
   created: function () {
-    console.log("CREATED")
     this.loadData()
     window.addEventListener('beforeunload', this.beforeLeave)
   },
