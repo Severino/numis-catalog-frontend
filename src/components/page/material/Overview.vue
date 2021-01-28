@@ -18,7 +18,7 @@
 <script>
 import PlusCircleOutline from "vue-material-design-icons/PlusCircleOutline";
 import List from "../../layout/List.vue";
-import axios from "axios";
+import Query from "../../../database/query.js";
 
 export default {
   name: "MaterialOverviewPage",
@@ -26,27 +26,17 @@ export default {
     PlusCircleOutline,
     List,
   },
-  data: function () {
+  data: function() {
     return {
       loading: true,
       materials: [],
     };
   },
-  mounted: function () {
-    axios({
-      url: "http://localhost:4000/graphql",
-      method: "post",
-      data: {
-        query: `
-          {
-            material {
-              id,
-              name
-            }
-          }
-        `,
-      },
-    })
+  mounted: function() {
+    const query = new Query("material");
+
+    query
+      .list(["id", "name"])
       .then((response) => {
         this.$data.materials = response.data.data.material;
         this.loading = false;
@@ -54,7 +44,7 @@ export default {
       .catch(console.error);
   },
   computed: {
-    materialList: function () {
+    materialList: function() {
       if (this.$store.getters.local) {
         return this.$store.getters["material/list"];
       } else {
@@ -70,23 +60,8 @@ export default {
       if (this.$store.getters.local) {
         this.$store.commit("material/remove", id);
       } else {
-        const query = `
-          {
-            deleteMaterial(
-              id: ${id}
-            ){id}
-          }
-        `;
-
-        console.log(query);
-
-        axios({
-          url: "http://localhost:4000/graphql",
-          method: "post",
-          data: {
-            query,
-          },
-        })
+        new Query("material")
+          .delete(id)
           .then(() => {
             const idx = this.$data.materials.findIndex(
               (material) => material.id == id

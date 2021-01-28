@@ -1,4 +1,3 @@
-
 <template>
   <div class="material-page">
     <h1>{{ $tc("properties.material") }}</h1>
@@ -22,31 +21,19 @@
   </div>
 </template>
 
-
 <script>
-import axios from "axios";
 import Row from "../../layout/Row.vue";
 import LoadingSpinner from "../../misc/LoadingSpinner.vue";
+import Query from "../../../database/query";
+
 export default {
   components: { Row, LoadingSpinner },
   name: "MaterialEditPage",
   created() {
     let id = this.$route.params.id;
     if (id != null) {
-      axios({
-        url: "http://localhost:4000/graphql",
-        method: "post",
-        data: {
-          query: `
-          {
-            material (id:${id})  {
-              id,
-              name
-            }
-          }
-        `,
-        },
-      })
+      new Query("material")
+        .get(id, ["id", "name"])
         .then((result) => {
           if (result.data.data.material.length > 0) {
             this.material = result.data.data.material[0];
@@ -81,7 +68,7 @@ export default {
     //     this.loading = false
     // }
   },
-  data: function () {
+  data: function() {
     return {
       loading: true,
       error: "",
@@ -92,34 +79,18 @@ export default {
     };
   },
   methods: {
-    logError: function (message) {
+    logError: function(message) {
       this.$data.error = message;
     },
-    cancel: function () {
+    cancel: function() {
       this.$router.push({ name: "Material" });
     },
-    handleSubmit: function () {
+    handleSubmit: function() {
       if (!this.loading) {
         document.getElementById("submit-btn").style.visibility = "hidden";
 
-        const query = `
-          {
-            updateMaterial(
-              id: ${this.$data.material.id},
-              name: "${this.$data.material.name}"
-            ){id}
-          }
-        `;
-
-        console.log(query);
-
-        axios({
-          url: "http://localhost:4000/graphql",
-          method: "post",
-          data: {
-            query,
-          },
-        })
+        new Query("material")
+          .update(this.material)
           .then(() => {
             this.$router.push({ name: "Material" });
           })
@@ -127,6 +98,7 @@ export default {
             this.logError(this.$t("error.could_not_replace_element"));
             console.error(err);
           });
+        //
 
         // const material = Object.assign({}, this.$data.material);
         // this.$store.dispatch("material/push", material).then(() => {
