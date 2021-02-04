@@ -12,48 +12,28 @@
 
     <h3>{{ $t("general.manage_properties") }}</h3>
     <div class="button-list">
-      <router-link
-        class="button icon-button"
-        :to="{ name: 'Material' }"
-        draggable="false"
-      >
+      <router-link class="button icon-button" to="/material" draggable="false">
         <PlusBox />
-        <span>{{ $tc("properties.material") }}</span>
+        <span>{{ $tc("property.material") }}</span>
       </router-link>
-      <router-link
-        class="button icon-button"
-        :to="{ name: 'Mint' }"
-        draggable="false"
-      >
+      <router-link class="button icon-button" to="/mint" draggable="false">
         <PlusBox />
-        <span>{{ $tc("properties.mint") }}</span>
+        <span>{{ $tc("property.mint") }}</span>
       </router-link>
 
-       <router-link
-        class="button icon-button"
-        :to="{ name: 'Person' }"
-        draggable="false"
-      >
+      <router-link class="button icon-button" to="/person" draggable="false">
         <PlusBox />
-        <span>{{ $tc("properties.person") }}</span>
+        <span>{{ $tc("property.person") }}</span>
       </router-link>
 
-       <router-link
-        class="button icon-button"
-        :to="{ name: 'Honorific' }"
-        draggable="false"
-      >
+      <router-link class="button icon-button" to="/honorific" draggable="false">
         <PlusBox />
-        <span>{{ $tc("properties.honorific") }}</span>
+        <span>{{ $tc("property.honorific") }}</span>
       </router-link>
 
-      <router-link
-        class="button icon-button"
-        :to="{ name: 'Title' }"
-        draggable="false"
-      >
+      <router-link class="button icon-button" to="/title" draggable="false">
         <PlusBox />
-        <span>{{ $tc("properties.title") }}</span>
+        <span>{{ $tc("property.title") }}</span>
       </router-link>
     </div>
   </div>

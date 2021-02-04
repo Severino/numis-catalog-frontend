@@ -1,6 +1,13 @@
 <template>
   <div class="list">
-    <div v-if="items.length == 0 && !loading" class="info">
+    <div v-if="error" class="info error">
+      <Information />
+      <p>
+        {{ error }}
+      </p>
+    </div>
+
+    <div v-if="items.length == 0 && !loading && error == ''" class="info">
       <Information />
       <p>
         {{ $t("warning.list_is_empty") }}
@@ -36,6 +43,10 @@ export default {
       id: String,
       name: String,
     },
+    error: {
+      type: String,
+      default: ""
+      },
   },
   methods: {
     listItemClicked: function (id) {
@@ -65,6 +76,12 @@ export default {
   .material-design-icon {
     margin-right: $padding * 2;
   }
+}
+
+.error {
+  color: rgb(138, 39, 39);;
+  background-color: rgb(255, 81, 81);
+  border: 1px solid rgb(138, 39, 39);
 }
 
 .loading-spinner {

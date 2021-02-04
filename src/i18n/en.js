@@ -3,9 +3,11 @@ const general = {
     create_type: "create new type",
     manage_properties: "manage properties",
     type_catalogue: "type catalogue",
+    longitude: "longitude",
+    latitude: "latitude"
 }
 
-const properties = {
+const property = {
     additional_persons: "additional persons",
     circular_text: "? circular text | ? circular texts",
     coin_master: "? master of coins",
@@ -31,12 +33,15 @@ const properties = {
     type_id: "type id | type ids",
 }
 
-const attributes = {
-    name: "name | names"
+const attribute = {
+    name: "name | names",
+    longitude: "longitude",
+    latitude: "latitude"
 }
 
 const error = {
-    loading_element: "Could not load requested element. You can create a new one or return to list. Request admin if this keeps happening."
+    loading_element: "Could not load requested element. You can create a new one or return to list. Request admin if this keeps happening.",
+    loading_list: "Could not load list. Database seems to be offline."
 };
 
 const warning = {
@@ -55,11 +60,11 @@ const navigation = {
 }
 
 module.exports = {
-    attributes,
+    attribute,
     error,
     form,
     general,
     navigation,
-    properties,
+    property,
     warning,
 }

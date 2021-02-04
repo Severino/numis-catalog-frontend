@@ -46,19 +46,18 @@ export default {
 <style lang="scss">
 @import "./scss/_import.scss";
 
-
 #app-name {
   color: rgb(60, 184, 255);
   margin-right: $padding;
 }
 
-.subtitle{
+.subtitle {
   font-size: 1.2rem;
   text-transform: capitalize;
 }
 
 #app-name:after {
-  content:"|";
+  content: "|";
   color: white;
   margin: 0 20px;
 }
@@ -90,7 +89,6 @@ button[type="submit"] {
 
 .button,
 button {
-
   text-transform: capitalize;
   color: gray;
   border-color: gray;
@@ -124,8 +122,6 @@ label {
   }
 }
 
-
-
 h1,
 h2,
 h3 {
@@ -138,7 +134,6 @@ h3 {
   background-color: rgb(75, 75, 75);
 
   .button-group {
-
     input:checked + label {
       background-color: transparent;
       border-bottom: 2px solid white;
@@ -153,7 +148,7 @@ h3 {
       background-color: transparent;
       border-radius: 0;
       border: none;
-      padding:  $padding;
+      padding: $padding;
     }
   }
 }
@@ -178,9 +173,18 @@ main {
   padding-top: 20px;
 }
 
-.content-wrapper {
-  width: 50vw;
+@media (min-width: 1080px) {
+  .content-wrapper {
+    
   margin: 0 auto;
+    width: 50vw;
+  }
+}
+
+.content-wrapper {
+  box-sizing: border-box;
+  width: 100%;
+  padding: 10px;
 }
 
 a {

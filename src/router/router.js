@@ -3,21 +3,16 @@ import VueRouter from 'vue-router'
 import CreateTypePage from "@/components/page/CreateTypePage.vue"
 import Inventory from "@/components/page/Inventory"
 import LandingPage from "@/components/page/LandingPage.vue"
+import Overview from "@/components/page/Overview.vue"
 
-import MaterialOverview from "@/components/page/material/Overview.vue"
-import MaterialEdit from "@/components/page/material/Edit.vue"
+import MaterialForm from "@/components/page/property/MaterialForm"
+import PersonForm from "@/components/page/property/PersonForm"
+import TitleForm from "@/components/page/property/TitleForm"
+import HonorificForm from "@/components/page/property/HonorificForm"
+import MintForm from "@/components/page/property/MintForm"
 
-import MintOverview from "@/components/page/mint/Overview.vue"
-import MintEdit from "@/components/page/mint/Edit.vue"
 
-import HonorificOverview from "@/components/page/honorific/Overview.vue"
-import HonorificEdit from "@/components/page/honorific/Edit.vue"
 
-import TitleOverview from "@/components/page/title/Overview.vue"
-import TitleEdit from "@/components/page/title/Edit.vue"
-
-import PersonOverview from "@/components/page/person/Overview.vue"
-import PersonEdit from "@/components/page/person/Edit.vue"
 
 Vue.use(VueRouter)
 
@@ -31,65 +26,49 @@ const routes = [
     name: 'CreateTypePage',
     component: CreateTypePage
   }, {
-    path: "/material",
-    name: "Material",
-    component: MaterialOverview
+    path: "/:property",
+    name: "Property",
+    component: Overview
   }, {
     path: "/material/create",
     name: "CreateMaterial",
-    component: MaterialEdit
+    component: MaterialForm
   }, {
-    path: "/material/:id?",
-    name: "UpdateMaterial",
-    component: MaterialEdit
-  }, {
-    path: "/mint",
-    name: "Mint",
-    component: MintOverview
-  }, {
-    path: "/mint/create",
-    name: "CreateMint",
-    component: MintEdit
-  }, {
-    path: "/mint/:id?",
-    name: "UpdateMint",
-    component: MintEdit
-  }, {
-    path: "/person",
-    name: "Person",
-    component: PersonOverview
+    path: "/material/:id",
+    name: "EditMaterial",
+    component: MaterialForm
   }, {
     path: "/person/create",
     name: "CreatePerson",
-    component: PersonEdit
+    component: PersonForm
   }, {
-    path: "/person/:id?",
-    name: "UpdatePerson",
-    component: PersonEdit
-  }, {
-    path: "/title",
-    name: "Title",
-    component: TitleOverview
+    path: "/person/:id",
+    name: "EditPerson",
+    component: PersonForm
   }, {
     path: "/title/create",
     name: "CreateTitle",
-    component: TitleEdit
+    component: TitleForm
   }, {
-    path: "/title/:id?",
-    name: "UpdateTitle",
-    component: TitleEdit
-  }, {
-    path: "/honorific",
-    name: "Honorific",
-    component: HonorificOverview
+    path: "/title/:id",
+    name: "EditTitle",
+    component: TitleForm
   }, {
     path: "/honorific/create",
     name: "CreateHonorific",
-    component: HonorificEdit
+    component: HonorificForm
   }, {
-    path: "/honorific/:id?",
-    name: "UpdateHonorific",
-    component: HonorificEdit
+    path: "/honorific/:id",
+    name: "EditHonorific",
+    component: HonorificForm
+  }, {
+    path: "/mint/create",
+    name: "CreateMint",
+    component: MintForm
+  }, {
+    path: "/mint/:id",
+    name: "EditMint",
+    component: MintForm
   },
   {
     path: "/inventory",

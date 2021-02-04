@@ -6,7 +6,7 @@ const general = {
 }
 
 
-const properties = {
+const property = {
     additional_persons: "Sonstige Personen",
     circular_text: "Umschrift | Umschriften",
     coin_master: "Münzherr",
@@ -32,12 +32,16 @@ const properties = {
     type_id: "Typennummer | Typennummern",
 }
 
-const attributes = {
-    name: "Name | Namen"
+const attribute = {
+    name: "Name | Namen",
+    longitude: "Längengrad",
+    latitude: "Breitengrad"
 }
 
 const error = {
     loading_element: "Das angefragte Element konnte nicht geladen werden. Gehe zur Liste zurück oder erstelle ein neues Element hier. Kontaktiere einen Admin, falls das Problem weiterhin besteht."
+    ,
+    loading_list: "List konnte nicht geladen werden. Anscheinend ist die Datenbank nicht verfügbar."
 }
 
 const warning = {
@@ -55,11 +59,11 @@ const navigation = {
 }
 
 module.exports = {
-    attributes,
+    attribute,
     error,
     form,
     general,
     navigation,
-    properties,
+    property,
     warning,
 }

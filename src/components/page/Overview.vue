@@ -1,15 +1,17 @@
 <template>
-  <div class="material-page">
-    <h1>{{ $tc("properties.material") }}</h1>
+  <div :class="`${this.property}-page`">
+    <h1>{{ $tc(`property.${property}`) }}</h1>
 
     <div class="button" @click="create">
       <PlusCircleOutline />
       <span>{{ $t("form.create") }}</span>
     </div>
+
     <List
-      @select="editMaterial"
-      @remove="removeMaterial"
-      :items="materialList"
+      @select="edit"
+      @remove="remove"
+      :error="error"
+      :items="list"
       :loading="loading"
     />
   </div>
@@ -17,67 +19,70 @@
 
 <script>
 import PlusCircleOutline from "vue-material-design-icons/PlusCircleOutline";
-import List from "../../layout/List.vue";
-import Query from "../../../database/query.js";
+import List from "../layout/List.vue";
+import Query from "../../database/query.js";
 
 export default {
-  name: "MaterialOverviewPage",
+  name: "OverviewPage",
   components: {
     PlusCircleOutline,
     List,
   },
-  data: function() {
-    return {
-      loading: true,
-      materials: [],
-    };
-  },
-  mounted: function() {
-    const query = new Query("material");
-
-    query
+  created: function () {
+    console.log("CERATED");
+    new Query(this.property)
       .list(["id", "name"])
-      .then((response) => {
-        this.$data.materials = response.data.data.material;
-        this.loading = false;
+      .then((obj) => {
+        this.$data.items = obj.data.data[this.property];
       })
-      .catch(console.error);
+      .catch(() => {
+        this.error = this.$t("error.loading_list");
+      })
+      .finally(() => {
+        this.$data.loading = false;
+      });
   },
   computed: {
-    materialList: function() {
-      if (this.$store.getters.local) {
-        return this.$store.getters["material/list"];
-      } else {
-        return this.$data.materials;
-      }
+    property: function () {
+      return this.$route.params.property.toLowerCase();
+    },
+    list: function () {
+      return this.$data.items;
     },
   },
+  data: function () {
+    return {
+      loading: true,
+      items: [],
+      error: "",
+    };
+  },
+
   methods: {
     create() {
-      this.$router.push({ name: "CreateMaterial" });
+      this.$router.push({
+        path: `${this.property}/create`,
+      });
     },
-    removeMaterial(id) {
+    remove(id) {
       if (this.$store.getters.local) {
-        this.$store.commit("material/remove", id);
+        this.$store.commit(`${this.property}/remove`, id);
       } else {
-        new Query("material")
+        new Query(this.property)
           .delete(id)
           .then(() => {
-            const idx = this.$data.materials.findIndex(
-              (material) => material.id == id
-            );
+            const idx = this.$data.items.findIndex((item) => item.id == id);
             console.log(idx);
-            if (idx != -1) this.$data.materials.splice(idx, 1);
+            if (idx != -1) this.$data.items.splice(idx, 1);
           })
           .catch((err) => {
             console.error(err);
           });
       }
     },
-    editMaterial(id) {
+    edit(id) {
       this.$router.push({
-        name: "UpdateMaterial",
-        params: { id },
+        path: `/${this.property.toLowerCase()}/${id}`,
       });
     },
   },
