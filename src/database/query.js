@@ -1,5 +1,6 @@
 import axios from "axios"
 
+const host = "/severin/graphql"
 
 export default class Query {
 
@@ -28,7 +29,7 @@ export default class Query {
 
         console.log(query)
         return axios({
-            url: "http://localhost:4000/graphql",
+            url: host,
             method: "post",
             data: {
                 query
@@ -38,7 +39,7 @@ export default class Query {
 
     raw(query) {
         return axios({
-            url: "http://localhost:4000/graphql",
+            url: host,
             method: "post",
             data: {
                 query,
@@ -93,7 +94,7 @@ export default class Query {
       `;
 
         return axios({
-            url: "http://localhost:4000/graphql",
+            url: host,
             method: "post",
             data: {
                 query,
@@ -111,7 +112,7 @@ export default class Query {
         console.log(query)
 
         return axios({
-            url: "http://localhost:4000/graphql",
+            url: host,
             method: "post",
             data: {
                 query
