@@ -3,7 +3,7 @@
     <header class="top-header">
       <div class="content-wrapper">
         <div class="top-navigation">
-          <h3 id="app-name">Buyija</h3>
+          <h3 id="app-name">sikka:būya</h3>
           <span class="subtitle">{{ $t("general.type_catalogue") }}</span>
           <nav>
             <ButtonGroup
@@ -17,7 +17,6 @@
         </div>
       </div>
     </header>
-    <BackHeader v-if="isAwayFromHome" />
     <main class="content-wrapper">
       <router-view></router-view>
     </main>
@@ -26,20 +25,14 @@
 
 <script>
 import ButtonGroup from "./components/forms/ButtonGroup.vue";
-import BackHeader from "./components/layout/BackHeader.vue";
 export default {
-  components: { ButtonGroup, BackHeader },
+  components: { ButtonGroup },
   name: "App",
   methods: {
     languageChanged: function (event) {
       this.$i18n.locale = event.target.id;
     },
-  },
-  computed: {
-    isAwayFromHome: function () {
-      return this.$route.name !== "Home";
-    },
-  },
+  }
 };
 </script>
 
@@ -47,8 +40,10 @@ export default {
 @import "./scss/_import.scss";
 
 #app-name {
-  color: rgb(60, 184, 255);
+  color: $primary-color;
   margin-right: $padding;
+  text-transform: none;
+  font-weight: 800;
 }
 
 .subtitle {
@@ -173,18 +168,20 @@ main {
   padding-top: 20px;
 }
 
-@media (min-width: 1080px) {
-  .content-wrapper {
-    
-  margin: 0 auto;
-    width: 50vw;
-  }
-}
+
 
 .content-wrapper {
   box-sizing: border-box;
   width: 100%;
   padding: 10px;
+}
+
+@media (min-width: 1080px) {
+  .content-wrapper {
+    
+    margin: 0 auto;
+    width: 50vw;
+  }
 }
 
 a {

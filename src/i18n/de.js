@@ -3,6 +3,12 @@ const general = {
     create_type: "Neuen Typ anlegen",
     manage_properties: "Eigenschaften verwalten",
     type_catalogue: "Typenkatalog",
+    longitude: "longitude",
+    latitude: "latitude",
+    online: "online",
+    offline: "offline",
+    server_status:"server status",
+    delete_submit: "Entfernen"
 }
 
 
@@ -39,6 +45,7 @@ const attribute = {
 }
 
 const error = {
+    could_not_update_element: "Das angegebene Element konnte nicht aktualisiert werden. Die Datenbank könnte nicht erreichbar sein.",
     loading_element: "Das angefragte Element konnte nicht geladen werden. Gehe zur Liste zurück oder erstelle ein neues Element hier. Kontaktiere einen Admin, falls das Problem weiterhin besteht."
     ,
     loading_list: "List konnte nicht geladen werden. Anscheinend ist die Datenbank nicht verfügbar."

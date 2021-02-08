@@ -15,7 +15,7 @@
         autofocus
         required
       />
-      <LatLonInput :value="mint.location" @input="updateLocation" />
+      <!-- <LatLonInput :value="mint.location" @input="updateLocation" /> -->
     </FormWrapper>
   </div>
 </template>
@@ -23,12 +23,12 @@
 <script>
 import Query from "../../../database/query.js";
 import FormWrapper from "../FormWrapper.vue";
-import LatLonInput from "../../forms/LatLonInput.vue";
+// import LatLonInput from "../../forms/LatLonInput.vue";
 
 export default {
   components: {
     FormWrapper,
-    LatLonInput,
+    // LatLonInput,
   },
   name: "MintForm",
   created: function () {
@@ -83,25 +83,33 @@ export default {
           });
         })
         .catch((err) => {
-          this.error = this.$t("error.could_not_replace_element");
+          this.error = this.$t("error.could_not_update_element");
           console.error(err);
         });
     },
     add: function () {
+      const location =
+        !!this.mint.location.lat && !!this.mint.location.lon
+          ? `
+                    location: {
+                      lat: ${this.mint.location.lat}
+                      lon: ${this.mint.location.lon}
+                    }`
+          : "";
+
+      console.log(!!this.mint.location.lat && !!this.mint.location.lon);
+
       const query = `
        mutation {
                 addMint(
                   data:{
                     name: "${this.mint.name}"
-                    location: {
-                      lat: ${this.mint.location.lat}
-                      lon: ${this.mint.location.lon}
-                    }
+                    ${location}
                   }
                 )
               }
       `;
-      console.log(query);
+
       new Query("mint")
         .raw(query)
         .then(() => {
@@ -111,7 +119,7 @@ export default {
           });
         })
         .catch((err) => {
-          this.error = this.$t("error.could_not_replace_element");
+          this.error = this.$t("error.could_not_update_element");
           console.error(err);
         });
     },

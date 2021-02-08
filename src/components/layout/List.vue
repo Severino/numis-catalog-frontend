@@ -1,5 +1,6 @@
 <template>
   <div class="list">
+
     <div v-if="error" class="info error">
       <Information />
       <p>
@@ -15,7 +16,6 @@
     </div>
 
     <LoadingSpinner class="loading-spinner" v-if="loading" />
-
     <ListItem
       @click="listItemClicked"
       @remove="listItemRemoved"

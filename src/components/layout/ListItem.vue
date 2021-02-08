@@ -4,24 +4,34 @@
     <div class="slot">
       <slot></slot>
     </div>
-    <button @click.stop="triggerRemove">
-      <Remove />
-    </button>
+
+    <DynamicDeleteButton @remove="triggerRemove" />
   </div>
 </template>
 
 <script>
-import Remove from "vue-material-design-icons/Minus";
+import DynamicDeleteButton from './DynamicDeleteButton.vue';
 
 export default {
   components: {
-    Remove,
+    DynamicDeleteButton,
   },
   name: "ListItem",
+  data: function () {
+    return {
+      removing: false,
+      removeTimeout: null,
+    };
+  },
   props: {
     id: {
       required: true,
     },
+  },
+  beforeDestroy: function () {
+    if (this.timeout != null) {
+      clearTimeout(this.timeout);
+    }
   },
   methods: {
     triggerRemove: function () {
@@ -47,16 +57,6 @@ export default {
   padding: 0;
 }
 
-button {
-    padding:0;
-    min-width: 16px;
-    align-self: stretch;
-    color: whitesmoke;
-    background-color: rgb(231, 106, 106);
-    &:focus {
-        border-color: rgb(189, 81, 81);
-    }
-}
 
 .slot {
   flex: 1;

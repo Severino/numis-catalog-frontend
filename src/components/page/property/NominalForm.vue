@@ -1,16 +1,16 @@
 <template>
-  <div class="title-form">
+  <div class="nominal-form">
     <FormWrapper
       @submit="submit"
       @cancel="cancel"
       :loading="loading"
-      :title="$tc('property.title')"
+      :title="$tc('property.nominal')"
       :error="error"
     >
-      <input v-model="title.id" readonly />
+      <input v-model="nominal.id" readonly />
       <input
         type="text"
-        v-model="title.name"
+        v-model="nominal.name"
         :placeholder="$tc('attribute.name')"
         autofocus
       />
@@ -24,14 +24,14 @@ import FormWrapper from "../FormWrapper.vue";
 
 export default {
   components: { FormWrapper },
-  name: "TitleForm",
+  name: "NominalForm",
   created: function () {
     let id = this.$route.params.id;
     if (id != null) {
-      new Query("title")
+      new Query("nominal")
         .get(id, ["id", "name"])
         .then((result) => {
-          this.title = result.data.data.getTitle;
+          this.nominal = result.data.data.getNominal;
         })
         .catch((err) => {
           this.$data.error = this.$t("error.loading_element");
@@ -46,12 +46,12 @@ export default {
   },
   methods: {
     submit: function () {
-      new Query("title")
-        .update(this.title)
+      new Query("nominal")
+        .update(this.nominal)
         .then(() => {
           this.$router.push({
             name: "Property",
-            params: { property: "title" },
+            params: { property: "nominal" },
           });
         })
         .catch((err) => {
@@ -60,14 +60,14 @@ export default {
         });
     },
     cancel: function () {
-      this.$router.push({ path: "/title" });
+      this.$router.push({ path: "/nominal" });
     },
   },
   data: function () {
     return {
       error: "",
       loading: true,
-      title: { id: -1, name: "" },
+      nominal: { id: -1, name: "" },
     };
   },
 };

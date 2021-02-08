@@ -1,6 +1,7 @@
 import axios from "axios"
-
-const host = "/severin/graphql"
+console.log(process.env)
+const baseURL = process.env.VUE_APP_DATABASE_URL || ""
+const host = ["http:/", baseURL, "graphql"].join("/")
 
 export default class Query {
 

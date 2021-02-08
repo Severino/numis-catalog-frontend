@@ -10,6 +10,7 @@ import PersonForm from "@/components/page/property/PersonForm"
 import TitleForm from "@/components/page/property/TitleForm"
 import HonorificForm from "@/components/page/property/HonorificForm"
 import MintForm from "@/components/page/property/MintForm"
+import NominalForm from "@/components/page/property/NominalForm"
 
 
 
@@ -69,6 +70,14 @@ const routes = [
     path: "/mint/:id",
     name: "EditMint",
     component: MintForm
+  }, {
+    path: "/nominal/create",
+    name: "CreateNominal",
+    component: NominalForm
+  }, {
+    path: "/nominal/:id",
+    name: "EditNominal",
+    component: NominalForm
   },
   {
     path: "/inventory",

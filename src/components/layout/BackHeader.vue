@@ -24,13 +24,13 @@ export default {
 @import "@/scss/_import.scss";
 
 .back-header {
-  box-sizing: border-box;
-  position: sticky;
-  background-color: gray;
+  // box-sizing: border-box;
+  // position: sticky;
+  // background-color: gray;
   width: 100%;
   left: 0;
   top: 0;
-  padding: 10px 50px;
+  // padding: 10px 50px;
 }
 
 h1 {
@@ -44,19 +44,19 @@ nav {
 a {
   display: flex;
   align-items: center;
-  color: white;
+  color: black;
   text-transform:capitalize;
 
 
-$shadow:  1px 2px 3px rgba($color: #000000, $alpha: .3);
+// $shadow:  1px 2px 3px rgba($color: #000000, $alpha: .3);
   text-decoration: none;
-  text-shadow:$shadow;
+  // text-shadow:$shadow;
 
   .material-design-icon {
       margin-right: 10px;
-      svg {
-          filter: drop-shadow($shadow);
-      }
+      // svg {
+      //     filter: drop-shadow($shadow);
+      // }
   }
 }
 

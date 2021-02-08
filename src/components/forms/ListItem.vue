@@ -4,17 +4,17 @@
       <slot></slot>
     </div>
     <button @click="triggerRemove">
-      <Delete />
+      <MinusCircle />
     </button>
   </div>
 </template>
 
 <script>
-import Delete from "vue-material-design-icons/Delete.vue";
+import MinusCircle from "vue-material-design-icons/MinusCircle";
 
 export default {
   components: {
-    Delete,
+    MinusCircle,
   },
   name: "Section",
   props: {

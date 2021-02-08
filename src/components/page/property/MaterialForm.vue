@@ -55,7 +55,7 @@ export default {
           });
         })
         .catch((err) => {
-          this.error = this.$t("error.could_not_replace_element");
+          this.error = this.$t("error.could_not_update_element");
           console.error(err);
         });
     },

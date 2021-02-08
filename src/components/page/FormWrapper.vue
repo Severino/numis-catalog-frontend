@@ -116,7 +116,7 @@ export default {
 //             this.$router.push({ name: "Material" });
 //           })
 //           .catch((err) => {
-//             this.logError(this.$t("error.could_not_replace_element"));
+//             this.logError(this.$t("error.could_not_update_element"));
 //             console.error(err);
 //           });
 //         //

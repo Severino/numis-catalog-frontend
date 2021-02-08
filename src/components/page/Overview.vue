@@ -1,8 +1,9 @@
 <template>
-  <div :class="`${this.property}-page`">
+  <div :class="`${this.property}-page`" >
+    <BackHeader />
     <h1>{{ $tc(`property.${property}`) }}</h1>
 
-    <div class="button" @click="create">
+    <div class="button" @click="create" tabindex="1" autofocus @keydown.enter="create">
       <PlusCircleOutline />
       <span>{{ $t("form.create") }}</span>
     </div>
@@ -21,15 +22,16 @@
 import PlusCircleOutline from "vue-material-design-icons/PlusCircleOutline";
 import List from "../layout/List.vue";
 import Query from "../../database/query.js";
+import BackHeader from '../layout/BackHeader.vue';
 
 export default {
   name: "OverviewPage",
   components: {
     PlusCircleOutline,
     List,
+    BackHeader,
   },
   created: function () {
-    console.log("CERATED");
     new Query(this.property)
       .list(["id", "name"])
       .then((obj) => {
@@ -59,6 +61,9 @@ export default {
   },
 
   methods: {
+    handleKeys(event) {
+      console.log(event.key)
+    },
     create() {
       this.$router.push({
         path: `${this.property}/create`,

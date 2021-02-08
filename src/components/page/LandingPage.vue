@@ -1,6 +1,9 @@
 <template>
   <div>
-    <h2>{{ $t("general.administration") }}</h2>
+    <header>
+      <h2>{{ $t("general.administration") }}</h2>
+      <ServerStatus />
+    </header>
     <!-- <router-link
       class="button icon-button"
       :to="{ name: 'CreateTypePage' }"
@@ -12,6 +15,12 @@
 
     <h3>{{ $t("general.manage_properties") }}</h3>
     <div class="button-list">
+      
+
+      <router-link class="button icon-button" to="/honorific" draggable="false">
+        <PlusBox />
+        <span>{{ $tc("property.honorific") }}</span>
+      </router-link>
       <router-link class="button icon-button" to="/material" draggable="false">
         <PlusBox />
         <span>{{ $tc("property.material") }}</span>
@@ -20,15 +29,13 @@
         <PlusBox />
         <span>{{ $tc("property.mint") }}</span>
       </router-link>
-
+      <router-link class="button icon-button" to="/nominal" draggable="false">
+        <PlusBox />
+        <span>{{ $tc("property.nominal") }}</span>
+      </router-link>
       <router-link class="button icon-button" to="/person" draggable="false">
         <PlusBox />
         <span>{{ $tc("property.person") }}</span>
-      </router-link>
-
-      <router-link class="button icon-button" to="/honorific" draggable="false">
-        <PlusBox />
-        <span>{{ $tc("property.honorific") }}</span>
       </router-link>
 
       <router-link class="button icon-button" to="/title" draggable="false">
@@ -41,16 +48,23 @@
 
 <script>
 import PlusBox from "vue-material-design-icons/PlusBox";
+import ServerStatus from "../misc/ServerStatus.vue";
 
 export default {
   name: "LandingPage",
   components: {
     PlusBox,
+    ServerStatus,
   },
 };
 </script>
 
 <style lang="scss" scoped>
+header {
+  display: flex;
+  justify-content: space-between;
+}
+
 h3 {
   margin-top: 50px;
   padding-bottom: 0.5em;

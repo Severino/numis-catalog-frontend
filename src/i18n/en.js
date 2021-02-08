@@ -4,7 +4,11 @@ const general = {
     manage_properties: "manage properties",
     type_catalogue: "type catalogue",
     longitude: "longitude",
-    latitude: "latitude"
+    latitude: "latitude",
+    online: "online",
+    offline: "offline",
+    server_status:"server status",
+    delete_submit: "Delete"
 }
 
 const property = {
@@ -40,6 +44,7 @@ const attribute = {
 }
 
 const error = {
+    could_not_update_element: "Element could not be updated. Database maybe inacessible.",
     loading_element: "Could not load requested element. You can create a new one or return to list. Request admin if this keeps happening.",
     loading_list: "Could not load list. Database seems to be offline."
 };
