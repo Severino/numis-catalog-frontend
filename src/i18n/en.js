@@ -22,6 +22,7 @@ const property = {
     material: "material | materials",
     mint_year: "year of minting",
     mint: "mint | mints",
+    mint_as_on_coin: "mint as on coin",
     nominal: "nominal | nominals",
     overlord: "? overlord | ? overlords",
     person: "person | persons",

@@ -1,5 +1,6 @@
 <template>
   <div class="types-page">
+    <BackHeader />
     <Heading>{{ $t("general.type_catalogue") }}</Heading>
     <Row>
       <LabeledInputContainer :label="$tc('property.type_id')">
@@ -21,17 +22,18 @@
       </LabeledInputContainer>
     </Row>
     <Row>
-      <LabeledInputContainer :label="$tc('property.nominal')">
-        <DataSelectField table="Nominal" attribute="name"></DataSelectField>
+      <LabeledInputContainer :label="$t('property.mint_as_on_coin')">
+        <input />
       </LabeledInputContainer>
-      <LabeledInputContainer :label="$tc('property.donativ')">
-        <Checkbox id="donativ" />
+
+      <LabeledInputContainer :label="$tc('property.material')">
+        <DataSelectField table="Material" attribute="name"></DataSelectField>
       </LabeledInputContainer>
     </Row>
 
     <Row>
-      <LabeledInputContainer :label="$tc('property.material')">
-        <DataSelectField table="Material" attribute="name"></DataSelectField>
+      <LabeledInputContainer :label="$tc('property.donativ')">
+        <Checkbox id="donativ" />
       </LabeledInputContainer>
 
       <LabeledInputContainer :label="$tc('property.procedures.cast')">
@@ -43,11 +45,30 @@
       </LabeledInputContainer>
     </Row>
 
+    <Row>
+      <LabeledInputContainer :label="$tc('property.nominal')">
+        <DataSelectField
+          table="Nominal"
+          attribute="name"
+        ></DataSelectField> </LabeledInputContainer
+    ></Row>
+
     <LabeledInputContainer :label="$t('property.coin_master')">
-      <DataSelectField table="MasterOfCoins" attribute="name"></DataSelectField>
+      <TitledPersonSelect
+        table="MasterOfCoins"
+        attribute="name"
+      ></TitledPersonSelect>
     </LabeledInputContainer>
 
-    <List v-on:add="addOberherr" :title="$tc('property.overlord', 2)" class="needs-spacing">
+    <List
+      v-on:add="addOberherr"
+      :title="$tc('property.overlord', 2)"
+      class="needs-spacing"
+    >
+      <div v-if="oberherren.length == 0" class="info">
+        {{ $t("warning.list_is_empty") }}
+      </div>
+
       <ListItem
         v-for="oberherr of oberherren"
         :key="oberherr.id"
@@ -61,7 +82,15 @@
     <LabeledInputContainer :label="$t('property.caliph')">
       <TitledPersonSelect />
     </LabeledInputContainer>
-    <List :title="$t('property.additional_persons')" class="needs-spacing" v-on:add="addOtherPerson">
+    <List
+      :title="$t('property.additional_persons')"
+      class="needs-spacing"
+      v-on:add="addOtherPerson"
+    >
+      <div v-if="oberherren.length == 0" class="info">
+        {{ $t("warning.list_is_empty") }}
+      </div>
+
       <ListItem
         v-for="other in otherPersons"
         :key="other.id"
@@ -73,78 +102,21 @@
     </List>
 
     <Section title="Voderseite">
-      <Heading>{{ $t("property.sides.front") }}</Heading>
-
-      <LabeledInputContainer :label="$tc('property.field_text')">
-        <Row style="margin-bottom: 10px;">
-          <button>Left</button>
-          <button>Center</button>
-          <button>Right</button>
-          <span style="margin-right: 50px; "></span>
-          <button>Bold</button>
-          <button>Cursive</button>
-        </Row>
-        <textarea name="" id="" cols="30" rows="10">
-          
-        </textarea>
-      </LabeledInputContainer>
-
-      <LabeledInputContainer :label="$tc('property.circular_text')">
-        <List v-on:add="addUmschrift">
-          <ListItem
-            v-for="umschrift of umschriften"
-            :key="umschrift.id"
-            v-on:remove="removeUmschrift"
-            :object="umschrift"
-          >
-            <input
-              type="text"
-              name=""
-              id=""
-              dir="ltr"
-              :value="umschrift.text"
-            />
-          </ListItem>
-        </List>
-      </LabeledInputContainer>
+      <CoinSideField
+        :title="$t('property.sides.front')"
+        :field="front.fieldText"
+        :umschriften="front.umschriften"
+        @change="frontChanged"
+      />
     </Section>
 
-    
     <Section title="Rückseite">
-      <Heading>{{ $t("property.sides.back") }}</Heading>
-
-      <LabeledInputContainer :label="$tc('property.field_text')">
-        <Row style="margin-bottom: 10px;">
-          <button>Left</button>
-          <button>Center</button>
-          <button>Right</button>
-          <span style="margin-right: 50px; "></span>
-          <button>Bold</button>
-          <button>Cursive</button>
-        </Row>
-        <textarea name="" id="" cols="30" rows="10">
-          
-        </textarea>
-      </LabeledInputContainer>
-
-      <LabeledInputContainer :label="$tc('property.circular_text')">
-        <List v-on:add="addUmschrift">
-          <ListItem
-            v-for="umschrift of umschriften"
-            :key="umschrift.id"
-            v-on:remove="removeUmschrift"
-            :object="umschrift"
-          >
-            <input
-              type="text"
-              name=""
-              id=""
-              dir="ltr"
-              :value="umschrift.text"
-            />
-          </ListItem>
-        </List>
-      </LabeledInputContainer>
+      <CoinSideField
+        :title="$t('property.sides.back')"
+        :field="back.fieldText"
+        :umschriften="back.umschriften"
+        @change="backChanged"
+      />
     </Section>
   </div>
 </template>
@@ -160,6 +132,8 @@ import ButtonGroup from "../forms/ButtonGroup.vue";
 import List from "../forms/List.vue";
 import ListItem from "../forms/ListItem.vue";
 import TitledPersonSelect from "../forms/TitledPersonSelect.vue";
+import CoinSideField from "../forms/coins/CoinSideField.vue";
+import BackHeader from "../layout/BackHeader.vue";
 
 export default {
   name: "CreateTypePage",
@@ -174,6 +148,8 @@ export default {
     List,
     ListItem,
     TitledPersonSelect,
+    CoinSideField,
+    BackHeader,
   },
   data: function () {
     return {
@@ -182,8 +158,14 @@ export default {
         this.$t("property.procedures.cast"),
       ],
       productionOptions: ["pressed", "cast"],
-      umschriften: [],
-      umschriftId: 0,
+      front: {
+        fieldText: "",
+        umschriften: [],
+      },
+      back: {
+        fieldText: "",
+        umschriften: [],
+      },
       oberherren: [],
       oberherrenId: 0,
       otherPersons: [],
@@ -191,6 +173,12 @@ export default {
     };
   },
   methods: {
+    frontChanged: function (coinSideObject) {
+      this.front = coinSideObject;
+    },
+    backChanged: function (coinSideObject) {
+      this.back = coinSideObject;
+    },
     addUmschrift: function () {
       this.umschriften.push({
         id: this.umschriftId++,
@@ -236,8 +224,6 @@ export default {
 </script>
 
 <style lang="scss">
-
-
 @import "@/scss/_import.scss";
 
 h3,
@@ -247,9 +233,14 @@ label {
 
 .types-page {
   margin-bottom: 50vh;
+
+  >h3 {
+    font-size: 2rem;
+    font-weight: bold;
+  }
 }
 
-.needs-spacing{
+.needs-spacing {
   margin: $padding 0;
 }
 </style>

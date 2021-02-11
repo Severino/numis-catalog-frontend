@@ -36,6 +36,10 @@ export default {
   padding-left: $left * 2;
   position: relative;
 
+  > * {
+    margin-bottom: $padding/2;
+  }
+
   &:not(:empty) {
     &::before {
       content: "";
@@ -49,7 +53,9 @@ export default {
       transform: translate(-50%);
     }
 
+
     &::after {
+      height: 50%;
       content: "";
       position: absolute;
       top: 0;
@@ -71,7 +77,7 @@ export default {
     border-bottom: 2px solid $gray;
     width: $left + 1px;
     left: 0;
-    top: 18px;
+    top: calc(50% - 1px);
     transform: translateX(-100%);
   }
 }
@@ -85,7 +91,6 @@ export default {
   position: relative;
   display: flex;
   flex-direction: column;
-
 }
 
 .list-container {

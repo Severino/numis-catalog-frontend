@@ -23,6 +23,7 @@ const property = {
     material: "Material | Materialien",
     mint_year: "Prägejahr",
     mint: "Prägeort | Prägeorte",
+    mint_as_on_coin: "Prägeort wie auf Münze",
     nominal: "Nominal | Nominale",
     overlord: "Oberherr | Oberherren",
     person: "Person | Personen",

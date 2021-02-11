@@ -79,7 +79,7 @@ export default {
 @import "@/scss/_import.scss";
 
 
-.title-row {
+.titled-person-select .title-row {
   margin-left: 10px;
 }
 

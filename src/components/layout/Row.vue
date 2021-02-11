@@ -22,7 +22,7 @@ export default {
         >* {
             flex:1;
             &:not(:last-child){
-                margin-right: $padding;
+                margin-right: $padding*2;
             }
         }
     }

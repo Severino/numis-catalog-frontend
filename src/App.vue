@@ -28,11 +28,18 @@ import ButtonGroup from "./components/forms/ButtonGroup.vue";
 export default {
   components: { ButtonGroup },
   name: "App",
+  created: function () {
+    const lang = window.localStorage.getItem("language", this.$i18n.locale);
+    if (lang) {
+      this.$i18n.locale = lang;
+    }
+  },
   methods: {
     languageChanged: function (event) {
       this.$i18n.locale = event.target.id;
+      window.localStorage.setItem("language", this.$i18n.locale);
     },
-  }
+  },
 };
 </script>
 
@@ -99,7 +106,7 @@ button {
 
 label {
   display: block;
-  margin-top: 30px;
+  margin-top: 55px;
   margin-bottom: 10px;
 
   @include interactive();
@@ -168,8 +175,6 @@ main {
   padding-top: 20px;
 }
 
-
-
 .content-wrapper {
   box-sizing: border-box;
   width: 100%;
@@ -178,7 +183,6 @@ main {
 
 @media (min-width: 1080px) {
   .content-wrapper {
-    
     margin: 0 auto;
     width: 50vw;
   }
@@ -209,5 +213,15 @@ a {
   padding: 20px;
   background-color: rgb(255, 92, 92);
   border: 1px solid rgb(192, 68, 68);
+}
+
+section {
+  margin-top: 5em;
+
+  h3 {
+    font-size: 1.5em;
+    font-weight: bold;
+    margin-bottom: 0;
+  }
 }
 </style>
