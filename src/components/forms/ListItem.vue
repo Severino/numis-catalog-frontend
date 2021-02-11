@@ -43,10 +43,11 @@ export default {
 
 .list-item > :first-child {
   flex: 1;
-  margin-right: 10px;
+  // margin-right: 10px;
 }
 
 button {
+  align-self: stretch;
   color: whitesmoke;
   background-color: rgb(231, 106, 106);
   &:focus {

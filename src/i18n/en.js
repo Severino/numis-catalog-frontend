@@ -17,6 +17,7 @@ const property = {
     coin_master: "? master of coins",
     caliph: "caliph",
     donativ: "donativ",
+    field_text: "? field text",
     honorific: "honorific | honorifics",
     material: "material | materials",
     mint_year: "year of minting",

@@ -18,6 +18,7 @@ const property = {
     coin_master: "Münzherr",
     caliph: "Kalif",
     donativ: "donativ",
+    field_text: "Feld",
     honorific: "Ehrenname | Ehrennamen",
     material: "Material | Materialien",
     mint_year: "Prägejahr",

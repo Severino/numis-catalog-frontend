@@ -4,14 +4,14 @@
       <h2>{{ $t("general.administration") }}</h2>
       <ServerStatus />
     </header>
-    <!-- <router-link
+    <router-link
       class="button icon-button"
       :to="{ name: 'CreateTypePage' }"
       draggable="false"
     >
       <PlusBox />
       <span>{{ $t("general.create_type") }}</span>
-    </router-link> -->
+    </router-link>
 
     <h3>{{ $t("general.manage_properties") }}</h3>
     <div class="button-list">

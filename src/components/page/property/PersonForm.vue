@@ -8,6 +8,7 @@
       :error="error"
     >
       <input v-model="person.id" readonly />
+
       <input
         type="text"
         v-model="person.name"

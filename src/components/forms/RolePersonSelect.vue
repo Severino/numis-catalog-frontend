@@ -1,12 +1,12 @@
 <template>
   <div class="role-person-select">
-    <DataSelectField id="role" placeholder="Rolle" table="Role" attribute="name" />
+    <select>
     <DataSelectField id="name" placeholder="Name" table="Person" attribute="name"></DataSelectField>
   </div>
 </template>
 
 <script>
-import DataSelectField from '../DataSelectField.vue';
+import DataSelectField from './DataSelectField.vue';
 
 export default {
   name: "TitledPersonSelect",

@@ -100,7 +100,7 @@ export default {
 }
 
 .id-field {
-  width: 64px;
+  max-width: 37px;
   background-color: rgb(226, 226, 226);
   border-radius: 0;
   border: none;

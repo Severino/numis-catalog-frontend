@@ -65,6 +65,7 @@ export default {
 label{
    margin: 0;
   font-size: 1rem;
+  text-align: center;
 }
 
 input {

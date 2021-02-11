@@ -1,7 +1,7 @@
 import axios from "axios"
 console.log(process.env)
-const baseURL = process.env.VUE_APP_DATABASE_URL || ""
-const host = ["http:/", baseURL, "graphql"].join("/")
+const baseURL = process.env.VUE_APP_DATABASE_URL || "http://localhost:4000/graphql"
+const host = baseURL
 
 export default class Query {
 
