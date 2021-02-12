@@ -33,15 +33,17 @@ const property = {
     caliph:
         "Kalif",
     cursive_script:
-        "kursive Schriftart?",
+        "kursive Schriftart",
     donativ:
-        "Geschenkmünze?",
+        "Geschenkmünze",
     field_text:
         "Feld",
     frontside:
         "Avers",
     honorific:
         "Ehrenname | Ehrennamen",
+    isolated_character:
+        "isolierter Buchstabe | isolierte Buchstaben",
     material:
         "Material | Materialien",
     mint_year:
@@ -56,6 +58,8 @@ const property = {
         "Oberherr | Oberherren",
     person:
         "Person | Personen",
+    piece:
+        "Exemplar | Exemplare",
     procedure:
         "Herstellungsart | Herstellungsarten",
     procedures:
@@ -77,8 +81,8 @@ const property = {
     title:
         "Titel",
     type_id:
-        "sikka:būya- ID | sikka:būya-IDs",
-    treadwill_id:
+        "sikka:būya-ID | sikka:būya-IDs",
+    treadwell_id:
         "Treadwell-ID | Treadwell-IDs",
     varieties:
         "Varianten"

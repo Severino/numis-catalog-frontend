@@ -35,13 +35,15 @@ const property = {
     cursive_script:
         "cursive script",
     donativ:
-        "donative coin?",
+        "donative coin",
     field_text:
         "? field text",
     frontside:
         "obverse",
     honorific:
         "honorific | honorifics",
+    isolated_character:
+        "isolated character | isolated characters",
     material:
         "material | materials",
     mint_year:
@@ -56,6 +58,8 @@ const property = {
         "overlord | overlords",
     person:
         "person | persons",
+    piece:
+        "piece  | pieces",
     procedure:
         "procedure | procedures",
     procedures:
@@ -78,7 +82,7 @@ const property = {
         "title | titles",
     type_id:
         "sikka:būya- ID | sikka:būya-IDs",
-    treadwill_id:
+    treadwell_id:
         "Treadwell-ID | Treadwell-IDs",
     varieties:
         "varieties"

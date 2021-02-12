@@ -4,8 +4,8 @@
       type="checkbox"
       :name="id"
       :id="id"
-      :checked="checked"
-      @input="checked = $event.target.checked"
+      :checked="value"
+      @input="input"
     />
     <label :for="id" tabindex="0">
       <span>{{ text }}</span></label
@@ -21,13 +21,21 @@ export default {
       type: String,
       required: true,
     },
-  },
-  data: function () {
-    return { checked: false };
+    value: {
+      type: Boolean,
+      required:true
+    }
   },
   computed: {
-    text: function () {
-      return this.$data.checked ? "Ja" : "Nein";
+    text: function() {
+      console.log(this.value)
+      return this.value === true? "Ja" : "Nein";
+    },
+  },
+  methods: {
+    input: function(event) {
+      const checked = event.target.checked;
+      this.$emit("input", checked);
     },
   },
 };

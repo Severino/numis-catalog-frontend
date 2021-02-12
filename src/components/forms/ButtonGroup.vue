@@ -5,7 +5,13 @@
       v-bind:key="option"
       class="radio-button"
     >
-      <input type="radio" :checked="(active == option)" :name="id" :id="option" @change="change" />
+      <input
+        type="radio"
+        :checked="active == option"
+        :name="id"
+        :id="option"
+        @change="change"
+      />
       <label :for="option" tabindex="0"
         ><span>{{ labels[idx] }}</span></label
       >
@@ -13,14 +19,18 @@
   </Row>
 </template>
 
-
 <script>
 import Row from "../layout/Row.vue";
 export default {
   components: { Row },
   name: "ButtonGroup",
   props: {
-    active : String,
+    selected: {
+      type: Number,
+      validator: function(value) {
+        return parseFloat(value % 1) === 0;
+      },
+    },
     id: {
       type: String,
       required: true,
@@ -34,10 +44,25 @@ export default {
       required: true,
     },
   },
-  methods: {
-    change: function (event) {
-      this.$emit("change", event)
+  data: function() {
+    return {
+      active: null,
+    };
+  },
+  mounted() {
+    if (
+      this.selected != null &&
+      this.selected >= -1 &&
+      this.selected <= this.options.length
+    ) {
+      if (this.selected == -1) this.selected = this.options.length - 1;
+      this.active = this.options[this.selected];
     }
+  },
+  methods: {
+    change: function(event) {
+      this.$emit("change", event);
+    },
   },
 };
 </script>
@@ -62,8 +87,8 @@ export default {
 //   box-sizing: border-box;
 // }
 
-label{
-   margin: 0;
+label {
+  margin: 0;
   font-size: 1rem;
   text-align: center;
 }
@@ -102,5 +127,4 @@ label {
     }
   }
 }
-</style> 
-
+</style>
