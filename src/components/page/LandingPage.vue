@@ -5,7 +5,7 @@
       <ServerStatus />
     </header>
     <router-link
-      class="button icon-button"
+      class="button icon-button draft"
       :to="{ name: 'CreateTypePage' }"
       draggable="false"
     >
@@ -60,6 +60,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+@import "@/scss/_import.scss";
 header {
   display: flex;
   justify-content: space-between;
@@ -69,5 +70,22 @@ h3 {
   margin-top: 50px;
   padding-bottom: 0.5em;
   border-bottom: 1px solid black;
+}
+
+.draft {
+  position: relative;
+}
+
+.draft::before{
+  content: "DRAFT";
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 0.5rem;
+  color: white;
+  font-weight: bold;
+  background-color: $red;
+  padding: 5px 20px;
+  position: absolute;
+  top:0;
+  transform: translate(20px, -50%);
 }
 </style>

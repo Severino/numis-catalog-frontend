@@ -28,8 +28,8 @@ const property = {
     person: "person | persons",
     procedure: "? procedure | ? procedures",
     procedures: {
-        cast: "? cast",
-        pressed: "pressed",
+        cast: "cast",
+        pressed: "struck",
     },
     sides: {
         front: "frontside",

@@ -27,8 +27,6 @@ export default {
   created: function () {
     this.update();
     this.$data.interval = setInterval(this.update, 3000);
-
-    console.log(process.env.DATABASE_URL);
   },
   beforeDestroy: function () {
     clearInterval(this.$data.interval);
@@ -43,7 +41,8 @@ export default {
     update: function () {
       new Query()
         .raw(`{ping}`)
-        .then(() => {
+        .then((event) => {
+          console.log(event)
           this.status = true;
         })
         .catch(() => {
