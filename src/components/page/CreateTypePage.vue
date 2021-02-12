@@ -14,7 +14,7 @@
 
     <Row>
       <LabeledInputContainer :label="$tc('property.mint')">
-        <DataSelectField table="Mint" attribute="name"></DataSelectField>
+        <DataSelectField table="Mint" attribute="name" />
       </LabeledInputContainer>
 
       <LabeledInputContainer :label="$t('property.mint_as_on_coin')">
@@ -23,10 +23,10 @@
     </Row>
     <Row>
       <LabeledInputContainer :label="$tc('property.material')">
-        <DataSelectField table="Material" attribute="name"></DataSelectField>
+        <DataSelectField table="Material" attribute="name" />
       </LabeledInputContainer>
       <LabeledInputContainer :label="$tc('property.nominal')">
-        <DataSelectField table="Nominal" attribute="name"></DataSelectField>
+        <DataSelectField table="Nominal" attribute="name" />
       </LabeledInputContainer>
     </Row>
     <Row>
@@ -37,7 +37,7 @@
 
     <Row>
       <LabeledInputContainer :label="$tc('property.donativ') + ' (?)'">
-        <Checkbox id="donativ" v-model="value"  />
+        <Checkbox id="donativ" v-model="donativ" />
       </LabeledInputContainer>
 
       <LabeledInputContainer :label="$tc('property.procedure')">
@@ -45,7 +45,7 @@
           id="production"
           :labels="productionLabels"
           :options="productionOptions"
-          :selected="0"
+          v-model="procedure"
         ></ButtonGroup>
       </LabeledInputContainer>
     </Row>
@@ -79,7 +79,7 @@
     </List>
 
     <LabeledInputContainer :label="$t('property.caliph')">
-      <data-select-field />
+      <DataSelectField table="persons" attribute="name" />
     </LabeledInputContainer>
     <List
       :title="$t('property.additional_persons')"
@@ -96,7 +96,7 @@
         v-on:remove="removeOtherPerson"
         :object="other"
       >
-        <DataSelectField table="person" attribute="name" />
+        <!-- <DataSelectField table="person" attribute="name" /> -->
       </ListItem>
     </List>
 
@@ -120,11 +120,11 @@
 
     <Row>
       <LabeledInputContainer :label="$t('property.cursive_script') + ' (?)'">
-        <Checkbox :checked="hasCursiveScript" @input="cursiveChanged" />
+        <Checkbox id="cursive" :v-model="hasCursiveScript" />
       </LabeledInputContainer>
 
       <LabeledInputContainer :label="$tc('property.isolated_character', 2)">
-        <input type="text" v-model="isolatedCharacater" />
+        <input type="text" v-model="isolatedCharacters" />
       </LabeledInputContainer>
     </Row>
 
@@ -166,18 +166,19 @@ export default {
     ListItem,
     TitledPersonSelect,
     CoinSideField,
-    BackHeader,
+    BackHeader
   },
   computed: {
-    productionLabels: function() {
+    productionLabels: function () {
       return [
         this.$t("property.procedures.pressed"),
         this.$t("property.procedures.cast"),
       ];
     },
   },
-  data: function() {
+  data: function () {
     return {
+      procedure: "pressed",
       productionOptions: ["pressed", "cast"],
       front: {
         fieldText: "",
@@ -187,8 +188,8 @@ export default {
         fieldText: "",
         umschriften: [],
       },
-      isolierteBuchstaben: "",
-      cursiveScript: false,
+      isolatedCharacters: "",
+      hasCursiveScript: false,
       donativ: false,
       oberherren: [],
       oberherrenId: 0,
@@ -202,62 +203,61 @@ export default {
     };
   },
   methods: {
-    frontChanged: function(coinSideObject) {
+    frontChanged: function (coinSideObject) {
       this.front = coinSideObject;
     },
-    backChanged: function(coinSideObject) {
+    backChanged: function (coinSideObject) {
       this.back = coinSideObject;
     },
-    cursiveChanged: function(value) {
-      console.log(value)
+    cursiveChanged: function (value) {
       this.hasCursiveScript = value;
     },
-    addPiece: function() {
+    addPiece: function () {
       this.pieces.push({
         id: this.piecesId++,
         text: "",
       });
     },
-    addCoinMaster: function() {
+    addCoinMaster: function () {
       this.coinMasters.push({
         id: this.coinMastersId++,
         text: "",
       });
     },
-    addUmschrift: function() {
+    addUmschrift: function () {
       this.umschriften.push({
         id: this.umschriftId++,
         text: "",
       });
     },
-    addOberherr: function() {
+    addOberherr: function () {
       this.oberherren.push({
         id: this.oberherrenId++,
         text: "",
       });
     },
-    addOtherPerson: function() {
+    addOtherPerson: function () {
       this.otherPersons.push({
         id: this.otherPersonsId++,
         name: "",
         role: "",
       });
     },
-    removeUmschrift: function(item) {
+    removeUmschrift: function (item) {
       console.log(item);
       const idx = this.$data.umschriften.indexOf(item);
       if (idx != -1) {
         this.oberherren.splice(idx, 1);
       }
     },
-    removeOberherr: function(item) {
+    removeOberherr: function (item) {
       console.log(item);
       const idx = this.$data.oberherren.indexOf(item);
       if (idx != -1) {
         this.oberherren.splice(idx, 1);
       }
     },
-    removeOtherPerson: function(item) {
+    removeOtherPerson: function (item) {
       console.log(item);
       const idx = this.$data.otherPersons.indexOf(item);
       if (idx != -1) {

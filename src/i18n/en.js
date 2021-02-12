@@ -29,7 +29,7 @@ const property = {
     circular_text:
         "marginal inscription | marginal inscriptions",
     coin_master:
-        "? master of coins",
+        "minting authority",
     caliph:
         "caliph",
     cursive_script:

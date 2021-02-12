@@ -16,8 +16,7 @@
           <DataSelectField
             table="Title"
             attribute="name"
-            id="title"
-          ></DataSelectField>
+            id="title" />
         </div>
       </List>
 
@@ -30,8 +29,7 @@
           <DataSelectField
             table="Ehrennamen"
             attribute="name"
-            id="name-of-honor"
-          ></DataSelectField>
+            id="name-of-honor" />
         </div>
       </List>
     </div>

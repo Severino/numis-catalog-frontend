@@ -37,9 +37,9 @@ export default {
     },
     hideText: function () {
       this.textVisibility = false;
-    },
+    }, 
     update: function () {
-      new Query()
+      new Query() 
         .raw(`{ping}`)
         .then((event) => {
           console.log(event)

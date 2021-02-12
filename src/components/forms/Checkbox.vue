@@ -22,13 +22,11 @@ export default {
       required: true,
     },
     value: {
-      type: Boolean,
-      required:true
+      type: Boolean
     }
   },
   computed: {
     text: function() {
-      console.log(this.value)
       return this.value === true? "Ja" : "Nein";
     },
   },

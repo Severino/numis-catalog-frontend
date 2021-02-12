@@ -25,11 +25,9 @@ export default {
   components: { Row },
   name: "ButtonGroup",
   props: {
-    selected: {
-      type: Number,
-      validator: function(value) {
-        return parseFloat(value % 1) === 0;
-      },
+    value: {
+      type: String,
+      required: true
     },
     id: {
       type: String,
@@ -50,18 +48,13 @@ export default {
     };
   },
   mounted() {
-    if (
-      this.selected != null &&
-      this.selected >= -1 &&
-      this.selected <= this.options.length
-    ) {
-      if (this.selected == -1) this.selected = this.options.length - 1;
-      this.active = this.options[this.selected];
-    }
+    const activeOption = this.options.indexOf(this.value)
+    if(activeOption != -1)
+      this.active = this.options[activeOption];
   },
   methods: {
     change: function(event) {
-      this.$emit("change", event);
+      this.$emit("input", event.target.id);
     },
   },
 };

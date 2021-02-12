@@ -10,8 +10,7 @@
               id="language"
               :labels="['de', 'en']"
               :options="['de', 'en']"
-              @change="languageChanged"
-              :active="this.$i18n.locale"
+              v-model="language"
             />
           </nav>
         </div>
@@ -28,15 +27,26 @@ import ButtonGroup from "./components/forms/ButtonGroup.vue";
 export default {
   components: { ButtonGroup },
   name: "App",
+  data: function () {
+    return {
+      language: "de",
+    };
+  },
+  watch: {
+    language: function (oldLang, newLang) {
+      this.languageChanged(newLang);
+    },
+  },
   created: function () {
     const lang = window.localStorage.getItem("language", this.$i18n.locale);
     if (lang) {
+      this.language = lang;
       this.$i18n.locale = lang;
     }
   },
   methods: {
-    languageChanged: function (event) {
-      this.$i18n.locale = event.target.id;
+    languageChanged: function (lang) {
+      this.$i18n.locale = lang;
       window.localStorage.setItem("language", this.$i18n.locale);
     },
   },

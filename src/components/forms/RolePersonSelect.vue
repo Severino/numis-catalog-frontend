@@ -1,7 +1,7 @@
 <template>
   <div class="role-person-select">
     <select>
-    <DataSelectField id="name" placeholder="Name" table="Person" attribute="name"></DataSelectField>
+    <!-- <DataSelectField id="name" placeholder="Name" table="Person" attribute="name"></DataSelectField> -->
   </div>
 </template>
 
