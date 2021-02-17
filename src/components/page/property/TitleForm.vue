@@ -7,12 +7,13 @@
       :title="$tc('property.title')"
       :error="error"
     >
-      <input v-model="title.id" readonly />
+      <input v-model="title.id" type="hidden" />
       <input
         type="text"
         v-model="title.name"
         :placeholder="$tc('attribute.name')"
         autofocus
+        required
       />
     </FormWrapper>
   </div>

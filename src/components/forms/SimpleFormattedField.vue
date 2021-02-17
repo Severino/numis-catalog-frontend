@@ -18,6 +18,9 @@ import Row from "../layout/Row.vue";
 export default {
   components: { Row },
   name: "SimpleFormattedField",
+  props: {
+    content: String,
+  },
   methods: {
     getSelected: function () {
       var node = document.getSelection().anchorNode;

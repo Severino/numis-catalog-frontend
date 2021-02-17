@@ -61,24 +61,27 @@
 
     <List
       v-on:add="addOberherr"
-      :title="$tc('property.overlord', 2)"
-      class="needs-spacing"
+      :description="$t('info.overlords')"
+      :title="$tc('role.overlord', 2)"
+      class="overlords needs-spacing"
     >
+      <p></p>
       <div v-if="oberherren.length == 0" class="info">
         {{ $t("warning.list_is_empty") }}
       </div>
 
       <ListItem
-        v-for="oberherr of oberherren"
+        v-for="(oberherr, index) of oberherren"
         :key="oberherr.id"
         v-on:remove="removeOberherr"
         :object="oberherr"
       >
+        <div class="list-number">{{ index + 1 }}</div>
         <TitledPersonSelect />
       </ListItem>
     </List>
 
-    <LabeledInputContainer :label="$t('property.caliph')">
+    <LabeledInputContainer :label="$t('role.caliph')">
       <DataSelectField table="persons" attribute="name" />
     </LabeledInputContainer>
     <List
@@ -128,13 +131,27 @@
       </LabeledInputContainer>
     </Row>
 
-    <List :title="$tc('property.piece', 2)" @add="addPiece">
-      <ListItem v-for="piece in pieces" :key="'pieces-' + piece.id">
+    <List :title="$tc('property.piece', 2)" @add="addPiece" class="pieces-list">
+      <div v-if="pieces.length == 0" class="info">
+        {{ $t("warning.list_is_empty") }}
+      </div>
+      <ListItem
+        v-for="piece in pieces"
+        :key="'pieces-' + piece.id"
+        :object="piece"
+      >
         <input type="text" name="" id="" />
       </ListItem>
     </List>
 
-    <LabeledInputContainer />
+    <LabeledInputContainer :label="$t('property.literature')">
+      <SimpleFormattedField v-model="literatureHTML" />
+    </LabeledInputContainer>
+
+    <Row>
+      <button>{{ $t("form.cancel") }}</button>
+      <button>{{ $t("form.submit") }}</button>
+    </Row>
   </div>
 </template>
 
@@ -151,6 +168,7 @@ import ListItem from "../forms/ListItem.vue";
 import TitledPersonSelect from "../forms/TitledPersonSelect.vue";
 import CoinSideField from "../forms/coins/CoinSideField.vue";
 import BackHeader from "../layout/BackHeader.vue";
+import SimpleFormattedField from "../forms/SimpleFormattedField.vue";
 
 export default {
   name: "CreateTypePage",
@@ -166,7 +184,8 @@ export default {
     ListItem,
     TitledPersonSelect,
     CoinSideField,
-    BackHeader
+    BackHeader,
+    SimpleFormattedField,
   },
   computed: {
     productionLabels: function () {
@@ -199,7 +218,7 @@ export default {
       coinMastersId: 1,
       pieces: [],
       piecesId: 0,
-      literatureText: "",
+      literatureHTML: "",
     };
   },
   methods: {
@@ -287,5 +306,34 @@ label {
 
 .needs-spacing {
   margin: $padding 0;
+}
+
+.overlords .list-item .slot {
+  display: flex;
+  flex-direction: row;
+  align-items: stretch;
+
+  .titled-person-select {
+    flex: 1;
+  }
+}
+
+.pieces-list{
+
+  .list-container button{
+    padding:  0 10px;
+  }
+  .slot {
+    display: flex;
+    input {
+      flex:1
+    }
+  }
+}
+
+.list-number {
+  padding: 5px;
+  display: flex;
+  align-items: center;
 }
 </style>

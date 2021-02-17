@@ -4,6 +4,7 @@
       <div v-if="title" class="title">{{ title }}</div>
       <button @click="addEntry">+</button>
     </Row>
+    <p v-if="description" class="description">{{ description }}</p>
     <div class="list-container">
       <slot />
     </div>
@@ -17,6 +18,7 @@ export default {
   name: "List",
   props: {
     title: String,
+    description: String,
   },
   methods: {
     addEntry: function () {
@@ -53,7 +55,6 @@ export default {
       transform: translate(-50%);
     }
 
-
     &::after {
       height: 50%;
       content: "";
@@ -80,6 +81,10 @@ export default {
     top: calc(50% - 1px);
     transform: translateX(-100%);
   }
+}
+
+.description {
+  font-size:0.75rem;
 }
 </style>
 

@@ -26,12 +26,12 @@ const property = {
         "Sonstige Personen",
     backside:
         "Rückseite",
+    border_and_misc:
+        "Rand und Sonstiges",
     circular_text:
         "Umschrift | Umschriften",
     coin_master:
         "Münzherr",
-    caliph:
-        "Kalif",
     cursive_script:
         "kursive Schriftart",
     donativ:
@@ -44,6 +44,12 @@ const property = {
         "Ehrenname | Ehrennamen",
     isolated_character:
         "isolierter Buchstabe | isolierte Buchstaben",
+    intermediate_circular_text:
+        "Mittlere Umschrift",
+    inner_circular_text:
+        "innere Umschrift",
+    literature:
+        "Literatur",
     material:
         "Material | Materialien",
     mint_year:
@@ -54,8 +60,8 @@ const property = {
         "Prägeort wie auf Münze",
     nominal:
         "Nominal | Nominale",
-    overlord:
-        "Oberherr | Oberherren",
+    outer_circular_text:
+        "äußere Umschrift",
     person:
         "Person | Personen",
     piece:
@@ -84,14 +90,18 @@ const property = {
         "sikka:būya-ID | sikka:būya-IDs",
     treadwell_id:
         "Treadwell-ID | Treadwell-IDs",
+    uncertain_location:
+        "Verortung unsicher",
     varieties:
         "Varianten"
 }
 
-const roles = {
-    cutter: "Stempelschneider",
-    heir: "designierter Thronfolger des Kalifen",
-    warden: "Münzwardein"
+const role = {
+    cutter: "Stempelschneider | Stempelschneider",
+    heir: "designierter Thronfolger des Kalifen | designierter Thronfolger des Kalifen",
+    warden: "Münzwardein | Münzwardeien",
+    overlord: "Oberherr | Oberherren",
+    caliph: "Kalif | Kalifen"
 }
 
 const attribute = {
@@ -111,6 +121,11 @@ const error = {
     ,
     loading_list:
         "List konnte nicht geladen werden. Anscheinend ist die Datenbank nicht verfügbar."
+}
+
+const info = {
+    overlords: "Note: The overlords are entered from top (the lowest), to bottom (the highest)."
+
 }
 
 const warning = {
@@ -136,9 +151,10 @@ module.exports = {
     attribute,
     error,
     form,
+    info,
     general,
     navigation,
     property,
-    roles,
+    role,
     warning,
 }

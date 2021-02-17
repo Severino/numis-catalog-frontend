@@ -7,12 +7,13 @@
       :title="$tc('property.nominal')"
       :error="error"
     >
-      <input v-model="nominal.id" readonly />
+      <input v-model="nominal.id" type="hidden" />
       <input
         type="text"
         v-model="nominal.name"
         :placeholder="$tc('attribute.name')"
         autofocus
+        required
       />
     </FormWrapper>
   </div>

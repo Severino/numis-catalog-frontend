@@ -7,14 +7,25 @@
       :title="$tc('property.person')"
       :error="error"
     >
-      <input v-model="person.id" readonly />
+      <input v-model="person.id" type="hidden" />
 
       <input
         type="text"
         v-model="person.name"
         :placeholder="$tc('attribute.name')"
         autofocus
+        required
       />
+      <select v-model="person.role" required>
+        <option disabled value="">-</option>
+        <option
+          v-for="option in roleOptions"
+          v-bind:value="option.value"
+          v-bind:key="option.key"
+        >
+          {{ option.text }}
+        </option>
+      </select>
     </FormWrapper>
   </div>
 </template>
@@ -30,7 +41,7 @@ export default {
     let id = this.$route.params.id;
     if (id != null) {
       new Query("person")
-        .get(id, ["id", "name"])
+        .get(id, ["id", "name", "role"])
         .then((result) => {
           this.person = result.data.data.getPerson;
         })
@@ -68,8 +79,35 @@ export default {
     return {
       error: "",
       loading: true,
-      person: { id: -1, name: "" },
+      person: { id: -1, name: "", role: "overlord" },
     };
+  },
+  computed: {
+    roleOptions: function () {
+      return [
+        {
+          key: "role_option_00",
+          text: this.$tc("role.overlord"),
+          value: "overlord",
+        },
+        {
+          key: "role_option_01",
+          text: this.$tc("role.caliph"),
+          value: "caliph",
+        },
+        {
+          key: "role_option_02",
+          text: this.$tc("role.cutter"),
+          value: "cutter",
+        },
+        { key: "role_option_03", text: this.$tc("role.heir"), value: "heir" },
+        {
+          key: "role_option_04",
+          text: this.$tc("role.warden"),
+          value: "warden",
+        },
+      ];
+    },
   },
 };
 </script>

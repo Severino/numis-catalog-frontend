@@ -7,7 +7,7 @@
       :title="$tc('property.mint')"
       :error="error"
     >
-      <input v-model="mint.id" readonly />
+      <input v-model="mint.id" type="hidden" />
       <input
         type="text"
         v-model="mint.name"
@@ -15,7 +15,13 @@
         autofocus
         required
       />
-      <!-- <LatLonInput :value="mint.location" @input="updateLocation" /> -->
+      <div id="uncertain-row">
+        <div class="label">
+          {{ $t("property.uncertain_location") + "(?)" }}
+        </div>
+
+        <Checkbox id="location_uncertain" v-model="mint.uncertain" />
+      </div>
     </FormWrapper>
   </div>
 </template>
@@ -23,19 +29,19 @@
 <script>
 import Query from "../../../database/query.js";
 import FormWrapper from "../FormWrapper.vue";
-// import LatLonInput from "../../forms/LatLonInput.vue";
+import Checkbox from "../../forms/Checkbox";
 
 export default {
   components: {
+    Checkbox,
     FormWrapper,
-    // LatLonInput,
   },
   name: "MintForm",
   created: function () {
     let id = this.$route.params.id;
     if (id != null) {
       new Query("mint")
-        .get(id, ["id", "name", "location"])
+        .get(id, ["id", "name", "location", "uncertain"])
         .then((result) => {
           this.mint = result.data.data.getMint;
         })
@@ -64,6 +70,7 @@ export default {
                 updateMint(
                   data:{
                     id: "${this.mint.id}"
+                    uncertain: ${this.mint.uncertain}
                     name: "${this.mint.name}"
                     location: {
                       lat: ${this.mint.location.lat}
@@ -73,7 +80,7 @@ export default {
                 )
               }
       `;
-      console.log(query);
+      
       new Query("mint")
         .raw(query)
         .then(() => {
@@ -103,6 +110,7 @@ export default {
        mutation {
                 addMint(
                   data:{
+                    uncertain: ${this.mint.uncertain}
                     name: "${this.mint.name}"
                     ${location}
                   }
@@ -134,8 +142,16 @@ export default {
     return {
       error: "",
       loading: true,
-      mint: { id: -1, name: "", location: [0, 0] },
+      mint: { id: -1, name: "", uncertain: false, location: [0, 0] },
     };
   },
 };
 </script>
+
+<style lang="scss" scoped>
+  #uncertain-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    align-items: center;
+  }
+</style>

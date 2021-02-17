@@ -7,12 +7,13 @@
       :honorific="$tc('property.honorific')"
       :error="error"
     >
-      <input v-model="honorific.id" readonly />
+      <input v-model="honorific.id" type="hidden" />
       <input
         type="text"
         v-model="honorific.name"
         :placeholder="$tc('attribute.name')"
         autofocus
+        required
       />
     </FormWrapper>
   </div>

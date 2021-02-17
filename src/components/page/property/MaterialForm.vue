@@ -7,12 +7,13 @@
       :title="$tc('property.material')"
       :error="error"
     >
-      <input v-model="material.id" readonly />
+      <input v-model="material.id" type="hidden" />
       <input
         type="text"
         v-model="material.name"
         :placeholder="$tc('attribute.name')"
         autofocus
+        required
       />
     </FormWrapper>
   </div>

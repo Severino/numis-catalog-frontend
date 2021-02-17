@@ -26,24 +26,30 @@ const property = {
         "additional persons",
     backside:
         "reverse",
+    border_and_misc:
+        "border and miscellaneous",
     circular_text:
         "marginal inscription | marginal inscriptions",
     coin_master:
         "minting authority",
-    caliph:
-        "caliph",
     cursive_script:
         "cursive script",
     donativ:
         "donative coin",
     field_text:
-        "? field text",
+        "field text",
     frontside:
         "obverse",
     honorific:
         "honorific | honorifics",
     isolated_character:
         "isolated character | isolated characters",
+    intermediate_circular_text:
+        "intermediate marginal inscription",
+    inner_circular_text:
+        "inner marginal inscription",
+    literature:
+        "literature",
     material:
         "material | materials",
     mint_year:
@@ -54,8 +60,8 @@ const property = {
         "mint as on coin",
     nominal:
         "nominal | nominals",
-    overlord:
-        "overlord | overlords",
+    outer_circular_text:
+        "outer marginal inscription",
     person:
         "person | persons",
     piece:
@@ -84,13 +90,18 @@ const property = {
         "sikka:būya- ID | sikka:būya-IDs",
     treadwell_id:
         "Treadwell-ID | Treadwell-IDs",
+    uncertain_location:
+        "location uncertain",
+
     varieties:
         "varieties"
 }
-const roles = {
-    cutter: "die cutter",
-    heir: "caliphal heir-apparent",
-    warden: "mint warden"
+const role = {
+    cutter: "die cutter | die cutters",
+    heir: "caliphal heir-apparent | caliphal heir-apparent",
+    warden: "mint warden | mint wardens",
+    overlord: "overlord | overlords",
+    caliph: "caliph | caliphs"
 }
 
 const attribute = {
@@ -110,6 +121,10 @@ const error = {
     loading_list:
         "Could not load list. Database seems to be offline."
 };
+
+const info = {
+    overlords: "Notiz: Die Oberherren werden von oben (dem niedrigsten), bis unten (dem höchsten) eingetragen."
+}
 
 const warning = {
     list_is_empty:
@@ -135,9 +150,10 @@ module.exports = {
     attribute,
     error,
     form,
+    info,
     general,
     navigation,
     property,
-    roles,
+    role,
     warning,
 }

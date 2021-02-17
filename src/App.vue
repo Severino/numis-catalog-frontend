@@ -33,7 +33,7 @@ export default {
     };
   },
   watch: {
-    language: function (oldLang, newLang) {
+    language: function (newLang) {
       this.languageChanged(newLang);
     },
   },
@@ -84,6 +84,7 @@ body {
   font-size: 20px;
 }
 
+select,
 .button,
 input,
 button {
