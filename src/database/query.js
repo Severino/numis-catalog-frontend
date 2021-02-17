@@ -38,6 +38,10 @@ export default class Query {
         })
     }
 
+    static raw(query) {
+        return new Query().raw(query)
+    }
+
     raw(query) {
         return axios({
             url: host,

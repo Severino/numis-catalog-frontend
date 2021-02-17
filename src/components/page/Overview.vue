@@ -35,6 +35,7 @@ export default {
     new Query(this.property)
       .list(["id", "name"])
       .then((obj) => {
+        console.log(obj)
         this.$data.items = obj.data.data[this.property];
       })
       .catch(() => {

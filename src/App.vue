@@ -5,6 +5,7 @@
         <div class="top-navigation">
           <h3 id="app-name">sikka:būya</h3>
           <span class="subtitle">{{ $t("general.type_catalogue") }}</span>
+          <div class="version">version: {{ version }}</div>
           <nav>
             <ButtonGroup
               id="language"
@@ -29,6 +30,7 @@ export default {
   name: "App",
   data: function () {
     return {
+      version: "",
       language: "de",
     };
   },
@@ -38,6 +40,8 @@ export default {
     },
   },
   created: function () {
+    this.version = require("../package.json").version
+
     const lang = window.localStorage.getItem("language", this.$i18n.locale);
     if (lang) {
       this.language = lang;
@@ -113,6 +117,12 @@ button {
   box-sizing: border-box;
 
   @include interactive();
+}
+
+.version{
+  font-size: 0.5em;
+  opacity: 0.5;
+  padding: 10px;
 }
 
 label {
