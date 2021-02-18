@@ -5,6 +5,8 @@ const general = {
         "Neuen Typ anlegen",
     manage_properties:
         "Eigenschaften verwalten",
+    no:
+        "nein",
     type_catalogue:
         "Typenkatalog",
     longitude:
@@ -18,7 +20,8 @@ const general = {
     server_status:
         "server status",
     delete_submit:
-        "Entfernen"
+        "Entfernen",
+    yes: "ja"
 }
 
 const property = {

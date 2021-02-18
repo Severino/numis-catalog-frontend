@@ -27,7 +27,7 @@ export default {
   },
   computed: {
     text: function() {
-      return this.value === true? "Ja" : "Nein";
+      return this.value === true? this.$t("general.yes") : this.$t("general.no");
     },
   },
   methods: {

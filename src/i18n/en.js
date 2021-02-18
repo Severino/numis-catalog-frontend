@@ -5,6 +5,7 @@ const general = {
         "create new type",
     manage_properties:
         "manage properties",
+    no: "no",
     type_catalogue:
         "type catalogue",
     longitude:
@@ -18,7 +19,8 @@ const general = {
     server_status:
         "server status",
     delete_submit:
-        "Delete"
+        "Delete",
+    yes: "yes"
 }
 
 const property = {
