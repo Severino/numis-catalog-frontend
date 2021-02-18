@@ -87,7 +87,7 @@ export default {
       return [
         {
           key: "role_option_00",
-          text: this.$tc("role.overlord"),
+          text: this.$tc("role.buyid"),
           value: "overlord",
         },
         {

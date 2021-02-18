@@ -60,6 +60,8 @@ const property = {
         "mint as on coin",
     nominal:
         "nominal | nominals",
+    overlord:
+        "overlord | overlords",
     outer_circular_text:
         "outer marginal inscription",
     person:
@@ -100,7 +102,7 @@ const role = {
     cutter: "die cutter | die cutters",
     heir: "caliphal heir-apparent | caliphal heir-apparent",
     warden: "mint warden | mint wardens",
-    overlord: "overlord | overlords",
+    buyid: "Būyid | Būyids",
     caliph: "caliph | caliphs"
 }
 

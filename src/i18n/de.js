@@ -60,6 +60,8 @@ const property = {
         "Prägeort wie auf Münze",
     nominal:
         "Nominal | Nominale",
+    overlord:
+        "Oberherr | Oberherren",
     outer_circular_text:
         "äußere Umschrift",
     person:
@@ -100,7 +102,7 @@ const role = {
     cutter: "Stempelschneider | Stempelschneider",
     heir: "designierter Thronfolger des Kalifen | designierter Thronfolger des Kalifen",
     warden: "Münzwardein | Münzwardeien",
-    overlord: "Oberherr | Oberherren",
+    buyid: "Būyide | Būyiden",
     caliph: "Kalif | Kalifen"
 }
 

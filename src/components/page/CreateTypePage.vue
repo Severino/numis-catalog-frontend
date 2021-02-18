@@ -62,7 +62,7 @@
     <List
       v-on:add="addOberherr"
       :description="$t('info.overlords')"
-      :title="$tc('role.overlord', 2)"
+      :title="$tc('property.overlord', 2)"
       class="overlords needs-spacing"
     >
       <p></p>
@@ -81,7 +81,7 @@
       </ListItem>
     </List>
 
-    <LabeledInputContainer :label="$t('role.caliph')">
+    <LabeledInputContainer :label="$tc('role.caliph')">
       <DataSelectField table="persons" attribute="name" />
     </LabeledInputContainer>
     <List
