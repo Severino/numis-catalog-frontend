@@ -16,7 +16,7 @@
         :data-id="search.id"
         @click.stop="setValue"
       >
-        {{ search.name }}
+        {{ showTextContent(search) }}
       </li>
     </ul>
   </div>
@@ -27,7 +27,7 @@ import Query from "../../../src/database/query";
 
 export default {
   name: "DataSelectField",
-  data: function () {
+  data: function() {
     return {
       id: null,
       value: "",
@@ -41,34 +41,41 @@ export default {
       required: true,
     },
     attribute: {
-      type: String,
-      required: true,
+      type: String
     },
+    // Text allows us to format the text as we want to.
+    // This is an alternative to attribute.
+    // Use JavaScript template literals placeholders ('${your_variable}')
+    text: {
+      type: String,
+    },
+    query: String,
+    queryCommand: String,
     msg: String,
     tooltip: String,
     placeholder: String,
   },
   methods: {
-    setValue: function (event) {
+    setValue: function(event) {
       const target = event.target;
       this.value = target.textContent;
       this.id = target.getAttribute("data-id", this.id);
       this.listVisible = false;
     },
-    showList: function () {
+    showList: function() {
       this.listVisible = true;
     },
-    hideList: function () {
+    hideList: function() {
       setTimeout(() => {
         this.listVisible = false;
       }, 300);
     },
-    initId: function () {
+    initId: function() {
       this.getData().forEach((el) => {
         if (el.id > this.$data.id) this.$data.id = el.id + 1;
       });
     },
-    getData: function () {
+    getData: function() {
       let loaded;
       try {
         loaded = JSON.parse(window.localStorage.getItem(this.$props.table));
@@ -78,46 +85,36 @@ export default {
 
       return loaded || [];
     },
-    createEntry: function () {
-      // const data = this.getData();
-      // let id = 0;
-      // data.forEach((datapoint) => {
-      //   if (datapoint.id >= id) {
-      //     id = datapoint.id + 1;
-      //   }
-      // });
-      // const created = {
-      //   id,
-      // };
-      // created[this.$props.attribute] = this.$data.value;
-      // data.push(created);
-      // localStorage.setItem(this.$props.table, JSON.stringify(data));
-      // this.searchEntry();
-    },
-    searchEntry: function () {
-      const queryCommand = `search${
-        this.table[0].toUpperCase() + this.table.slice(1)
-      }`;
-      const query = `query{
+    searchEntry: function() {
+      let queryCommand;
+      let query;
+      if (this.query) {
+        query = this.query;
+        queryCommand = this.queryCommand;
+      } else {
+        queryCommand = `search${this.table[0].toUpperCase() +
+          this.table.slice(1)}`;
+        query = `query{
         ${queryCommand}
         (text: "${this.value}"){id, name}
       }`;
-      console.log(query);
+      }
+
       Query.raw(query)
         .then((result) => {
           this.search_results = result.data.data[queryCommand];
+          console.log(result.data.data, queryCommand)
         })
         .catch(console.error);
-
-      // const data = this.getData();
-
-      // console.log(data);
-      // const match = data.filter((el) => {
-      //   return el[this.$props.attribute] == this.$data.value;
-      // });
-      // console.log(match.length);
-
-      // this.$data.id = (match.length == 1)?  match[0].id : null;
+    },
+    showTextContent: function(search) {
+      if (this.attribute) return search[this.attribute] || "";
+      else if (this.text) {
+        return this.text.replace(/\${(.+?)}/g, function(match, name) {
+          return search[name] || "";
+        });
+      }
+      return "";
     },
   },
 };
@@ -187,4 +184,4 @@ button {
     }
   }
 }
-</style> 
+</style>

@@ -53,9 +53,9 @@
     <List v-on:add="addCoinMaster" :title="$t('property.coin_master')">
       <TitledPersonSelect
         v-for="coin_master in coinMasters"
-        table="MasterOfCoins"
+        table="persons"
         attribute="name"
-        :key="coin_master.id"
+        :key="'mint-warden-id-' + coin_master.id"
       ></TitledPersonSelect>
     </List>
 
@@ -74,15 +74,15 @@
         v-for="(oberherr, index) of oberherren"
         :key="oberherr.id"
         v-on:remove="removeOberherr"
-        :object="oberherr"
+        :object="'oberherren-id-'+oberherr"
       >
         <div class="list-number">{{ index + 1 }}</div>
         <TitledPersonSelect />
       </ListItem>
     </List>
 
-    <LabeledInputContainer :label="$tc('role.caliph')">
-      <DataSelectField table="persons" attribute="name" />
+    <LabeledInputContainer :label="$tc('role.caliph')" >
+      <DataSelectField table="person" text="${name} (${role})" />
     </LabeledInputContainer>
     <List
       :title="$t('property.additional_persons')"
@@ -95,11 +95,11 @@
 
       <ListItem
         v-for="other in otherPersons"
-        :key="other.id"
+        :key="'other-person-id-' + other.id"
         v-on:remove="removeOtherPerson"
         :object="other"
       >
-        <!-- <DataSelectField table="person" attribute="name" /> -->
+        <DataSelectField table="person" text="${name} (${role})" query="{getPersonsWithRole{id,name, role}}" queryCommand="getPersonsWithRole" />
       </ListItem>
     </List>
 
@@ -188,14 +188,14 @@ export default {
     SimpleFormattedField,
   },
   computed: {
-    productionLabels: function () {
+    productionLabels: function() {
       return [
         this.$t("property.procedures.pressed"),
         this.$t("property.procedures.cast"),
       ];
     },
   },
-  data: function () {
+  data: function() {
     return {
       procedure: "pressed",
       productionOptions: ["pressed", "cast"],
@@ -222,65 +222,52 @@ export default {
     };
   },
   methods: {
-    frontChanged: function (coinSideObject) {
+    frontChanged: function(coinSideObject) {
       this.front = coinSideObject;
     },
-    backChanged: function (coinSideObject) {
+    backChanged: function(coinSideObject) {
       this.back = coinSideObject;
     },
-    cursiveChanged: function (value) {
+    cursiveChanged: function(value) {
       this.hasCursiveScript = value;
     },
-    addPiece: function () {
+    addPiece: function() {
       this.pieces.push({
         id: this.piecesId++,
         text: "",
       });
     },
-    addCoinMaster: function () {
+    addCoinMaster: function() {
       this.coinMasters.push({
         id: this.coinMastersId++,
         text: "",
       });
     },
-    addUmschrift: function () {
-      this.umschriften.push({
-        id: this.umschriftId++,
-        text: "",
-      });
-    },
-    addOberherr: function () {
+    addOberherr: function() {
       this.oberherren.push({
         id: this.oberherrenId++,
         text: "",
       });
     },
-    addOtherPerson: function () {
+    addOtherPerson: function() {
       this.otherPersons.push({
         id: this.otherPersonsId++,
         name: "",
         role: "",
       });
     },
-    removeUmschrift: function (item) {
+    removeOberherr: function(item) {
       console.log(item);
-      const idx = this.$data.umschriften.indexOf(item);
+      const idx = this.oberherren.indexOf(item);
       if (idx != -1) {
         this.oberherren.splice(idx, 1);
       }
     },
-    removeOberherr: function (item) {
+    removeOtherPerson: function(item) {
       console.log(item);
-      const idx = this.$data.oberherren.indexOf(item);
+      const idx = this.otherPersons.indexOf(item);
       if (idx != -1) {
-        this.oberherren.splice(idx, 1);
-      }
-    },
-    removeOtherPerson: function (item) {
-      console.log(item);
-      const idx = this.$data.otherPersons.indexOf(item);
-      if (idx != -1) {
-        this.oberherren.splice(idx, 1);
+        this.otherPersons.splice(idx, 1);
       }
     },
   },
@@ -318,15 +305,14 @@ label {
   }
 }
 
-.pieces-list{
-
-  .list-container button{
-    padding:  0 10px;
+.pieces-list {
+  .list-container button {
+    padding: 0 10px;
   }
   .slot {
     display: flex;
     input {
-      flex:1
+      flex: 1;
     }
   }
 }

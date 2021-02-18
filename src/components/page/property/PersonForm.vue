@@ -17,7 +17,6 @@
         required
       />
       <select v-model="person.role" required>
-        <option disabled value="">-</option>
         <option
           v-for="option in roleOptions"
           v-bind:value="option.value"
@@ -44,6 +43,7 @@ export default {
         .get(id, ["id", "name", "role"])
         .then((result) => {
           this.person = result.data.data.getPerson;
+          if(this.person.role == null) this.person.role = " "
         })
         .catch((err) => {
           this.$data.error = this.$t("error.loading_element");
@@ -79,7 +79,7 @@ export default {
     return {
       error: "",
       loading: true,
-      person: { id: -1, name: "", role: "overlord" },
+      person: { id: -1, name: "", role: " " },
     };
   },
   computed: {
@@ -87,8 +87,8 @@ export default {
       return [
         {
           key: "role_option_00",
-          text: this.$tc("role.buyid"),
-          value: "overlord",
+          text: "-",
+          value: " ",
         },
         {
           key: "role_option_01",

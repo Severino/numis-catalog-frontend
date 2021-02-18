@@ -5,7 +5,8 @@ const general = {
         "create new type",
     manage_properties:
         "manage properties",
-    no: "no",
+    no:
+        "no",
     type_catalogue:
         "type catalogue",
     longitude:
