@@ -11,7 +11,7 @@
     <input class="id-field" type="text" tabindex="-1" :value="id" readonly />
     <ul :class="'search-box ' + (listVisible ? 'visible' : 'hidden')">
       <li v-if="error" class="error non-selectable">{{ error }}</li>
-      <li v-if="!error && searchResults.length == 0" class="non-selectable">
+      <li v-if="!error && !loading && searchResults.length == 0" class="non-selectable">
         {{ $t("message.list_empty") }}
       </li>
       <li
@@ -19,8 +19,10 @@
         :key="search.id"
         :data-id="search.id"
         @click.stop="setValue"
-      ><!-- These comments are necessary, that no whitespace is added!
-        -->{{transformTextContent(search)}}<!--
+      >
+        <!-- These comments are necessary, that no whitespace is added!
+        -->{{ transformTextContent(search)
+        }}<!--
       --></li>
     </ul>
   </div>
@@ -28,6 +30,7 @@
 
 <script>
 import Query from "../../../src/database/query";
+
 
 export default {
   name: "DataSelectField",
@@ -38,6 +41,7 @@ export default {
       listVisible: false,
       hideTimeout: null,
       searchResults: [],
+      loading: false,
       error: "",
     };
   },
@@ -74,6 +78,7 @@ export default {
     },
     focus: function () {
       this.showList();
+      this.searchEntry();
     },
     showList: function () {
       if (this.hideTimeout) clearTimeout(this.hideTimeout);
@@ -129,6 +134,9 @@ export default {
         .catch((error) => {
           console.error(error);
           this.error = error;
+        })
+        .finally(() => {
+          this.loading = false;
         });
     },
     transformTextContent: function (search) {
@@ -199,6 +207,8 @@ button {
   // padding: 10px;
   box-sizing: border-box;
   z-index: 1000;
+  max-height: 50vh;
+  overflow-y: auto;
 
   box-shadow: 1px 2px 3px rgba($color: #000000, $alpha: 0.2);
 
