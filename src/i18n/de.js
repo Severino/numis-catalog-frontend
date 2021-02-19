@@ -130,7 +130,7 @@ const message = {
 
 const error = {
     could_not_update_element:
-        "Das angegebene Element konnte nicht aktualisiert werden. Die Datenbank könnte nicht erreichbar sein.",
+        "Das angegebene Element konnte nicht aktualisiert werden. Die Datenbank ist nicht erreichbar.",
     loading_element:
         "Das angefragte Element konnte nicht geladen werden. Gehe zur Liste zurück oder erstelle ein neues Element hier. Kontaktiere einen Admin, falls das Problem weiterhin besteht."
     ,

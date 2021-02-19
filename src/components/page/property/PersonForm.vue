@@ -43,7 +43,7 @@ export default {
         .get(id, ["id", "name", "role"])
         .then((result) => {
           this.person = result.data.data.getPerson;
-          if(this.person.role == null) this.person.role = " "
+          if (this.person.role == null) this.person.role = " ";
         })
         .catch((err) => {
           this.$data.error = this.$t("error.loading_element");
@@ -100,7 +100,12 @@ export default {
           text: this.$tc("role.cutter"),
           value: "cutter",
         },
-        { key: "role_option_03", text: this.$tc("role.heir"), value: "heir" }
+        { key: "role_option_03", text: this.$tc("role.heir"), value: "heir" },
+        {
+          key: "role_option_04",
+          text: this.$tc("role.warden"),
+          value: "warden",
+        },
       ];
     },
   },
