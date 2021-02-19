@@ -49,6 +49,8 @@ export default {
 button {
   align-self: stretch;
   color: whitesmoke;
+  padding: 0 10px;
+
   background-color: rgb(231, 106, 106);
   &:focus {
     border-color: rgb(189, 81, 81);

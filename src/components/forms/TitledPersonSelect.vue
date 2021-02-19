@@ -8,29 +8,31 @@
         :placeholder="$tc('attribute.name')"
       ></DataSelectField>
       <List :title="$tc('property.title')" @add="addTitle">
-        <div
+        <ListItem
           class="list-item"
           v-for="title in titles"
-          :key="`${person}-${title}`"
+          :key="`title-${title.key}`"
+          @remove="removeTitle"
+          :object="title"
         >
-          <DataSelectField
-            table="Title"
-            attribute="name"
-            id="title" />
-        </div>
+          <DataSelectField table="Title" attribute="name" id="title" />
+        </ListItem>
       </List>
 
       <List :title="$tc('property.honorific')" @add="addHonorific">
-        <div
+        <ListItem
           class="list-item"
           v-for="honorific in honorifics"
-          :key="`${person}-${honorific}`"
+          :key="`honorific-${honorific.key}`"
+          @remove="removeHonorific"
+          :object="honorific"
         >
           <DataSelectField
-            table="Ehrennamen"
+            table="honorific"
             attribute="name"
-            id="name-of-honor" />
-        </div>
+            id="name-of-honor"
+          />
+        </ListItem>
       </List>
     </div>
   </div>
@@ -39,12 +41,14 @@
 <script>
 import DataSelectField from "./DataSelectField.vue";
 import List from "./List.vue";
+import ListItem from "./ListItem.vue";
 
 export default {
   name: "TitledPersonSelect",
   components: {
     DataSelectField,
     List,
+    ListItem,
   },
   props: {
     person: String,
@@ -61,12 +65,35 @@ export default {
       },
     },
   },
+  mounted: function () {
+    this.$props.honorifics.forEach((honorific) => {
+      honorific.key = this.honorificsKey++;
+    });
+
+    this.$props.titles.forEach((honorific) => {
+      honorific.key = this.titleKey++;
+    });
+  },
+  data: function () {
+    return {
+      honorificsKey: 0,
+      titleKey: 0,
+    };
+  },
   methods: {
     addTitle: function () {
-      this.titles.push({ id: -1, name: "" });
+      this.titles.push({ key: this.titleKey++, id: -1, name: "" });
+    },
+    removeTitle: function (title) {
+      let idx = this.titles.findIndex((otherTitle) => title == otherTitle);
+      if (idx != -1) this.titles.splice(idx, 1);
     },
     addHonorific: function () {
-      this.honorifics.push({ id: -1, name: "" });
+      this.honorifics.push({ key: this.honorificsKey++, id: -1, name: "" });
+    },
+    removeHonorific(honorific) {
+      let idx = this.honorifics.findIndex(honorific);
+      if (idx != -1) this.honorifics.splice(idx, 1);
     },
   },
 };
@@ -75,7 +102,6 @@ export default {
 
 <style  lang="scss">
 @import "@/scss/_import.scss";
-
 
 .titled-person-select .title-row {
   margin-left: 10px;
