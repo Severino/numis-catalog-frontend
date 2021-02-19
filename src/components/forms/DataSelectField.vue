@@ -2,22 +2,26 @@
   <div class="data-select">
     <input
       class="name-field"
-      @input="searchEntry"
-      @focus="showList"
+      @input="input"
+      @focus="focus"
       @blur="hideList"
       :placeholder="placeholder"
       v-model="value"
     />
     <input class="id-field" type="text" tabindex="-1" :value="id" readonly />
     <ul :class="'search-box ' + (listVisible ? 'visible' : 'hidden')">
+      <li v-if="error" class="error non-selectable">{{ error }}</li>
+      <li v-if="!error && searchResults.length == 0" class="non-selectable">
+        {{ $t("message.list_empty") }}
+      </li>
       <li
-        v-for="search of search_results"
+        v-for="search of searchResults"
         :key="search.id"
         :data-id="search.id"
         @click.stop="setValue"
-      >
-        {{ showTextContent(search) }}
-      </li>
+      ><!-- These comments are necessary, that no whitespace is added!
+        -->{{transformTextContent(search)}}<!--
+      --></li>
     </ul>
   </div>
 </template>
@@ -27,12 +31,14 @@ import Query from "../../../src/database/query";
 
 export default {
   name: "DataSelectField",
-  data: function() {
+  data: function () {
     return {
       id: null,
       value: "",
       listVisible: false,
-      search_results: [],
+      hideTimeout: null,
+      searchResults: [],
+      error: "",
     };
   },
   props: {
@@ -41,7 +47,7 @@ export default {
       required: true,
     },
     attribute: {
-      type: String
+      type: String,
     },
     // Text allows us to format the text as we want to.
     // This is an alternative to attribute.
@@ -56,26 +62,37 @@ export default {
     placeholder: String,
   },
   methods: {
-    setValue: function(event) {
+    setValue: function (event) {
       const target = event.target;
       this.value = target.textContent;
       this.id = target.getAttribute("data-id", this.id);
       this.listVisible = false;
     },
-    showList: function() {
+    input: function () {
+      this.searchEntry();
+      this.id = null;
+    },
+    focus: function () {
+      this.showList();
+    },
+    showList: function () {
+      if (this.hideTimeout) clearTimeout(this.hideTimeout);
       this.listVisible = true;
     },
-    hideList: function() {
-      setTimeout(() => {
+    hideList: function () {
+      this.hideTimeout = setTimeout(() => {
         this.listVisible = false;
-      }, 300);
+        if (!this.id) {
+          this.value = "";
+        }
+      }, 200);
     },
-    initId: function() {
+    initId: function () {
       this.getData().forEach((el) => {
         if (el.id > this.$data.id) this.$data.id = el.id + 1;
       });
     },
-    getData: function() {
+    getData: function () {
       let loaded;
       try {
         loaded = JSON.parse(window.localStorage.getItem(this.$props.table));
@@ -85,32 +102,39 @@ export default {
 
       return loaded || [];
     },
-    searchEntry: function() {
+    searchEntry: function () {
       let queryCommand;
       let query;
       if (this.query) {
         query = this.query;
         queryCommand = this.queryCommand;
       } else {
-        queryCommand = `search${this.table[0].toUpperCase() +
-          this.table.slice(1)}`;
+        queryCommand = `search${
+          this.table[0].toUpperCase() + this.table.slice(1)
+        }`;
         query = `query{
         ${queryCommand}
         (text: "${this.value}"){id, name}
       }`;
       }
 
+      console.log(query);
+
       Query.raw(query)
         .then((result) => {
-          this.search_results = result.data.data[queryCommand];
-          console.log(result.data.data, queryCommand)
+          console.log(result.data.data[queryCommand]);
+          this.searchResults = result.data.data[queryCommand];
+          this.error = "";
         })
-        .catch(console.error);
+        .catch((error) => {
+          console.error(error);
+          this.error = error;
+        });
     },
-    showTextContent: function(search) {
+    transformTextContent: function (search) {
       if (this.attribute) return search[this.attribute] || "";
       else if (this.text) {
-        return this.text.replace(/\${(.+?)}/g, function(match, name) {
+        return this.text.replace(/\${(.+?)}/g, function (match, name) {
           return search[name] || "";
         });
       }
@@ -138,6 +162,10 @@ export default {
   position: relative;
 }
 
+.error {
+  background-color: $red;
+}
+
 .name-field {
   flex: 1;
 
@@ -151,6 +179,7 @@ export default {
   background-color: rgb(226, 226, 226);
   border-radius: 0;
   border: none;
+  text-align: center;
 }
 
 button {
@@ -177,7 +206,11 @@ button {
     border-bottom: 1px solid whitesmoke;
     padding: 10px;
 
-    &:hover {
+    &.non-selectable {
+      background-color: whitesmoke;
+    }
+
+    &:not(.non-selectable):hover {
       color: whitesmoke;
       background-color: $primary-color;
       cursor: pointer;

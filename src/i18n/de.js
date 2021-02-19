@@ -118,6 +118,16 @@ const attribute = {
         "Breitengrad"
 }
 
+
+const info = {
+    overlords: "Note: The overlords are entered from top (the lowest), to bottom (the highest)."
+
+}
+
+const message = {
+    list_empty: "Keine Elemente in der Liste."
+}
+
 const error = {
     could_not_update_element:
         "Das angegebene Element konnte nicht aktualisiert werden. Die Datenbank könnte nicht erreichbar sein.",
@@ -128,10 +138,6 @@ const error = {
         "List konnte nicht geladen werden. Anscheinend ist die Datenbank nicht verfügbar."
 }
 
-const info = {
-    overlords: "Note: The overlords are entered from top (the lowest), to bottom (the highest)."
-
-}
 
 const warning = {
     list_is_empty:
@@ -158,6 +164,7 @@ module.exports = {
     form,
     info,
     general,
+    message,
     navigation,
     property,
     role,

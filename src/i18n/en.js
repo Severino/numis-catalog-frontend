@@ -118,6 +118,15 @@ const attribute = {
         "latitude"
 }
 
+
+const info = {
+    overlords: "Notiz: Die Oberherren werden von oben (dem niedrigsten), bis unten (dem höchsten) eingetragen."
+}
+
+const message = {
+    list_empty: "No items in list."
+}
+
 const error = {
     could_not_update_element:
         "Element could not be updated. Database maybe inacessible.",
@@ -126,10 +135,6 @@ const error = {
     loading_list:
         "Could not load list. Database seems to be offline."
 };
-
-const info = {
-    overlords: "Notiz: Die Oberherren werden von oben (dem niedrigsten), bis unten (dem höchsten) eingetragen."
-}
 
 const warning = {
     list_is_empty:
@@ -157,6 +162,7 @@ module.exports = {
     form,
     info,
     general,
+    message,
     navigation,
     property,
     role,

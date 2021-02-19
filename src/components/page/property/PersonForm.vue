@@ -100,12 +100,7 @@ export default {
           text: this.$tc("role.cutter"),
           value: "cutter",
         },
-        { key: "role_option_03", text: this.$tc("role.heir"), value: "heir" },
-        {
-          key: "role_option_04",
-          text: this.$tc("role.warden"),
-          value: "warden",
-        },
+        { key: "role_option_03", text: this.$tc("role.heir"), value: "heir" }
       ];
     },
   },
