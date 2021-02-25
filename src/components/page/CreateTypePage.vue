@@ -75,14 +75,19 @@
           v-on:remove="removeIssuer"
           :object="issuer"
         >
-          <TitledPersonSelect
-            name="isser"
-            table="persons"
-            attribute="name"
-            :value="issuer"
-            :key="`issuer-${issuer.key}`"
-            @input="issuerChanged($event, issuer_idx)"
-          ></TitledPersonSelect>
+          <div class="div" :data-invalid="issuer.error">
+            <div v-if="issuer.error" class="invalid-warning">
+              {{ issuer.error }}
+            </div>
+            <TitledPersonSelect
+              name="isser"
+              table="persons"
+              attribute="name"
+              :value="issuer"
+              :key="`issuer-${issuer.key}`"
+              @input="issuerChanged($event, issuer_idx)"
+            ></TitledPersonSelect>
+          </div>
         </ListItem>
       </List>
       <List
@@ -95,14 +100,13 @@
         <div v-if="coin.overlords.length == 0" class="info">
           {{ $t("warning.list_is_empty") }}
         </div>
-
         <ListItem
-          v-for="(overlord, index) of coin.overlords"
+          v-for="overlord of coin.overlords"
           :key="'overlord-key-' + overlord.key"
           v-on:remove="removeOverlord"
           :object="overlord"
         >
-          <div class="list-number">{{ index + 1 }}</div>
+          <div class="overlord-rank">{{ overlord.rank }}</div>
           <TitledPersonSelect
             name="overlord"
             :value="overlord"
@@ -222,6 +226,8 @@ import SimpleFormattedField from "../forms/SimpleFormattedField.vue";
 import Query from "../../database/query.js";
 import LoadingSpinner from "../misc/LoadingSpinner.vue";
 
+import axios from "axios";
+
 export default {
   name: "CreateTypePage",
   components: {
@@ -241,19 +247,20 @@ export default {
     LoadingSpinner,
   },
   computed: {
-    productionLabels: function () {
+    productionLabels: function() {
       return [
         this.$t("property.procedures.pressed"),
         this.$t("property.procedures.cast"),
       ];
     },
   },
-  mounted: function () {
-    // window.onbeforeunload = function (event) {
-    //   return "ASD";
-    // };
+  mounted: function() {
+    window.onbeforeunload = (event) => {
+      if (!this.submitted) return "ASD";
+      else return true;
+    };
   },
-  created: function () {
+  created: function() {
     let id = this.$route.params.id;
     if (id != null) {
       Query.raw(
@@ -337,22 +344,26 @@ export default {
                 cursiveScript
                 isolatedCharacters
                 literature
-                pieces 
+                pieces
         }
       }
       `
       )
         .then((obj) => {
-          if (obj.message && obj.message.errors && obj.message.errors.length > 0) {
+          if (
+            obj.message &&
+            obj.message.errors &&
+            obj.message.errors.length > 0
+          ) {
             this.errorMessage = obj.message.errors[0];
-            console.log("ERROR")
+            console.log("ERROR");
           } else {
             const type = obj.data.data.getCoinType;
 
-            if(type.literature) type.literature = decodeURI(type.literature)
+            if (type.literature) type.literature = decodeURI(type.literature);
 
             // Sorts the overlords appropriately
-            if(!type.overlords) type.overlords = []
+            if (!type.overlords) type.overlords = [];
             type.overlords.sort((a, b) => (a.rank > b.rank ? 1 : -1));
 
             type.overlords.forEach((overlord) => {
@@ -364,7 +375,7 @@ export default {
               );
             });
 
-            if(!type.issuers) type.issuers = []
+            if (!type.issuers) type.issuers = [];
             type.issuers.forEach((issuer) => {
               issuer.key = this.key++;
               issuer.titles.forEach((title) => (title.key = this.key++));
@@ -373,12 +384,12 @@ export default {
               );
             });
 
-            if(!type.otherPersons) type.otherPersons = []
+            if (!type.otherPersons) type.otherPersons = [];
             type.otherPersons.forEach(
               (otherPerson) => (otherPerson.key = this.key++)
             );
 
-            if(!type.pieces) type.pieces = []
+            if (!type.pieces) type.pieces = [];
             type.pieces.forEach((piece, index) => {
               type.pieces[index] = { key: this.key++, value: piece };
             });
@@ -406,11 +417,11 @@ export default {
     }
   },
   beforeRouteLeave(to, from, next) {
-    if (confirm(this.$t("warning.leave_without_saving"))) {
+    if (this.submitted || confirm(this.$t("warning.leave_without_saving"))) {
       next();
     } else next(false);
   },
-  data: function () {
+  data: function() {
     return {
       coin: {
         id: null,
@@ -446,42 +457,44 @@ export default {
         literature: "",
         pieces: [],
       },
+      submitted: false,
       errorMessage: "",
+      validationErrors: [],
       loading: true,
       productionOptions: ["pressed", "cast"],
       key: 0,
     };
   },
   watch: {
-    key: function (old, next) {
+    key: function(old, next) {
       console.log(next);
     },
   },
   methods: {
-    aversChanged: function (coinSideObject) {
+    aversChanged: function(coinSideObject) {
       this.coin.avers = coinSideObject;
     },
-    cancel: function () {
+    cancel: function() {
       this.$router.push("/type/");
     },
-    reverseChanged: function (coinSideObject) {
+    reverseChanged: function(coinSideObject) {
       console.log(coinSideObject.misc);
 
       this.coin.reverse = coinSideObject;
     },
-    issuerChanged: function (issuer, index) {
+    issuerChanged: function(issuer, index) {
       this.coin.issuers.splice(index, 1, issuer);
     },
-    addPiece: function () {
+    addPiece: function() {
       this.coin.pieces.push({
         key: "piece-" + this.key++,
         text: "",
       });
     },
-    removePiece: function (index) {
+    removePiece: function(index) {
       this.coin.pieces.splice(index, 1);
     },
-    addIssuer: function () {
+    addIssuer: function() {
       this.coin.issuers.push({
         key: "issuer-" + this.key++,
         person: {
@@ -493,7 +506,7 @@ export default {
         honorifics: [],
       });
     },
-    removeIssuer: function (item) {
+    removeIssuer: function(item) {
       const idx = this.coin.issuers.indexOf(item);
       if (idx != -1) {
         this.coin.issuers.splice(idx, 1);
@@ -502,10 +515,10 @@ export default {
         });
       }
     },
-    addOverlord: function () {
+    addOverlord: function() {
       this.coin.overlords.push({
         key: "overlord-" + this.key++,
-        rank: this.coin.overlords.length,
+        rank: this.coin.overlords.length + 1,
         person: {
           id: null,
           name: "",
@@ -514,7 +527,7 @@ export default {
         honorifics: [],
       });
     },
-    addOtherPerson: function () {
+    addOtherPerson: function() {
       this.coin.otherPersons.push({
         id: null,
         key: this.key++,
@@ -522,10 +535,10 @@ export default {
         role: "",
       });
     },
-    overlordChanged: function (overlord, index) {
+    overlordChanged: function(overlord, index) {
       this.coin.overlords.splice(index, 1, overlord);
     },
-    removeOverlord: function (item) {
+    removeOverlord: function(item) {
       const idx = this.coin.overlords.indexOf(item);
       if (idx != -1) {
         this.coin.overlords.splice(idx, 1);
@@ -534,14 +547,100 @@ export default {
         });
       }
     },
-    removeOtherPerson: function (item) {
+    removeOtherPerson: function(item) {
       console.log(item);
       const idx = this.coin.otherPersons.indexOf(item);
       if (idx != -1) {
         this.coin.otherPersons.splice(idx, 1);
       }
     },
-    submitForm: function () {
+    submitForm: function() {
+      function validateTitledPerson(titledPerson) {
+        return titledPerson.person.id;
+      }
+
+      let invalid = false;
+
+      this.coin.issuers.forEach((issuer, index) => {
+        if (!validateTitledPerson(issuer)) {
+          console.error(issuer);
+          issuer.error =
+            "Person ist nicht valide. Geben Sie eine Person an oder löschen Sie das Element.";
+          this.coin.issuers.splice(index, 1, issuer);
+          invalid = true;
+        }
+      });
+
+      // const invalidOverlords = [];
+      // this.coin.overlords.forEach((overlord) => {
+      //   if (!validateTitledPerson(overlord)) {
+      //     invalidOverlords.push(overlord);
+      //   }
+      // });
+
+      // const invalidOtherPersons = [];
+      // this.coin.otherPersons.forEach((otherPerson) => {
+      //   if (!validateTitledPerson(otherPerson)) {
+      //     invalidOtherPersons.push(otherPerson);
+      //   }
+      // });
+
+      // const invalids = [
+      //   ...invalidIssuers,
+      //   // ...invalidOverlords,
+      //   // ...invalidOtherPersons,
+      // ];
+      // invalids.forEach((invalid) => {
+      //   console.log(invalid)
+
+      //   invalid.error =
+
+      // });
+
+      if (invalid) {
+        setTimeout(() => {
+          const target = document.querySelector(".invalid-warning");
+          console.log(target);
+          if (target) {
+            target.scrollIntoView({
+              top: target.clientY,
+              behavior: "smooth",
+            });
+          }
+        }, 10);
+
+        return;
+      }
+
+      // TODO ADA
+      const query = `
+        mutation ($projectId:String, $treadwellId:String, $mint:ID, $mintAsOnCoin:String, $material:ID, $nominal:ID, 
+        $yearOfMinting:String, $donativ:Boolean, $procedure:String, $issuers:[TitledPerson], $otherPersons:[Person], $overlords:[TitledPerson], 
+        $caliph:Person, $avers:CoinSideField, $reverse:CoinSideField, $cursiveScript:Boolean, $isolatedCharacters:String, $literature:String, $pieces:[String]){
+        addCoinType(data: {
+            projectId: $projectId, 
+            treadwellId: $treadwellId, 
+            mint: $mint, 
+            mintAsOnCoin: $mintAsOnCoin, 
+            material: $material, 
+            nominal: $nominal, 
+            yearOfMinting: $yearOfMinting, 
+            donativ: $donativ, 
+            procedure: $procedure, 
+            issuers: $issuers, 
+            otherPersons: $otherPersons, 
+            overlords: $overlords, 
+            caliph: $caliph, 
+            avers: $avers, 
+            reverse: $reverse, 
+            cursiveScript: $cursiveScript, 
+            isolatedCharacters: $isolatedCharacters, 
+            literature: $literature, 
+            pieces: $pieces
+         })
+         }
+   `;
+
       function transformCoinObject(obj) {
         const pieces = [];
         for (let [key, val] of Object.entries(obj)) {
@@ -563,36 +662,29 @@ export default {
                 yearOfMinting: "${this.coin.yearOfMinting}",
                 donativ: ${this.coin.donativ},
                 procedure: "${this.coin.procedure}",
-                issuers: [${this.coin.issuers
-                  .filter((issuer) => issuer.person && issuer.person.id != null)
-                  .map(
-                    (issuer) =>
-                      `{ person: ${
-                        issuer.person.id
-                      }, titles: [${issuer.titles
-                        .map((title) => title.id)
-                        .join(",")}], honorifics: [${issuer.honorifics
-                        .map((honorific) => honorific.id)
-                        .join(",")}]}`
-                  )}],
+                issuers: [${this.coin.issuers.map(
+                  (issuer) =>
+                    `{ person: ${
+                      issuer.person.id
+                    }, titles: [${issuer.titles
+                      .map((title) => title.id)
+                      .join(",")}], honorifics: [${issuer.honorifics
+                      .map((honorific) => honorific.id)
+                      .join(",")}]}`
+                )}],
                 otherPersons: [${this.coin.otherPersons
-                  .filter((op) => op.person && op.person.id != null)
                   .map((person) => person.id)
                   .join(",")}]
-                overlords: [${this.coin.overlords
-                  .filter(
-                    (overlord) => overlord.person && overlord.person.id != null
-                  )
-                  .map(
-                    (overlord) =>
-                      `{ person: ${overlord.person.id},rank: ${
-                        overlord.rank
-                      }, titles: [${overlord.titles
-                        .map((title) => title.id)
-                        .join(",")}], honorifics: [${overlord.honorifics
-                        .map((honorific) => honorific.id)
-                        .join(",")}]}`
-                  )}],
+                overlords: [${this.coin.overlords.map(
+                  (overlord) =>
+                    `{ person: ${overlord.person.id},rank: ${
+                      overlord.rank
+                    }, titles: [${overlord.titles
+                      .map((title) => title.id)
+                      .join(",")}], honorifics: [${overlord.honorifics
+                      .map((honorific) => honorific.id)
+                      .join(",")}]}`
+                )}],
                 caliph: ${this.coin.caliph.id} ,
                 avers: ${transformCoinObject(this.coin.avers)},
                 reverse: ${transformCoinObject(this.coin.reverse)} ,
@@ -609,7 +701,10 @@ export default {
         console.log(mutation);
 
         Query.raw(mutation)
-          .then((result) => this.$router.push("/type/"))
+          .then((result) => {
+            this.submitted = true;
+            this.$router.push("/type/");
+          })
           .catch(console.error);
       } else {
         const errorMsg = "UPDATE NOT SUPPORTED YET";
@@ -687,9 +782,14 @@ label {
   }
 }
 
-.list-number {
+.overlord-rank {
   padding: 5px;
   display: flex;
   align-items: center;
+}
+
+.invalid-warning {
+  padding: 20px 50px;
+  background-color: $red;
 }
 </style>

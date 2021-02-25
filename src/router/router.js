@@ -5,6 +5,7 @@ import Inventory from "@/components/page/Inventory"
 import LandingPage from "@/components/page/LandingPage.vue"
 import Overview from "@/components/page/Overview.vue"
 import TypeOverview from "@/components/page/TypeOverview.vue"
+import TestPage from "@/components/page/TestPage.vue"
 
 
 import MaterialForm from "@/components/page/property/MaterialForm"
@@ -15,10 +16,13 @@ import MintForm from "@/components/page/property/MintForm"
 import NominalForm from "@/components/page/property/NominalForm"
 
 
-
 Vue.use(VueRouter)
 
 const routes = [
+  {
+    path: "/test",
+    component: TestPage
+  },
   {
     path: '/',
     name: 'Home',

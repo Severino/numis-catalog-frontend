@@ -1,7 +1,6 @@
 <template>
   <div class="simple-formatted-field">
-    <textarea value="value" @input="input" />
-    <!-- <Row class="toolbar" style="margin-bottom: 10px">
+    <Row class="toolbar" style="margin-bottom: 10px">
       <button @click="align('left')">Left</button>
       <button @click="align('center')">Center</button>
       <button @click="align('right')">Right</button>
@@ -11,13 +10,13 @@
     </Row>
 
     <div
+      v-once
       ref="field"
       class="formatted-text-area"
       @input="input"
       v-html="value"
       contenteditable
-    > -->
-    <!-- </div> -->
+    ></div>
   </div>
 </template>
 
@@ -33,44 +32,82 @@ export default {
       required: true,
     },
   },
+  data: function() {
+    return {
+      range: null,
+    };
+  },
   watch: {
-    // value: function () {
-    //   this.$refs.field.innerHTML = this.value || "";
-    // },
+    value: function(value) {
+      console.log(value);
+    },
   },
   methods: {
-    getSelected: function () {
-      var node = document.getSelection().anchorNode;
-      return node.nodeType == 3 ? node.parentNode : node;
+    getSelected: function() {
+      let node = document.getSelection().anchorNode;
+      while (
+        node.parentNode &&
+        !node.parentNode.hasAttribute("contenteditable")
+      ) {
+        node = node.parentNode;
+      }
+      console.log(node.nodeType == 3);
+      if (node.parentNode && node.nodeType == 3) {
+        let textNode = node;
+        node = document.createElement("div");
+        textNode.parentNode.insertBefore(node, textNode);
+        node.appendChild(textNode);
+      }
+      // if(node.nodeType)
+      return node;
     },
 
-    align: function (value) {
+    align: function(value) {
       const node = this.getSelected();
       console.log(node);
       Object.assign(node.style, {
         textAlign: value,
-        // color: "red",
       });
-    },
-    toggleBold: function () {
-      document.execCommand("bold", false, null);
-    },
-    toggleCursive: function () {
-      document.execCommand("italic", false, null);
-    },
-    input: function (event) {
-      const target = event.target;
-      console.log(event.target.value)
-      this.$emit("input", target.value);
+      this.$emit("input", this.$refs.field.innerHTML);
 
-      // console.log(event.target.innerHTML);
-      // this.$emit("input", target.innerHTML);
-      // const lastNode = null;
-      // target.childNodes.forEach((node, index) => {
-      //   // console.log("CREATE LINE");
-      //   // TODO: Set care to last position.
-      //   // }
-      // });
+    },
+    toggleBold: function() {
+      document.execCommand("bold", false, null);
+      this.$emit("input", this.$refs.field.innerHTML);
+    },
+    toggleCursive: function() {
+      document.execCommand("italic", false, null);
+      this.$emit("input", this.$refs.field.innerHTML);
+    },
+    input: function(event) {
+      const target = event.target;
+      this.$emit("input", target.innerHTML);
+    },
+
+    /**
+     * Thankfully taken from: https://gist.github.com/dantaex/543e721be845c18d2f92652c0ebe06aa
+     */
+    saveSelection: function() {
+      if (window.getSelection) {
+        var sel = window.getSelection();
+        if (sel.getRangeAt && sel.rangeCount) {
+          return sel.getRangeAt(0);
+        }
+      } else if (document.selection && document.selection.createRange) {
+        return document.selection.createRange();
+      }
+      return null;
+    },
+    restoreSelection: function(range) {
+      if (range) {
+        if (window.getSelection) {
+          var sel = window.getSelection();
+          sel.removeAllRanges();
+          sel.addRange(range);
+        } else if (document.selection && range.select) {
+          range.select();
+        }
+      }
     },
   },
 };
