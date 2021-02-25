@@ -131,7 +131,7 @@
 
         <ListItem
           v-for="otherPerson in coin.otherPersons"
-          :key="'other-person-id-' + otherPerson.id"
+          :key="'other-person-id-' + otherPerson.key"
           v-on:remove="removeOtherPerson"
           :object="otherPerson"
         >
@@ -516,7 +516,8 @@ export default {
     },
     addOtherPerson: function () {
       this.coin.otherPersons.push({
-        id: this.key++,
+        id: null,
+        key: this.key++,
         name: "",
         role: "",
       });
@@ -608,7 +609,7 @@ export default {
         console.log(mutation);
 
         Query.raw(mutation)
-          .then((result) => console.log(result))
+          .then((result) => this.$router.push("/type/"))
           .catch(console.error);
       } else {
         const errorMsg = "UPDATE NOT SUPPORTED YET";
