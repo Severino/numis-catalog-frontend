@@ -1,9 +1,14 @@
 <template>
   <div class="list">
-    <Row class="title-row">
-      <div v-if="title" class="title">{{ title }}</div>
-      <button @click="addEntry">+</button>
-    </Row>
+    <div class="wrapper" >
+      <Row class="title-row">
+        <label v-if="title" class="title"
+          >{{ title }} {{ length !== null ? `(${length})` : "" }}</label
+        >
+        <button @click.stop="addEntry">+</button>
+      </Row>
+    </div>
+
     <p v-if="description" class="description">{{ description }}</p>
     <div class="list-container">
       <slot />
@@ -19,10 +24,15 @@ export default {
   props: {
     title: String,
     description: String,
+    length: { type: Number, default: null },
+  },
+  data: function () {
+    return {
+      isCollapsed: false,
+    };
   },
   methods: {
     addEntry: function () {
-      console.log("ADD ENTRY");
       this.$emit("add");
     },
   },
@@ -37,6 +47,10 @@ export default {
   $left: 15px;
   padding-left: $left * 2;
   position: relative;
+
+  &.collapsed {
+    display: none;
+  }
 
   > * {
     margin-bottom: $padding/2;
@@ -84,7 +98,7 @@ export default {
 }
 
 .description {
-  font-size:0.75rem;
+  font-size: 0.75rem;
 }
 </style>
 
@@ -96,6 +110,11 @@ export default {
   position: relative;
   display: flex;
   flex-direction: column;
+}
+
+.list.collapsible .title-row {
+  border: 1px solid gray;
+  padding: 0 10px;
 }
 
 .list-container {
@@ -111,7 +130,7 @@ export default {
 }
 
 .title-row {
-  align-items: center;
+  align-items: baseline;
 
   button:not(:first-child) {
     max-width: 37px;

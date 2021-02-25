@@ -7,7 +7,7 @@
     >
       <input
         type="radio"
-        :checked="active == option"
+        :checked="value == option"
         :name="id"
         :id="option"
         @change="change"
@@ -27,7 +27,7 @@ export default {
   props: {
     value: {
       type: String,
-      required: true
+      required: true,
     },
     id: {
       type: String,
@@ -42,18 +42,17 @@ export default {
       required: true,
     },
   },
-  data: function() {
+  data: function () {
     return {
       active: null,
     };
   },
   mounted() {
-    const activeOption = this.options.indexOf(this.value)
-    if(activeOption != -1)
-      this.active = this.options[activeOption];
+    const activeOption = this.options.indexOf(this.value);
+    if (activeOption != -1) this.active = this.options[activeOption];
   },
   methods: {
-    change: function(event) {
+    change: function (event) {
       this.$emit("input", event.target.id);
     },
   },

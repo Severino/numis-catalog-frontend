@@ -22,18 +22,24 @@ export default {
       required: true,
     },
     value: {
-      type: Boolean
-    }
+      type: Boolean,
+    },
+  },
+  created: function () {
+    console.log(this.value);
   },
   computed: {
-    text: function() {
-      return this.value === true? this.$t("general.yes") : this.$t("general.no");
+    text: function () {
+      return this.value === true
+        ? this.$t("general.yes")
+        : this.$t("general.no");
     },
   },
   methods: {
-    input: function(event) {
+    input: function (event) {
       const checked = event.target.checked;
       this.$emit("input", checked);
+      console.log(checked);
     },
   },
 };

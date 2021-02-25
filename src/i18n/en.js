@@ -33,7 +33,7 @@ const property = {
         "border and miscellaneous",
     circular_text:
         "marginal inscription | marginal inscriptions",
-    coin_master:
+    issuer:
         "minting authority",
     cursive_script:
         "cursive script",
@@ -115,7 +115,9 @@ const attribute = {
     longitude:
         "longitude",
     latitude:
-        "latitude"
+        "latitude",
+    test:
+        "type",
 }
 
 

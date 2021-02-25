@@ -1,6 +1,6 @@
 <template>
   <div class="restricted-input">
-    <input type="text" @input="validateInput" />
+    <input type="text" :value="value" @input="validateInput" />
     <div class="empty">
       <Info
         :trigger="trigger"
@@ -19,6 +19,7 @@ export default {
   components: { Info },
   name: "RestrictedInputField",
   props: {
+    value: String,
     pattern: {
       type: String,
       required: true,
@@ -37,6 +38,7 @@ export default {
         event.target.value = this.$data.oldValue;
       } else {
         this.$data.oldValue = event.target.value;
+        this.$emit("input", event.target.value)
       }
     },
   },

@@ -6,7 +6,7 @@
     </header>
     <router-link
       class="button icon-button draft"
-      :to="{ name: 'CreateTypePage' }"
+      to="/type"
       draggable="false"
     >
       <PlusBox />

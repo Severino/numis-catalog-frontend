@@ -84,7 +84,7 @@ body {
 }
 
 body {
-  font-family: "Domine";
+  font-family: "Lora";
   font-size: 20px;
 }
 
@@ -127,7 +127,6 @@ button {
 
 label {
   display: block;
-  margin-top: 55px;
   margin-bottom: 10px;
 
   @include interactive();

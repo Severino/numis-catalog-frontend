@@ -5,12 +5,12 @@
       <slot></slot>
     </div>
 
-    <DynamicDeleteButton @remove="triggerRemove" />
+    <DynamicDeleteButton @remove="triggerRemove" v-if="!noRemove" />
   </div>
 </template>
 
 <script>
-import DynamicDeleteButton from './DynamicDeleteButton.vue';
+import DynamicDeleteButton from "./DynamicDeleteButton.vue";
 
 export default {
   components: {
@@ -27,6 +27,7 @@ export default {
     id: {
       required: true,
     },
+    noRemove: { type: Boolean, default: false },
   },
   beforeDestroy: function () {
     if (this.timeout != null) {
@@ -56,7 +57,6 @@ export default {
   align-items: center;
   padding: 0;
 }
-
 
 .slot {
   flex: 1;

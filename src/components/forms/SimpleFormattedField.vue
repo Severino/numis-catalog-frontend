@@ -1,6 +1,7 @@
 <template>
   <div class="simple-formatted-field">
-    <Row class="toolbar" style="margin-bottom: 10px">
+    <textarea value="value" @input="input" />
+    <!-- <Row class="toolbar" style="margin-bottom: 10px">
       <button @click="align('left')">Left</button>
       <button @click="align('center')">Center</button>
       <button @click="align('right')">Right</button>
@@ -9,7 +10,14 @@
       <button @click="toggleCursive">Cursive</button>
     </Row>
 
-    <div class="formatted-text-area" @input="adjust" contenteditable></div>
+    <div
+      ref="field"
+      class="formatted-text-area"
+      @input="input"
+      v-html="value"
+      contenteditable
+    > -->
+    <!-- </div> -->
   </div>
 </template>
 
@@ -20,6 +28,15 @@ export default {
   name: "SimpleFormattedField",
   props: {
     content: String,
+    value: {
+      type: String,
+      required: true,
+    },
+  },
+  watch: {
+    // value: function () {
+    //   this.$refs.field.innerHTML = this.value || "";
+    // },
   },
   methods: {
     getSelected: function () {
@@ -36,32 +53,24 @@ export default {
       });
     },
     toggleBold: function () {
-      const node = this.getSelected();
-      Object.assign(node.style, {
-        fontWeight: node.style.fontWeight == "bold" ? "normal" : "bold",
-      });
+      document.execCommand("bold", false, null);
     },
     toggleCursive: function () {
-      const node = this.getSelected();
-
-      Object.assign(node.style, {
-        fontStyle: node.style.fontStyle == "italic" ? "normal" : "italic",
-      });
+      document.execCommand("italic", false, null);
     },
-    adjust: function (event) {
+    input: function (event) {
       const target = event.target;
+      console.log(event.target.value)
+      this.$emit("input", target.value);
 
-      target.childNodes.forEach((node) => {
-        console.log(node);
-        if (node.nodeType == 3) {
-          console.log("CREATE LINE");
-          const line = document.createElement("div");
-          target.appendChild(line);
-          line.appendChild(node);
-
-          // TODO: Set care to last position.
-        }
-      });
+      // console.log(event.target.innerHTML);
+      // this.$emit("input", target.innerHTML);
+      // const lastNode = null;
+      // target.childNodes.forEach((node, index) => {
+      //   // console.log("CREATE LINE");
+      //   // TODO: Set care to last position.
+      //   // }
+      // });
     },
   },
 };

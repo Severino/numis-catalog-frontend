@@ -28,14 +28,13 @@ export default class Query {
               }
             `
 
-        console.log(query)
         return axios({
             url: host,
             method: "post",
             data: {
                 query
             },
-        })
+        }).catch(console.error)
     }
 
     static raw(query) {

@@ -6,31 +6,49 @@
         attribute="name"
         id="name"
         :placeholder="$tc('attribute.name')"
+        :value="person"
+        @input="personChanged"
       ></DataSelectField>
-      <List :title="$tc('property.title')" @add="addTitle">
+      <List
+        :title="$tc('property.title')"
+        @add="addTitle"
+        :length="titlesLength"
+      >
         <ListItem
           class="list-item"
-          v-for="title in titles"
+          v-for="(title, title_index) in this.titles"
           :key="`title-${title.key}`"
-          @remove="removeTitle"
+          @remove="removeTitle(title_index)"
           :object="title"
         >
-          <DataSelectField table="Title" attribute="name" id="title" />
+          <DataSelectField
+            table="Title"
+            attribute="name"
+            id="title"
+            :value="title"
+            @input="titleChanged($event, title_index)"
+          />
         </ListItem>
       </List>
 
-      <List :title="$tc('property.honorific')" @add="addHonorific">
+      <List
+        :title="$tc('property.honorific')"
+        @add="addHonorific"
+        :length="honorificsLength"
+      >
         <ListItem
           class="list-item"
-          v-for="honorific in honorifics"
+          v-for="(honorific, honorific_index) in honorifics"
           :key="`honorific-${honorific.key}`"
-          @remove="removeHonorific"
+          @remove="removeHonorific(honorific_index)"
           :object="honorific"
         >
           <DataSelectField
             table="honorific"
             attribute="name"
             id="name-of-honor"
+            :value="honorific"
+            @input="honorificChanged($event, honorific_index)"
           />
         </ListItem>
       </List>
@@ -51,49 +69,111 @@ export default {
     ListItem,
   },
   props: {
-    person: String,
-    titles: {
-      type: Array,
-      default: function () {
-        return [];
-      },
-    },
-    honorifics: {
-      type: Array,
-      default: function () {
-        return [];
+    value: {
+      type: Object,
+      required: true,
+      validator: function (prop) {
+        return (
+          // prop.id != undefined &&
+          prop.person != undefined &&
+          prop.titles != undefined &&
+          prop.honorifics != undefined
+        );
       },
     },
   },
-  mounted: function () {
-    this.$props.honorifics.forEach((honorific) => {
-      honorific.key = this.honorificsKey++;
+  created: function () {
+    this.titles.forEach((element) => {
+      element.key = this.buildKey("title");
     });
-
-    this.$props.titles.forEach((honorific) => {
-      honorific.key = this.titleKey++;
-    });
+  },
+  watch: {
+    value: function () {
+      console.log("CHANGED");
+    },
   },
   data: function () {
     return {
-      honorificsKey: 0,
-      titleKey: 0,
+      listKey: 0,
     };
   },
-  methods: {
-    addTitle: function () {
-      this.titles.push({ key: this.titleKey++, id: -1, name: "" });
+  computed: {
+    person: function () {
+      return this.value && this.value.person
+        ? this.value.person
+        : { id: null, name: "" };
     },
-    removeTitle: function (title) {
-      let idx = this.titles.findIndex((otherTitle) => title == otherTitle);
-      if (idx != -1) this.titles.splice(idx, 1);
+    titles: function () {
+      return this.value && this.value.titles ? this.value.titles : [];
+    },
+    honorifics: function () {
+      return this.value && this.value.honorifics ? this.value.honorifics : [];
+    },
+    titlesLength: function () {
+      return this.titles.length;
+    },
+    honorificsLength: function () {
+      return this.honorifics.length;
+    },
+  },
+  methods: {
+    buildKey: function (name) {
+      return `${this.$vnode.key}_${name}_${this.listKey++}`;
+    },
+    personChanged: function (person) {
+      this.changed({ person });
+    },
+    addTitle: function () {
+      const titles = this.titles;
+      console.log(this.buildKey("title"));
+      titles.push({ key: this.buildKey("title"), id: null, name: "" });
+      this.changed({ titles });
+    },
+    removeTitle: function (title_index) {
+      const titles = this.titles;
+      titles.splice(title_index, 1);
+      this.changed({ titles });
     },
     addHonorific: function () {
-      this.honorifics.push({ key: this.honorificsKey++, id: -1, name: "" });
+      const honorifics = this.honorifics;
+      console.log(this.buildKey("honorific"));
+      honorifics.push({ key: this.buildKey("honorific"), id: null, name: "" });
+      this.changed({ honorifics });
     },
-    removeHonorific(honorific) {
-      let idx = this.honorifics.findIndex(honorific);
-      if (idx != -1) this.honorifics.splice(idx, 1);
+    removeHonorific(honorific_index) {
+      const honorifics = this.honorifics;
+      honorifics.splice(honorific_index, 1);
+      this.changed({ honorifics });
+    },
+    honorificChanged: function (honorific, index) {
+      const honorifics = this.honorifics;
+      honorifics.splice(index, 1, honorific);
+      this.changed({ honorifics });
+    },
+    titleChanged: function (title, index) {
+      const titles = this.titles;
+      titles.splice(index, 1, title);
+      this.changed({ titles });
+    },
+    changed: function ({
+      key = this.value.key,
+      person = this.person,
+      titles = this.titles,
+      honorifics = this.honorifics,
+    } = {}) {
+      console.log(this.$vnode.key)
+      console.log("CHANGED:", {
+        key,
+        person,
+        titles,
+        honorifics,
+      });
+      this.$emit("input", {
+        key,
+        person,
+        titles,
+        honorifics,
+      });
     },
   },
 };
@@ -103,9 +183,9 @@ export default {
 <style  lang="scss">
 @import "@/scss/_import.scss";
 
-.titled-person-select .title-row {
-  margin-left: 10px;
-}
+// .titled-person-select .title-row {
+//   // margin-left: 10px;
+// }
 
 .titled-person-select .title {
   font-size: 13.33px;
@@ -137,7 +217,7 @@ export default {
 
 .input-group {
   // padding: 5px;
-  display: grid;
+  // display: grid;
   grid-template-columns: repeat(2, 1fr);
   grid-template-rows: auto auto;
   flex: 1;

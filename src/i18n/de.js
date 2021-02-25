@@ -33,7 +33,7 @@ const property = {
         "Rand und Sonstiges",
     circular_text:
         "Umschrift | Umschriften",
-    coin_master:
+    issuer:
         "Münzherr",
     cursive_script:
         "kursive Schriftart",
@@ -93,6 +93,7 @@ const property = {
         "Titel",
     type_id:
         "sikka:būya-ID | sikka:būya-IDs",
+
     treadwell_id:
         "Treadwell-ID | Treadwell-IDs",
     uncertain_location:
@@ -115,7 +116,9 @@ const attribute = {
     longitude:
         "Längengrad",
     latitude:
-        "Breitengrad"
+        "Breitengrad",
+    test:
+        "Typ",
 }
 
 

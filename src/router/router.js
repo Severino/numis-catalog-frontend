@@ -4,6 +4,8 @@ import CreateTypePage from "@/components/page/CreateTypePage.vue"
 import Inventory from "@/components/page/Inventory"
 import LandingPage from "@/components/page/LandingPage.vue"
 import Overview from "@/components/page/Overview.vue"
+import TypeOverview from "@/components/page/TypeOverview.vue"
+
 
 import MaterialForm from "@/components/page/property/MaterialForm"
 import PersonForm from "@/components/page/property/PersonForm"
@@ -14,7 +16,6 @@ import NominalForm from "@/components/page/property/NominalForm"
 
 
 
-
 Vue.use(VueRouter)
 
 const routes = [
@@ -22,14 +23,30 @@ const routes = [
     path: '/',
     name: 'Home',
     component: LandingPage
-  }, {
-    path: '/type/create',
-    name: 'CreateTypePage',
-    component: CreateTypePage
-  }, {
+  },
+  {
+
+    path: "/type",
+    name: "TypeOverview",
+    component: TypeOverview
+
+  }
+  , {
     path: "/:property",
     name: "Property",
     component: Overview
+  }, {
+    path: '/type/create',
+    name: 'TypeCreationPage',
+    component: CreateTypePage
+  }, {
+    path: '/type/:id',
+    name: 'EditTypePage',
+    component: CreateTypePage
+  }, {
+    path: '/type',
+    name: 'TypesOverview',
+    component: CreateTypePage
   }, {
     path: "/material/create",
     name: "CreateMaterial",

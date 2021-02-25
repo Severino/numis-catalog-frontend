@@ -6,12 +6,22 @@
       @focus="focus"
       @blur="hideList"
       :placeholder="placeholder"
-      v-model="value"
+      v-model="value[attribute]"
+      :required="required"
     />
-    <input class="id-field" type="text" tabindex="-1" :value="id" readonly />
+    <input
+      class="id-field"
+      type="text"
+      tabindex="-1"
+      :value="value.id"
+      readonly
+    />
     <ul :class="'search-box ' + (listVisible ? 'visible' : 'hidden')">
       <li v-if="error" class="error non-selectable">{{ error }}</li>
-      <li v-if="!error && !loading && searchResults.length == 0" class="non-selectable">
+      <li
+        v-if="!error && !loading && searchResults.length == 0"
+        class="non-selectable"
+      >
         {{ $t("message.list_empty") }}
       </li>
       <li
@@ -31,13 +41,11 @@
 <script>
 import Query from "../../../src/database/query";
 
-
 export default {
   name: "DataSelectField",
   data: function () {
     return {
       id: null,
-      value: "",
       listVisible: false,
       hideTimeout: null,
       searchResults: [],
@@ -46,12 +54,23 @@ export default {
     };
   },
   props: {
+    value: {
+      type: Object,
+      validator: function (obj) {
+        return obj.id == null || !isNaN(parseInt(obj.id));
+      },
+    },
     table: {
       type: String,
       required: true,
     },
     attribute: {
       type: String,
+      required: true,
+    },
+    required: {
+      type: Boolean,
+      default: false,
     },
     // Text allows us to format the text as we want to.
     // This is an alternative to attribute.
@@ -67,14 +86,19 @@ export default {
   },
   methods: {
     setValue: function (event) {
-      const target = event.target;
-      this.value = target.textContent;
-      this.id = target.getAttribute("data-id", this.id);
+      const target = event.target
+      const value = this.value
       this.listVisible = false;
+      value.id = target.getAttribute("data-id", this.id) ;
+      value[this.attribute] = target.textContent;
+      this.$emit("input", value);
     },
-    input: function () {
-      this.searchEntry();
-      this.id = null;
+    input: function (event) {
+      const value = event.target.value;
+      this.searchEntry(value);
+      const obj = { id: null };
+      obj[this.attribute] = value;
+      this.$emit("input", obj);
     },
     focus: function () {
       this.showList();
@@ -87,8 +111,10 @@ export default {
     hideList: function () {
       this.hideTimeout = setTimeout(() => {
         this.listVisible = false;
-        if (!this.id) {
-          this.value = "";
+        if (!this.value.id) {
+          const obj = { id: null };
+          obj[this.attribute] = "";
+          this.$emit("input", obj);
         }
       }, 200);
     },
@@ -107,9 +133,10 @@ export default {
 
       return loaded || [];
     },
-    searchEntry: function () {
+    searchEntry: function (str = null) {
       let queryCommand;
       let query;
+      let searchString = str !== null ? str : this.value[this.attribute] || "";
       if (this.query) {
         query = this.query;
         queryCommand = this.queryCommand;
@@ -119,11 +146,9 @@ export default {
         }`;
         query = `query{
         ${queryCommand}
-        (text: "${this.value}"){id, name}
+        (text: "${searchString}"){id, name}
       }`;
       }
-
-      console.log(query);
 
       Query.raw(query)
         .then((result) => {
@@ -193,6 +218,7 @@ export default {
 button {
   width: 64px;
 }
+
 
 .search-box {
   position: absolute;

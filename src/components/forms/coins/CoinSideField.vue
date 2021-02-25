@@ -2,37 +2,46 @@
   <div class="coin-side-field">
     <Heading v-if="title">{{ title }}</Heading>
     <LabeledInputContainer :label="$tc('property.field_text')">
-      <SimpleFormattedField />
+     <textarea v-model="value.fieldText"></textarea>
+      <!-- <SimpleFormattedField
+        :value="value.fieldText"
+        @change="fieldTextChanged"
+      /> -->
     </LabeledInputContainer>
     <LabeledInputContainer :label="$t('property.inner_circular_text')">
       <input
-        id="inner_circular"
+        class="inscript"
         type="text"
-        dir="rtl"
-        v-model="innerInscript"
+        v-model="value.innerInscript"
+        
       />
     </LabeledInputContainer>
 
-    <LabeledInputContainer  v-if="outerInscript" :label="$t('property.intermediate_circular_text')">
+    <LabeledInputContainer
+      v-if="value.outerInscript || value.intermediateInscript"
+      :label="$t('property.intermediate_circular_text')"
+    >
       <input
-        id="intermediate_circular"
+        class="inscript"
         type="text"
-        dir="rtl"
-        v-model="inBetweenInscript"
+        v-model="value.intermediateInscript"
       />
     </LabeledInputContainer>
 
-    <LabeledInputContainer v-if="innerInscript" :label="$t('property.outer_circular_text')">
+    <LabeledInputContainer
+      v-if="value.innerInscript || value.outerInscript"
+      :label="$t('property.outer_circular_text')"
+    >
       <input
-        id="outer_circular"
+        class="inscript"
         type="text"
-        dir="rtl"
-        v-model="outerInscript"
+        v-model="value.outerInscript"
       />
     </LabeledInputContainer>
 
     <LabeledInputContainer :label="$t('property.border_and_misc')">
-      <SimpleFormattedField :content="misc" />
+      <textarea  v-model="value.misc" />
+      <!-- <SimpleFormattedField :value="value.misc" @input="miscFieldChanged" /> -->
     </LabeledInputContainer>
   </div>
 </template>
@@ -50,31 +59,52 @@ export default {
     title: {
       type: String,
     },
-    circularTexts: {
-      type: Array,
-      default: function () {
-        return [];
-      },
+    value: {
+      type: Object,
+      required: true
     },
-    fieldText: {
-      type: String,
-    },
-    innerInscript: {
-      type: String,
-    },
-    inBetweenInscript: {
-      type: String,
-    },
-    outerInscript: {
-      type: String,
-    },
-    misc: {
-      type: String,
-    },
+  },watch:{
+    value: function(old, nexr){
+
+        console.log(old.misc, nexr.misc)
+    }
   },
   methods: {
-    changed: function () {
-      this.$emit("change", this.circularTexts);
+    changed: function ({
+      fieldText = this.fieldText,
+      innerInscript = this.innerInscript,
+      outerInscript = this.outerInscript,
+      intermediateInscript = this.intermediateInscript,
+      misc = this.misc,
+    } = {}) {
+      console.log(this.misc)
+      this.$emit("change", {
+        fieldText,
+        innerInscript,
+        outerInscript,
+        intermediateInscript,
+        misc
+      });
+    },
+    fieldTextChanged: function (val) {
+      console.log(val)
+      this.changed({ misc: val });
+    },
+    miscFieldChanged: function (val) {
+      console.log(val)
+      this.changed({ misc: val });
+    },
+    innerInscriptChanged: function (event) {
+      const innerInscript = event.target.value;
+      this.changed({ innerInscript });
+    },
+    intermediateInscriptChanged: function (event) {
+      const intermediateInscript = event.target.value;
+      this.changed({ intermediateInscript });
+    },
+    outerInscriptChanged: function (event) {
+      const outerInscript = event.target.value;
+      this.changed({ outerInscript });
     },
   },
 };
@@ -95,5 +125,9 @@ ul.circular-list {
       width: 100%;
     }
   }
+}
+
+.inscript {
+  text-align: center;
 }
 </style>

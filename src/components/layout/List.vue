@@ -19,10 +19,11 @@
     <ListItem
       @click="listItemClicked"
       @remove="listItemRemoved"
+      :noRemove="true"
       v-for="item of items"
       :key="item.id"
       :id="item.id"
-      >{{ item.name }}</ListItem
+      >{{ item[listText] }}</ListItem
     >
   </div>
 </template>
@@ -35,6 +36,10 @@ import LoadingSpinner from "../misc/LoadingSpinner.vue";
 export default {
   components: { ListItem, Information, LoadingSpinner },
   props: {
+    listText: {
+      type: String,
+      default: "name"
+    },
     loading: {
       type: Boolean,
       default: false,
