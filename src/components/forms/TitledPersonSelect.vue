@@ -8,6 +8,7 @@
         :placeholder="$tc('attribute.name')"
         :value="person"
         @input="personChanged"
+        :queryCommand="queryCommand"
       ></DataSelectField>
       <List
         :title="$tc('property.title')"
@@ -69,6 +70,10 @@ export default {
     ListItem,
   },
   props: {
+    queryCommand: {
+      type: String,
+      default: null,
+    },
     value: {
       type: Object,
       required: true,
@@ -86,11 +91,6 @@ export default {
     this.titles.forEach((element) => {
       element.key = this.buildKey("title");
     });
-  },
-  watch: {
-    value: function () {
-      console.log("CHANGED");
-    },
   },
   data: function () {
     return {
@@ -118,14 +118,14 @@ export default {
   },
   methods: {
     buildKey: function (name) {
-      return `${this.$vnode.key}_${name}_${this.listKey++}`;
+      const key = `${this.$vnode.key}_${name}_${this.listKey++}`;
+      return key;
     },
     personChanged: function (person) {
       this.changed({ person });
     },
     addTitle: function () {
       const titles = this.titles;
-      console.log(this.buildKey("title"));
       titles.push({ key: this.buildKey("title"), id: null, name: "" });
       this.changed({ titles });
     },
@@ -136,7 +136,6 @@ export default {
     },
     addHonorific: function () {
       const honorifics = this.honorifics;
-      console.log(this.buildKey("honorific"));
       honorifics.push({ key: this.buildKey("honorific"), id: null, name: "" });
       this.changed({ honorifics });
     },
@@ -161,13 +160,6 @@ export default {
       titles = this.titles,
       honorifics = this.honorifics,
     } = {}) {
-      console.log(this.$vnode.key)
-      console.log("CHANGED:", {
-        key,
-        person,
-        titles,
-        honorifics,
-      });
       this.$emit("input", {
         key,
         person,
@@ -222,6 +214,10 @@ export default {
   grid-template-rows: auto auto;
   flex: 1;
   grid-gap: $padding;
+
+  > * {
+    margin-bottom: $padding;
+  }
 }
 #name {
   grid-row: 1;
@@ -230,6 +226,6 @@ export default {
 
 #title,
 #name-of-honor {
-  grid-row: 2;
+  flex: 1;
 }
 </style>

@@ -18,7 +18,6 @@ export default {
       type: String,
       default: "info",
       validator: (value) => {
-        console.log(value);
         return ["info", "error", "warning"].indexOf(value) != -1;
       },
     },
@@ -60,11 +59,11 @@ export default {
 @import "@/scss/_import.scss";
 
 .info {
-  background-color: $white;
+  color: white;
+  background-color: gray;
   padding: $padding 2 * $padding;
   width: 100%;
   font-size: $small-font;
-  border: 1px solid $gray;
   box-sizing: border-box;
 }
 

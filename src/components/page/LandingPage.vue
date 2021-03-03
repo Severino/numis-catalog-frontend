@@ -5,12 +5,12 @@
       <ServerStatus />
     </header>
     <router-link
-      class="button icon-button draft"
+      class="button icon-button"
       to="/type"
       draggable="false"
     >
       <PlusBox />
-      <span>{{ $t("general.create_type") }}</span>
+      <span>{{ $tc("general.type") }}</span>
     </router-link>
 
     <h3>{{ $t("general.manage_properties") }}</h3>

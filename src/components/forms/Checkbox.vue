@@ -25,9 +25,6 @@ export default {
       type: Boolean,
     },
   },
-  created: function () {
-    console.log(this.value);
-  },
   computed: {
     text: function () {
       return this.value === true
@@ -39,7 +36,6 @@ export default {
     input: function (event) {
       const checked = event.target.checked;
       this.$emit("input", checked);
-      console.log(checked);
     },
   },
 };

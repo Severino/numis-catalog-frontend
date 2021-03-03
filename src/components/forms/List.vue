@@ -13,6 +13,7 @@
     <div class="list-container">
       <slot />
     </div>
+    <button @click.stop="addEntry">+</button>
   </div>
 </template>
 
@@ -44,7 +45,7 @@ export default {
 .list-container {
   box-sizing: border-box;
 
-  $left: 15px;
+  $left: 19px;
   padding-left: $left * 2;
   position: relative;
 
@@ -129,12 +130,15 @@ export default {
   text-transform: capitalize;
 }
 
+  button{
+    max-width: 38px;
+    width: 38px;
+    height: 38px;
+  }
+
 .title-row {
   align-items: baseline;
 
-  button:not(:first-child) {
-    max-width: 37px;
-  }
 
   > * :first-child {
     flex: 1;

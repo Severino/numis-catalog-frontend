@@ -1,6 +1,8 @@
 const general = {
     administration:
         "administration",
+    type:
+        "type | types",
     create_type:
         "create new type",
     manage_properties:

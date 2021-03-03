@@ -6,6 +6,7 @@ const host = baseURL
 export default class Query {
 
     constructor(name) {
+        console.trace(name)
         this.name = name
     }
 
@@ -13,7 +14,7 @@ export default class Query {
         return this.name[0].toUpperCase() + this.name.substr(1)
     }
 
-    get(id, properties) {
+    async get(id, properties) {
 
         let locationIndex = properties.indexOf("location")
         if (locationIndex != -1) {
@@ -34,24 +35,36 @@ export default class Query {
             data: {
                 query
             },
-        }).catch(console.error)
+        })
     }
 
-    static raw(query) {
-        return new Query().raw(query)
+    static async raw(query, variables) {
+        return new Query().raw(query, variables)
     }
 
-    raw(query) {
+
+    async raw(query, variables = {}) {
         return axios({
             url: host,
             method: "post",
             data: {
                 query,
+                variables
             },
+        }).catch(error =>{
+            if (error.response) {
+                /*
+                 * The request was made and the server responded with a
+                 * status code that falls out of the range of 2xx
+                 */
+                console.log(error.response.data);
+                console.log(error.response.status);
+                console.log(error.response.headers);
+            }else console.dir(error)
         })
     }
 
-    update(data) {
+    async update(data) {
 
         if (data.id == -1) delete data.id
 

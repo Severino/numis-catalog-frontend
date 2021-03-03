@@ -4,8 +4,6 @@ const standard = {
             state.data = data
         },
         push(state, item) {
-
-            console.log("FOUND", item.id)
             if (item.id === -1) {
                 let maxId = 0
                 state.data.forEach(({ id }) => {

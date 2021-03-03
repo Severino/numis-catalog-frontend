@@ -104,7 +104,6 @@ export default {
                     }`
           : "";
 
-      console.log(!!this.mint.location.lat && !!this.mint.location.lon);
 
       const query = `
        mutation {

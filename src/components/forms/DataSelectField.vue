@@ -60,6 +60,13 @@ export default {
         return obj.id == null || !isNaN(parseInt(obj.id));
       },
     },
+    queryParams: {
+      type: Array,
+      default: function () {
+        return ["id", "name"];
+      },
+    },
+    additionalParameters: Object,
     table: {
       type: String,
       required: true,
@@ -77,6 +84,7 @@ export default {
     // Use JavaScript template literals placeholders ('${your_variable}')
     text: {
       type: String,
+      default: null,
     },
     query: String,
     queryCommand: String,
@@ -86,23 +94,27 @@ export default {
   },
   methods: {
     setValue: function (event) {
-      const target = event.target
-      const value = this.value
+      const target = event.target;
+      const value = this.value;
       this.listVisible = false;
-      value.id = target.getAttribute("data-id", this.id) ;
+      value.id = target.getAttribute("data-id", this.id);
       value[this.attribute] = target.textContent;
       this.$emit("input", value);
     },
     input: function (event) {
-      const value = event.target.value;
-      this.searchEntry(value);
-      const obj = { id: null };
-      obj[this.attribute] = value;
-      this.$emit("input", obj);
+      const value = this.value;
+      value[this.attribute] = event.target.value;
+      this.searchEntry(value[this.attribute]);
+      value.id = null;
+      this.$emit("input", value);
     },
     focus: function () {
+      const obj = this.value;
+      obj.id = null;
+      obj[this.attribute] = "";
+      this.$emit("input", obj);
       this.showList();
-      this.searchEntry();
+      this.searchEntry("");
     },
     showList: function () {
       if (this.hideTimeout) clearTimeout(this.hideTimeout);
@@ -134,25 +146,28 @@ export default {
       return loaded || [];
     },
     searchEntry: function (str = null) {
-      let queryCommand;
-      let query;
       let searchString = str !== null ? str : this.value[this.attribute] || "";
-      if (this.query) {
-        query = this.query;
-        queryCommand = this.queryCommand;
-      } else {
-        queryCommand = `search${
-          this.table[0].toUpperCase() + this.table.slice(1)
-        }`;
-        query = `query{
-        ${queryCommand}
-        (text: "${searchString}"){id, name}
-      }`;
+
+      const queryCommand = this.queryCommand
+        ? this.queryCommand
+        : `search${this.table[0].toUpperCase() + this.table.slice(1)}`;
+
+      const query = `{
+      ${queryCommand}(text: "${searchString}" ${
+        this.additionalParameters
+          ? Object.entries(this.additionalParameters).map(
+              ([key, value]) => `,${key}:${JSON.stringify(value)}`
+            )
+          : ""
+      } ){
+        ${this.queryParams.join(",")}
       }
+      }`;
+
+      console.log(query);
 
       Query.raw(query)
         .then((result) => {
-          console.log(result.data.data[queryCommand]);
           this.searchResults = result.data.data[queryCommand];
           this.error = "";
         })
@@ -165,13 +180,13 @@ export default {
         });
     },
     transformTextContent: function (search) {
-      if (this.attribute) return search[this.attribute] || "";
-      else if (this.text) {
+      if (this.text) {
         return this.text.replace(/\${(.+?)}/g, function (match, name) {
           return search[name] || "";
         });
+      } else {
+        return search[this.attribute] || "";
       }
-      return "";
     },
   },
 };
@@ -209,16 +224,14 @@ export default {
 
 .id-field {
   max-width: 37px;
-  background-color: rgb(226, 226, 226);
-  border-radius: 0;
   border: none;
   text-align: center;
+  @include disabled_input;
 }
 
 button {
   width: 64px;
 }
-
 
 .search-box {
   position: absolute;

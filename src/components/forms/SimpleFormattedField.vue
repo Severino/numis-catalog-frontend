@@ -9,14 +9,7 @@
       <button @click="toggleCursive">Cursive</button>
     </Row>
 
-    <div
-      v-once
-      ref="field"
-      class="formatted-text-area"
-      @input="input"
-      v-html="value"
-      contenteditable
-    ></div>
+    <div ref="field" class="formatted-text-area" contenteditable></div>
   </div>
 </template>
 
@@ -25,61 +18,63 @@ import Row from "../layout/Row.vue";
 export default {
   components: { Row },
   name: "SimpleFormattedField",
-  props: {
-    content: String,
-    value: {
-      type: String,
-      required: true,
-    },
-  },
-  data: function() {
+  data: function () {
     return {
       range: null,
     };
   },
-  watch: {
-    value: function(value) {
-      console.log(value);
-    },
-  },
   methods: {
-    getSelected: function() {
+    setContent: function (str) {
+      this.$refs.field.innerHTML = str;
+    },
+    getContent: function () {
+      return this.$refs.field.innerHTML;
+    },
+    getSelected: function () {
       let node = document.getSelection().anchorNode;
-      while (
-        node.parentNode &&
-        !node.parentNode.hasAttribute("contenteditable")
-      ) {
-        node = node.parentNode;
+
+      /**
+       * Break when selection is outside this element.
+       */
+      if (this.$refs.field == node || !this.$refs.field.contains(node)) {
+        return null;
+      } else {
+        while (node.parentNode != this.$refs.field) {
+          node = node.parentNode;
+        }
+
+        if (
+          node.nodeType == 3 ||
+          (node.nodeType == 1 && node.tagName.toLowerCase() !== "div")
+        ) {
+          let textNode = node;
+          node = document.createElement("div");
+          textNode.parentNode.insertBefore(node, textNode);
+          node.appendChild(textNode);
+        }
       }
-      console.log(node.nodeType == 3);
-      if (node.parentNode && node.nodeType == 3) {
-        let textNode = node;
-        node = document.createElement("div");
-        textNode.parentNode.insertBefore(node, textNode);
-        node.appendChild(textNode);
-      }
-      // if(node.nodeType)
+
       return node;
     },
 
-    align: function(value) {
+    align: function (value) {
       const node = this.getSelected();
-      console.log(node);
-      Object.assign(node.style, {
-        textAlign: value,
-      });
-      this.$emit("input", this.$refs.field.innerHTML);
-
+      if (node) {
+        Object.assign(node.style, {
+          textAlign: value,
+        });
+        this.$emit("input", this.$refs.field.innerHTML);
+      }
     },
-    toggleBold: function() {
+    toggleBold: function () {
       document.execCommand("bold", false, null);
       this.$emit("input", this.$refs.field.innerHTML);
     },
-    toggleCursive: function() {
+    toggleCursive: function () {
       document.execCommand("italic", false, null);
       this.$emit("input", this.$refs.field.innerHTML);
     },
-    input: function(event) {
+    input: function (event) {
       const target = event.target;
       this.$emit("input", target.innerHTML);
     },
@@ -87,7 +82,7 @@ export default {
     /**
      * Thankfully taken from: https://gist.github.com/dantaex/543e721be845c18d2f92652c0ebe06aa
      */
-    saveSelection: function() {
+    saveSelection: function () {
       if (window.getSelection) {
         var sel = window.getSelection();
         if (sel.getRangeAt && sel.rangeCount) {
@@ -98,7 +93,7 @@ export default {
       }
       return null;
     },
-    restoreSelection: function(range) {
+    restoreSelection: function (range) {
       if (range) {
         if (window.getSelection) {
           var sel = window.getSelection();

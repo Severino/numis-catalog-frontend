@@ -41,8 +41,7 @@ export default {
     update: function () {
       new Query() 
         .raw(`{ping}`)
-        .then((event) => {
-          console.log(event)
+        .then(() => {
           this.status = true;
         })
         .catch(() => {

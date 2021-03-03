@@ -48,10 +48,6 @@ const routes = [
     name: 'EditTypePage',
     component: CreateTypePage
   }, {
-    path: '/type',
-    name: 'TypesOverview',
-    component: CreateTypePage
-  }, {
     path: "/material/create",
     name: "CreateMaterial",
     component: MaterialForm

@@ -3,7 +3,7 @@
     <header class="top-header">
       <div class="content-wrapper">
         <div class="top-navigation">
-          <h3 id="app-name">sikka:būya</h3>
+          <h3 id="app-name" @click="goHome">sikka:būya</h3>
           <span class="subtitle">{{ $t("general.type_catalogue") }}</span>
           <div class="version">version: {{ version }}</div>
           <nav>
@@ -40,7 +40,7 @@ export default {
     },
   },
   created: function () {
-    this.version = require("../package.json").version
+    this.version = require("../package.json").version;
 
     const lang = window.localStorage.getItem("language", this.$i18n.locale);
     if (lang) {
@@ -52,6 +52,9 @@ export default {
     languageChanged: function (lang) {
       this.$i18n.locale = lang;
       window.localStorage.setItem("language", this.$i18n.locale);
+    },
+    goHome: function () {
+      if (this.$router.route != "/") this.$router.push("/");
     },
   },
 };
@@ -65,6 +68,8 @@ export default {
   margin-right: $padding;
   text-transform: none;
   font-weight: 800;
+
+  @include interactive();
 }
 
 .subtitle {
@@ -84,8 +89,12 @@ body {
 }
 
 body {
-  font-family: "Lora";
-  font-size: 20px;
+  font-family: 'Newsreader', serif;
+  font-size: 16px;
+
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
 }
 
 select,
@@ -106,26 +115,20 @@ button[type="submit"] {
 
 .button,
 button {
+
   text-transform: capitalize;
-  color: gray;
-  border-color: gray;
-
-  padding: 10px;
-  border: 1px solid whitesmoke;
-  transition: 0.3s border;
-
-  box-sizing: border-box;
-
+  @include input;
   @include interactive();
 }
 
-.version{
+.version {
   font-size: 0.5em;
   opacity: 0.5;
   padding: 10px;
 }
 
 label {
+  font-size: $large-font;
   display: block;
   margin-bottom: 10px;
 

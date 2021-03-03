@@ -1,11 +1,10 @@
 <template>
   <form class="types-page" @submit.prevent="">
-    <div v-if="coin.id" class="error">UPDATE IS NOT SUPPORTED YET</div>
     <div v-if="errorMessage" class="error">{{ errorMessage }}</div>
-    <Heading>{{ $t("general.type_catalogue") }}</Heading>
+    <Heading>{{ $tc("general.type") }}</Heading>
     <LoadingSpinner v-if="loading" />
     <div v-if="!loading" class="loading-area">
-      <input :value="coin.id" type="text" readonly />
+      <!-- <input :value="coin.id" type="text" readonly /> -->
       <Row>
         <LabeledInputContainer :label="$tc('property.type_id')">
           <input v-model="coin.projectId" />
@@ -75,18 +74,18 @@
           v-on:remove="removeIssuer"
           :object="issuer"
         >
-          <div class="div" :data-invalid="issuer.error">
-            <div v-if="issuer.error" class="invalid-warning">
-              {{ issuer.error }}
-            </div>
-            <TitledPersonSelect
-              name="isser"
-              table="persons"
-              attribute="name"
-              :value="issuer"
-              :key="`issuer-${issuer.key}`"
-              @input="issuerChanged($event, issuer_idx)"
-            ></TitledPersonSelect>
+          <TitledPersonSelect
+            name="isser"
+            table="persons"
+            attribute="name"
+            :value="issuer"
+            :key="`issuer-${issuer.key}`"
+            @input="issuerChanged($event, issuer_idx)"
+            queryCommand="searchPersonsWithoutRole"
+            :queryParams="['id', 'name']"
+          ></TitledPersonSelect>
+          <div v-if="issuer.error" class="invalid-warning">
+            {{ issuer.error }}
           </div>
         </ListItem>
       </List>
@@ -96,12 +95,11 @@
         :title="$tc('property.overlord', 2)"
         class="overlords needs-spacing"
       >
-        <p></p>
         <div v-if="coin.overlords.length == 0" class="info">
           {{ $t("warning.list_is_empty") }}
         </div>
         <ListItem
-          v-for="overlord of coin.overlords"
+          v-for="(overlord, index) of coin.overlords"
           :key="'overlord-key-' + overlord.key"
           v-on:remove="removeOverlord"
           :object="overlord"
@@ -111,8 +109,13 @@
             name="overlord"
             :value="overlord"
             :key="`overlord-${overlord.key}`"
-            @change="overlordChanged"
+            @input="overlordChanged($event, index)"
+            queryCommand="searchPersonsWithoutRole"
+            :queryParams="['id', 'name']"
           />
+          <div v-if="overlord.error" class="invalid-warning">
+            {{ overlord.error }}
+          </div>
         </ListItem>
       </List>
 
@@ -122,6 +125,9 @@
           attribute="name"
           table="person"
           text="${name} (${role})"
+          queryCommand="searchPersonsWithRole"
+          :queryParams="['id', 'role', 'name']"
+          :additionalParameters="{ filter: ['heir', 'cutter', 'warden'] }"
         />
       </LabeledInputContainer>
       <List
@@ -134,7 +140,7 @@
         </div>
 
         <ListItem
-          v-for="otherPerson in coin.otherPersons"
+          v-for="(otherPerson, index) in coin.otherPersons"
           :key="'other-person-id-' + otherPerson.key"
           v-on:remove="removeOtherPerson"
           :object="otherPerson"
@@ -143,10 +149,15 @@
             table="person"
             attribute="name"
             :value="otherPerson"
+            @input="otherPersonChanged($event, index)"
             text="${name} (${role})"
-            query="{getPersonsWithRole{id,name, role}}"
-            queryCommand="getPersonsWithRole"
+            queryCommand="searchPersonsWithRole"
+            :additionalParameters="{ filter: ['caliph'] }"
+            :queryParams="['id', 'role', 'name']"
           />
+          <div v-if="otherPerson.error" class="invalid-warning">
+            {{ otherPerson.error }}
+          </div>
         </ListItem>
       </List>
 
@@ -154,6 +165,7 @@
         <CoinSideField
           :title="$t('property.sides.front')"
           :value="coin.avers"
+          ref="aversField"
           @change="aversChanged"
         />
       </Section>
@@ -162,6 +174,7 @@
         <CoinSideField
           :title="$t('property.sides.back')"
           :value="coin.reverse"
+          ref="reverseField"
           @change="reverseChanged"
         />
       </Section>
@@ -190,14 +203,27 @@
           :object="piece"
           @remove="removePiece(idx)"
         >
-          <input type="text" v-model="coin.pieces[idx].value" />
+          <input
+            type="text"
+            v-model="coin.pieces[idx].value"
+            @input="pieceChanged(piece)"
+          />
+          <div v-if="piece.error" class="invalid-warning">
+            {{ piece.error }}
+          </div>
         </ListItem>
       </List>
 
       <LabeledInputContainer :label="$t('property.literature')">
-        <!-- <SimpleFormattedField v-model="coin.literature" /> -->
-        <textarea v-model="coin.literature"></textarea>
+        <SimpleFormattedField ref="literatureField" v-model="coin.literature" />
+        <!-- <textarea v-model="coin.literature"></textarea> -->
       </LabeledInputContainer>
+
+      <div class="submit-error-window">
+        <div class="submit-error" v-for="err in errorMessages" :key="err.key">
+          {{ err.message }}
+        </div>
+      </div>
 
       <Row>
         <button @click.stop="cancel">{{ $t("form.cancel") }}</button>
@@ -226,8 +252,6 @@ import SimpleFormattedField from "../forms/SimpleFormattedField.vue";
 import Query from "../../database/query.js";
 import LoadingSpinner from "../misc/LoadingSpinner.vue";
 
-import axios from "axios";
-
 export default {
   name: "CreateTypePage",
   components: {
@@ -247,20 +271,20 @@ export default {
     LoadingSpinner,
   },
   computed: {
-    productionLabels: function() {
+    productionLabels: function () {
       return [
         this.$t("property.procedures.pressed"),
         this.$t("property.procedures.cast"),
       ];
     },
   },
-  mounted: function() {
+  mounted: function () {
     window.onbeforeunload = (event) => {
       if (!this.submitted) return "ASD";
       else return true;
     };
   },
-  created: function() {
+  created: function () {
     let id = this.$route.params.id;
     if (id != null) {
       Query.raw(
@@ -356,11 +380,8 @@ export default {
             obj.message.errors.length > 0
           ) {
             this.errorMessage = obj.message.errors[0];
-            console.log("ERROR");
           } else {
             const type = obj.data.data.getCoinType;
-
-            if (type.literature) type.literature = decodeURI(type.literature);
 
             // Sorts the overlords appropriately
             if (!type.overlords) type.overlords = [];
@@ -368,7 +389,6 @@ export default {
 
             type.overlords.forEach((overlord) => {
               overlord.key = this.key++;
-              console.log(overlord.rank);
               overlord.titles.forEach((title) => (title.key = this.key++));
               overlord.honorifics.forEach(
                 (honorific) => (honorific.key = this.key++)
@@ -404,6 +424,15 @@ export default {
             type.nominal = type.nominal ? type.nominal : { id: null, name: "" };
             type.caliph = type.caliph ? type.caliph : { id: null, name: "" };
 
+            this.$refs.literatureField.setContent(type.literature || "");
+
+            this.$refs.aversField.setFieldContent(type.avers);
+            type.avers.misc = "";
+            type.avers.fieldText = "";
+            this.$refs.reverseField.setFieldContent(type.reverse);
+            type.reverse.misc = "";
+            type.reverse.fieldText = "";
+
             Object.assign(this.$data.coin, type);
           }
         })
@@ -421,7 +450,7 @@ export default {
       next();
     } else next(false);
   },
-  data: function() {
+  data: function () {
     return {
       coin: {
         id: null,
@@ -454,9 +483,9 @@ export default {
         },
         cursiveScript: false,
         isolatedCharacters: "",
-        literature: "",
         pieces: [],
       },
+      errorMessages: [],
       submitted: false,
       errorMessage: "",
       validationErrors: [],
@@ -465,36 +494,33 @@ export default {
       key: 0,
     };
   },
-  watch: {
-    key: function(old, next) {
-      console.log(next);
-    },
-  },
   methods: {
-    aversChanged: function(coinSideObject) {
+    aversChanged: function (coinSideObject) {
       this.coin.avers = coinSideObject;
     },
-    cancel: function() {
+    cancel: function () {
       this.$router.push("/type/");
     },
-    reverseChanged: function(coinSideObject) {
-      console.log(coinSideObject.misc);
-
+    reverseChanged: function (coinSideObject) {
       this.coin.reverse = coinSideObject;
     },
-    issuerChanged: function(issuer, index) {
+    issuerChanged: function (issuer, index) {
+      delete issuer.error;
       this.coin.issuers.splice(index, 1, issuer);
     },
-    addPiece: function() {
+    addPiece: function () {
       this.coin.pieces.push({
         key: "piece-" + this.key++,
-        text: "",
+        value: "",
       });
     },
-    removePiece: function(index) {
+    pieceChanged: function (piece) {
+      delete piece.error;
+    },
+    removePiece: function (index) {
       this.coin.pieces.splice(index, 1);
     },
-    addIssuer: function() {
+    addIssuer: function () {
       this.coin.issuers.push({
         key: "issuer-" + this.key++,
         person: {
@@ -506,7 +532,7 @@ export default {
         honorifics: [],
       });
     },
-    removeIssuer: function(item) {
+    removeIssuer: function (item) {
       const idx = this.coin.issuers.indexOf(item);
       if (idx != -1) {
         this.coin.issuers.splice(idx, 1);
@@ -515,7 +541,7 @@ export default {
         });
       }
     },
-    addOverlord: function() {
+    addOverlord: function () {
       this.coin.overlords.push({
         key: "overlord-" + this.key++,
         rank: this.coin.overlords.length + 1,
@@ -527,7 +553,7 @@ export default {
         honorifics: [],
       });
     },
-    addOtherPerson: function() {
+    addOtherPerson: function () {
       this.coin.otherPersons.push({
         id: null,
         key: this.key++,
@@ -535,10 +561,13 @@ export default {
         role: "",
       });
     },
-    overlordChanged: function(overlord, index) {
-      this.coin.overlords.splice(index, 1, overlord);
+    overlordChanged: function (overlord, index) {
+      const old = this.coin.overlords[index];
+      Object.assign(old, overlord);
+      delete old.error;
+      this.coin.overlords.splice(index, 1, old);
     },
-    removeOverlord: function(item) {
+    removeOverlord: function (item) {
       const idx = this.coin.overlords.indexOf(item);
       if (idx != -1) {
         this.coin.overlords.splice(idx, 1);
@@ -547,76 +576,126 @@ export default {
         });
       }
     },
-    removeOtherPerson: function(item) {
-      console.log(item);
+    removeOtherPerson: function (item) {
       const idx = this.coin.otherPersons.indexOf(item);
       if (idx != -1) {
         this.coin.otherPersons.splice(idx, 1);
       }
     },
-    submitForm: function() {
+    otherPersonChanged: function (otherPerson, index) {
+      const op = this.coin.otherPersons[index];
+      Object.assign(op, otherPerson);
+      delete op.error;
+      this.coin.otherPersons.splice(index, 1, op);
+    },
+    submitForm: function () {
       function validateTitledPerson(titledPerson) {
-        return titledPerson.person.id;
+        return !!titledPerson.person.id;
+      }
+
+      function validatePeron(person) {
+        return !!person.id;
       }
 
       let invalid = false;
 
       this.coin.issuers.forEach((issuer, index) => {
         if (!validateTitledPerson(issuer)) {
-          console.error(issuer);
           issuer.error =
             "Person ist nicht valide. Geben Sie eine Person an oder löschen Sie das Element.";
           this.coin.issuers.splice(index, 1, issuer);
           invalid = true;
+        } else {
+          delete issuer.error;
         }
       });
 
-      // const invalidOverlords = [];
-      // this.coin.overlords.forEach((overlord) => {
-      //   if (!validateTitledPerson(overlord)) {
-      //     invalidOverlords.push(overlord);
-      //   }
-      // });
+      this.coin.overlords.forEach((overlord, index) => {
+        if (!validateTitledPerson(overlord)) {
+          overlord.error =
+            "Person ist nicht valide. Geben Sie eine Person an oder löschen Sie das Element.";
+          invalid = true;
+          this.coin.overlords.splice(index, 1, overlord);
+        } else {
+          delete overlord.error;
+        }
+      });
 
-      // const invalidOtherPersons = [];
-      // this.coin.otherPersons.forEach((otherPerson) => {
-      //   if (!validateTitledPerson(otherPerson)) {
-      //     invalidOtherPersons.push(otherPerson);
-      //   }
-      // });
+      this.coin.otherPersons.forEach((otherPerson, index) => {
+        if (!validatePeron(otherPerson)) {
+          otherPerson.error =
+            "Person ist nicht valide. Geben Sie eine Person an oder löschen Sie das Element.";
+          invalid = true;
+          this.coin.otherPersons.splice(index, 1, otherPerson);
+        } else {
+          delete otherPerson.error;
+        }
+      });
 
-      // const invalids = [
-      //   ...invalidIssuers,
-      //   // ...invalidOverlords,
-      //   // ...invalidOtherPersons,
-      // ];
-      // invalids.forEach((invalid) => {
-      //   console.log(invalid)
-
-      //   invalid.error =
-
-      // });
+      this.coin.pieces.forEach((piece, index) => {
+        if (piece.value == "") {
+          piece.error =
+            "Person ist nicht valide. Geben Sie eine Person an oder löschen Sie das Element.";
+          invalid = true;
+          this.coin.pieces.splice(index, 1, piece);
+        } else {
+          delete piece.error;
+        }
+      });
 
       if (invalid) {
         setTimeout(() => {
           const target = document.querySelector(".invalid-warning");
-          console.log(target);
           if (target) {
             target.scrollIntoView({
-              top: target.clientY,
+              block: "start",
               behavior: "smooth",
             });
           }
         }, 10);
 
         return;
-      }
+      } else {
+        const submitData = this.$data.coin;
 
+        submitData.literature = this.$refs.literatureField.getContent();
+
+        submitData.avers = Object.assign(
+          submitData.avers,
+          this.$refs.aversField.getFieldContent()
+        );
+        submitData.reverse = Object.assign(
+          submitData.reverse,
+          this.$refs.reverseField.getFieldContent()
+        );
+
+        if (submitData.id == null) {
+          this.addCoinType(submitData)
+            .then(() => {
+              this.submitted = true;
+              this.$router.push({ name: "TypeOverview" });
+            })
+            .catch((error) => {
+              this.handleAxiosError(error);
+            });
+        } else {
+          this.updateCoinType(submitData)
+            .then(() => {
+              this.submitted = true;
+              this.$router.push({ name: "TypeOverview" });
+            })
+            .catch((error) => {
+              this.handleAxiosError(error);
+            });
+        }
+      }
+    },
+    addCoinType(data) {
       // TODO ADA
       const query = `
         mutation ($projectId:String, $treadwellId:String, $mint:ID, $mintAsOnCoin:String, $material:ID, $nominal:ID, 
-        $yearOfMinting:String, $donativ:Boolean, $procedure:String, $issuers:[TitledPerson], $otherPersons:[Person], $overlords:[TitledPerson], 
-        $caliph:Person, $avers:CoinSideField, $reverse:CoinSideField, $cursiveScript:Boolean, $isolatedCharacters:String, $literature:String, $pieces:[String]){
+        $yearOfMinting:String, $donativ:Boolean, $procedure:String, $issuers:[TitledPersonInput], $otherPersons:[ID], $overlords:[OverlordInput], 
+        $caliph:ID, $avers:CoinSideInformationInput, $reverse:CoinSideInformationInput, $cursiveScript:Boolean, $isolatedCharacters:String, $literature:String, $pieces:[String]){
         addCoinType(data: {
             projectId: $projectId, 
             treadwellId: $treadwellId, 
@@ -641,78 +720,137 @@ export default {
          }
    `;
 
-      function transformCoinObject(obj) {
-        const pieces = [];
-        for (let [key, val] of Object.entries(obj)) {
-          pieces.push(`${key}:"${val}"`);
-        }
+      const variables = {
+        projectId: data.projectId,
+        treadwellId: data.treadwellId,
+        mint: data.mint && data.mint.id ? data.mint.id : null,
+        mintAsOnCoin: data.mintAsOnCoin,
+        material: data.material && data.material.id ? data.material.id : null,
+        nominal: data.nominal && data.nominal.id ? data.nominal.id : null,
+        yearOfMinting: data.yearOfMinting,
+        donativ: data.donativ,
+        procedure: data.procedure,
+        issuers: data.issuers.map((issuer) => {
+          return {
+            person: issuer.person.id,
+            titles: issuer.titles.map((title) => +title.id),
+            honorifics: issuer.honorifics.map((honorific) => +honorific.id),
+          };
+        }),
+        otherPersons: data.otherPersons.map((person) => person.id),
+        overlords: data.overlords.map((overlord) => {
+          return {
+            person: overlord.person.id,
+            rank: overlord.rank,
+            titles: overlord.titles.map((title) => +title.id),
+            honorifics: overlord.honorifics.map((honorific) => +honorific.id),
+          };
+        }),
+        caliph: data.caliph && data.caliph.id ? data.caliph.id : null,
+        avers: data.avers,
+        reverse: data.reverse,
+        cursiveScript: data.cursiveScript,
+        isolatedCharacters: data.isolatedCharacters,
+        literature: data.literature,
+        pieces: data.pieces.map((piece) => piece.value),
+      };
 
-        return `{${pieces.join(",")}}`;
-      }
+      return Query.raw(query, variables);
+    },
+    updateCoinType(data) {
+      // TODO ADA
+      const query = `
+        mutation ($id:ID, $projectId:String, $treadwellId:String, $mint:ID, $mintAsOnCoin:String, $material:ID, $nominal:ID, 
+        $yearOfMinting:String, $donativ:Boolean, $procedure:String, $issuers:[TitledPersonInput], $otherPersons:[ID], $overlords:[OverlordInput], 
+        $caliph:ID, $avers:CoinSideInformationInput, $reverse:CoinSideInformationInput, $cursiveScript:Boolean, $isolatedCharacters:String, $literature:String, $pieces:[String]){
+        updateCoinType(id: $id, data: {
+            projectId: $projectId, 
+            treadwellId: $treadwellId, 
+            mint: $mint, 
+            mintAsOnCoin: $mintAsOnCoin, 
+            material: $material, 
+            nominal: $nominal, 
+            yearOfMinting: $yearOfMinting, 
+            donativ: $donativ, 
+            procedure: $procedure, 
+            issuers: $issuers, 
+            otherPersons: $otherPersons, 
+            overlords: $overlords, 
+            caliph: $caliph, 
+            avers: $avers, 
+            reverse: $reverse, 
+            cursiveScript: $cursiveScript, 
+            isolatedCharacters: $isolatedCharacters, 
+            literature: $literature, 
+            pieces: $pieces
+         })
+         }
+   `;
 
-      if (!this.coin.id) {
-        const mutation = `mutation {
-          addCoinType(data:{
-                projectId: "${this.coin.projectId}",
-                treadwellId: "${this.coin.treadwellId}",
-                mint: ${this.coin.mint.id},
-                mintAsOnCoin: "${this.coin.mintAsOnCoin}",
-                material: ${this.coin.material.id},
-                nominal: ${this.coin.nominal.id},
-                yearOfMinting: "${this.coin.yearOfMinting}",
-                donativ: ${this.coin.donativ},
-                procedure: "${this.coin.procedure}",
-                issuers: [${this.coin.issuers.map(
-                  (issuer) =>
-                    `{ person: ${
-                      issuer.person.id
-                    }, titles: [${issuer.titles
-                      .map((title) => title.id)
-                      .join(",")}], honorifics: [${issuer.honorifics
-                      .map((honorific) => honorific.id)
-                      .join(",")}]}`
-                )}],
-                otherPersons: [${this.coin.otherPersons
-                  .map((person) => person.id)
-                  .join(",")}]
-                overlords: [${this.coin.overlords.map(
-                  (overlord) =>
-                    `{ person: ${overlord.person.id},rank: ${
-                      overlord.rank
-                    }, titles: [${overlord.titles
-                      .map((title) => title.id)
-                      .join(",")}], honorifics: [${overlord.honorifics
-                      .map((honorific) => honorific.id)
-                      .join(",")}]}`
-                )}],
-                caliph: ${this.coin.caliph.id} ,
-                avers: ${transformCoinObject(this.coin.avers)},
-                reverse: ${transformCoinObject(this.coin.reverse)} ,
-                cursiveScript: ${this.coin.cursiveScript},
-                isolatedCharacters: "${this.coin.isolatedCharacters}",
-                literature: "${encodeURI(this.coin.literature)})",
-                pieces: [${this.coin.pieces
-                  .map((piece) => '"' + piece.text + '"')
-                  .join(",")}]
-            })
-        }
-        `;
+      const variables = {
+        id: data.id,
+        projectId: data.projectId,
+        treadwellId: data.treadwellId,
+        mint: data.mint && data.mint.id ? data.mint.id : null,
+        mintAsOnCoin: data.mintAsOnCoin,
+        material: data.material && data.material.id ? data.material.id : null,
+        nominal: data.nominal && data.nominal.id ? data.nominal.id : null,
+        yearOfMinting: data.yearOfMinting,
+        donativ: data.donativ,
+        procedure: data.procedure,
+        issuers: data.issuers.map((issuer) => {
+          return {
+            person: issuer.person.id,
+            titles: issuer.titles.map((title) => +title.id),
+            honorifics: issuer.honorifics.map((honorific) => +honorific.id),
+          };
+        }),
+        otherPersons: data.otherPersons.map((person) => person.id),
+        overlords: data.overlords.map((overlord) => {
+          return {
+            person: overlord.person.id,
+            rank: overlord.rank,
+            titles: overlord.titles.map((title) => +title.id),
+            honorifics: overlord.honorifics.map((honorific) => +honorific.id),
+          };
+        }),
+        caliph: data.caliph && data.caliph.id ? data.caliph.id : null,
+        avers: data.avers,
+        reverse: data.reverse,
+        cursiveScript: data.cursiveScript,
+        isolatedCharacters: data.isolatedCharacters,
+        literature: data.literature,
+        pieces: data.pieces.map((piece) => piece.value),
+      };
 
-        console.log(mutation);
+      return Query.raw(query, variables);
+    },
+    handleAxiosError(error) {
+      if (error.response) {
+        /*
+         * The request was made and the server responded with a
+         * status code that falls out of the range of 2xx
+         */
 
-        Query.raw(mutation)
-          .then((result) => {
-            this.submitted = true;
-            this.$router.push("/type/");
-          })
-          .catch(console.error);
+        this.errorMessages.push("Server hat Aufgabe abgelehnt.");
+
+        console.log(error.response.data);
+        console.log(error.response.status);
+        console.log(error.response.headers);
+      } else if (error.request) {
+        /*
+         * The request was made but no response was received, `error.request`
+         * is an instance of XMLHttpRequest in the browser and an instance
+         * of http.ClientRequest in Node.js
+         */
+        this.errorMessages.push("Server war nicht erreichbar.");
+
+        console.log(error.request);
       } else {
-        const errorMsg = "UPDATE NOT SUPPORTED YET";
-        console.error(errorMsg);
-        this.errorMessage = errorMsg;
-        setTimeout(() => {
-          this.errorMessage = "";
-        }, 3000);
+        this.errorMessages.push("Ausnahmefehler!");
+
+        // Something happened in setting up the request and triggered an Error
+        console.log("Error", error.message);
       }
     },
   },
@@ -721,6 +859,28 @@ export default {
 
 <style lang="scss">
 @import "@/scss/_import.scss";
+
+.coin-side-field > *,
+.loading-area > * {
+  margin-bottom: $padding * 2;
+}
+
+.submit-error {
+  padding: 10px;
+  font-size: 0.75rem;
+  background-color: tomato;
+  border: 1px solid rgb(160, 14, 14);
+
+  &:first-of-type {
+    border-top-left-radius: 20px;
+    border-top-right-radius: 20px;
+  }
+
+  &:last-of-type {
+    border-bottom-left-radius: 20px;
+    border-bottom-right-radius: 20px;
+  }
+}
 
 .error {
   position: fixed;
@@ -789,7 +949,15 @@ label {
 }
 
 .invalid-warning {
-  padding: 20px 50px;
+  position: absolute;
+  z-index: 10;
+  font-size: 0.85rem;
+  top: 0;
+  left: 0;
+  width: 100%;
+  padding: 5px 10px;
   background-color: $red;
+  box-sizing: border-box;
+  transform: translateY(-100%);
 }
 </style>

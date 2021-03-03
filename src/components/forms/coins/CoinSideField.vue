@@ -2,19 +2,12 @@
   <div class="coin-side-field">
     <Heading v-if="title">{{ title }}</Heading>
     <LabeledInputContainer :label="$tc('property.field_text')">
-     <textarea v-model="value.fieldText"></textarea>
-      <!-- <SimpleFormattedField
-        :value="value.fieldText"
-        @change="fieldTextChanged"
-      /> -->
+      <SimpleFormattedField
+        ref="fieldTextField"
+      />
     </LabeledInputContainer>
     <LabeledInputContainer :label="$t('property.inner_circular_text')">
-      <input
-        class="inscript"
-        type="text"
-        v-model="value.innerInscript"
-        
-      />
+      <input class="inscript" type="text" v-model="value.innerInscript" />
     </LabeledInputContainer>
 
     <LabeledInputContainer
@@ -32,16 +25,11 @@
       v-if="value.innerInscript || value.outerInscript"
       :label="$t('property.outer_circular_text')"
     >
-      <input
-        class="inscript"
-        type="text"
-        v-model="value.outerInscript"
-      />
+      <input class="inscript" type="text" v-model="value.outerInscript" />
     </LabeledInputContainer>
 
     <LabeledInputContainer :label="$t('property.border_and_misc')">
-      <textarea  v-model="value.misc" />
-      <!-- <SimpleFormattedField :value="value.misc" @input="miscFieldChanged" /> -->
+      <SimpleFormattedField ref="miscField" />
     </LabeledInputContainer>
   </div>
 </template>
@@ -61,38 +49,30 @@ export default {
     },
     value: {
       type: Object,
-      required: true
+      required: true,
     },
-  },watch:{
-    value: function(old, nexr){
-
-        console.log(old.misc, nexr.misc)
-    }
   },
   methods: {
+    setFieldContent({ fieldText = "", misc = "" } = {}) {
+      this.$refs.fieldTextField.setContent(fieldText);
+      this.$refs.miscField.setContent(misc);
+    },
+    getFieldContent() {
+      return {
+        fieldText: this.$refs.fieldTextField.getContent(),
+        misc: this.$refs.miscField.getContent(),
+      };
+    },
     changed: function ({
-      fieldText = this.fieldText,
       innerInscript = this.innerInscript,
       outerInscript = this.outerInscript,
       intermediateInscript = this.intermediateInscript,
-      misc = this.misc,
     } = {}) {
-      console.log(this.misc)
       this.$emit("change", {
-        fieldText,
         innerInscript,
         outerInscript,
         intermediateInscript,
-        misc
       });
-    },
-    fieldTextChanged: function (val) {
-      console.log(val)
-      this.changed({ misc: val });
-    },
-    miscFieldChanged: function (val) {
-      console.log(val)
-      this.changed({ misc: val });
     },
     innerInscriptChanged: function (event) {
       const innerInscript = event.target.value;

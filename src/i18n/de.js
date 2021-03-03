@@ -1,6 +1,8 @@
 const general = {
     administration:
         "Admin-Bereich",
+    type:
+        "Typ | Typen",
     create_type:
         "Neuen Typ anlegen",
     manage_properties:

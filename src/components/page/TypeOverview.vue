@@ -38,7 +38,6 @@ export default {
      getReducedCoinTypeList`)
       .list(["id", "projectId","treadwellId"])
       .then((obj) => {
-        console.log(obj)
         this.$data.items = obj.data.data["getReducedCoinTypeList"];
       })
       .catch(() => {
@@ -78,7 +77,6 @@ export default {
           .delete(id)
           .then(() => {
             const idx = this.$data.items.findIndex((item) => item.id == id);
-            console.log(idx);
             if (idx != -1) this.$data.items.splice(idx, 1);
           })
           .catch((err) => {
