@@ -1,6 +1,5 @@
 <template>
   <div class="list">
-
     <div v-if="error" class="info error">
       <Information />
       <p>
@@ -19,7 +18,7 @@
     <ListItem
       @click="listItemClicked"
       @remove="listItemRemoved"
-      :noRemove="true"
+      :noRemove="noRemove"
       v-for="item of items"
       :key="item.id"
       :id="item.id"
@@ -38,7 +37,7 @@ export default {
   props: {
     listText: {
       type: String,
-      default: "name"
+      default: "name",
     },
     loading: {
       type: Boolean,
@@ -50,14 +49,15 @@ export default {
     },
     error: {
       type: String,
-      default: ""
-      },
+      default: "",
+    },
+    noRemove: Boolean,
   },
   methods: {
-    listItemClicked: function (id) {
+    listItemClicked: function(id) {
       this.$emit("select", id);
     },
-    listItemRemoved: function (id) {
+    listItemRemoved: function(id) {
       this.$emit("remove", id);
     },
   },
@@ -84,7 +84,7 @@ export default {
 }
 
 .error {
-  color: rgb(138, 39, 39);;
+  color: rgb(138, 39, 39);
   background-color: rgb(255, 81, 81);
   border: 1px solid rgb(138, 39, 39);
 }
