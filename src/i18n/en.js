@@ -52,7 +52,7 @@ const property = {
     intermediate_circular_text:
         "intermediate marginal inscription",
     inner_circular_text:
-        "inner marginal inscription",
+        "(inner) marginal inscription",
     literature_and_remarks:
         "literature & remarks",
     material:
@@ -89,8 +89,8 @@ const property = {
         back:
             "backside"
     },
-    special_features:
-        "specific features",
+    specialities_and_variants:
+        "specialities/variants",
     title:
         "title | titles",
     type_id:
@@ -99,7 +99,8 @@ const property = {
         "Treadwell-ID | Treadwell-IDs",
     uncertain_location:
         "location uncertain",
-
+    vassal:
+        "vassal coin",
     varieties:
         "varieties"
 }

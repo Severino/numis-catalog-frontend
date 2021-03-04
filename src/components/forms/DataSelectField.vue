@@ -19,7 +19,7 @@
     <ul :class="'search-box ' + (listVisible ? 'visible' : 'hidden')">
       <li v-if="error" class="error non-selectable">{{ error }}</li>
       <li
-        v-if="!error && !loading && searchResults.length == 0"
+        v-if="!error && !loading && !searchResults || searchResults.length == 0"
         class="non-selectable"
       >
         {{ $t("message.list_empty") }}
@@ -164,10 +164,10 @@ export default {
       }
       }`;
 
-      console.log(query);
 
       Query.raw(query)
         .then((result) => {
+          console.log(result.data.data[queryCommand])
           this.searchResults = result.data.data[queryCommand];
           this.error = "";
         })

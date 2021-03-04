@@ -47,14 +47,6 @@
             pattern="^-?[0-9x]{0,3}$"
           />
         </LabeledInputContainer>
-      </Row>
-
-      <Row>
-        <Checkbox
-          id="donativ"
-          :label="$tc('property.donativ')"
-          v-model="coin.donativ"
-        />
 
         <LabeledInputContainer :label="$tc('property.procedure')">
           <ButtonGroup
@@ -63,6 +55,16 @@
             :options="productionOptions"
             v-model="coin.procedure"
           ></ButtonGroup>
+        </LabeledInputContainer>
+      </Row>
+
+      <Row>
+        <LabeledInputContainer :label="$tc('property.donativ')">
+          <Checkbox id="donativ" v-model="coin.donativ" />
+        </LabeledInputContainer>
+
+         <LabeledInputContainer :label="$tc('property.vassal')">
+          <Checkbox id="vassal" v-model="coin.vassal" />
         </LabeledInputContainer>
       </Row>
 
@@ -126,7 +128,6 @@
           v-model="coin.caliph"
           attribute="name"
           table="person"
-          text="${name} (${role})"
           queryCommand="searchPersonsWithRole"
           :queryParams="['id', 'role', 'name']"
           :additionalParameters="{ filter: ['heir', 'cutter', 'warden'] }"
@@ -163,6 +164,7 @@
         </ListItem>
       </List>
 
+      <hr />
       <Section title="Voderseite">
         <CoinSideField
           :title="$t('property.sides.front')"
@@ -172,6 +174,7 @@
         />
       </Section>
 
+      <hr />
       <Section title="Rückseite">
         <CoinSideField
           :title="$t('property.sides.back')"
@@ -180,6 +183,12 @@
           @change="reverseChanged"
         />
       </Section>
+
+      <hr />
+
+      <LabeledInputContainer :label="$t('property.specialities_and_variants')">
+        <SimpleFormattedField ref="specialsField" />
+      </LabeledInputContainer>
 
       <Row>
         <LabeledInputContainer :label="$t('property.cursive_script') + ' (?)'">
@@ -216,8 +225,8 @@
         </ListItem>
       </List>
 
-      <LabeledInputContainer :label="$t('property.literature')">
-        <SimpleFormattedField ref="literatureField" v-model="coin.literature" />
+      <LabeledInputContainer :label="$t('property.literature_and_remarks')">
+        <SimpleFormattedField ref="literatureField" />
         <!-- <textarea v-model="coin.literature"></textarea> -->
       </LabeledInputContainer>
 
@@ -427,12 +436,11 @@ export default {
             type.caliph = type.caliph ? type.caliph : { id: null, name: "" };
 
             this.$refs.literatureField.setContent(type.literature || "");
+            this.$refs.specialsField.setContent(type.specials || "");
 
             this.$refs.aversField.setFieldContent(type.avers);
-            type.avers.misc = "";
             type.avers.fieldText = "";
             this.$refs.reverseField.setFieldContent(type.reverse);
-            type.reverse.misc = "";
             type.reverse.fieldText = "";
 
             Object.assign(this.$data.coin, type);
@@ -486,6 +494,8 @@ export default {
         cursiveScript: false,
         isolatedCharacters: "",
         pieces: [],
+        vassal: false,
+        specials: "",
       },
       errorMessages: [],
       submitted: false,
@@ -661,6 +671,7 @@ export default {
         const submitData = this.$data.coin;
 
         submitData.literature = this.$refs.literatureField.getContent();
+        submitData.specials = this.$refs.specialsField.getContent();
 
         submitData.avers = Object.assign(
           submitData.avers,
@@ -673,9 +684,13 @@ export default {
 
         if (submitData.id == null) {
           this.addCoinType(submitData)
-            .then(() => {
-              this.submitted = true;
-              this.$router.push({ name: "TypeOverview" });
+            .then((result) => {
+              if (result.data.errors.length > 0) {
+                this.errorMessages = result.data.errors;
+              } else {
+                this.submitted = true;
+                this.$router.push({ name: "TypeOverview" });
+              }
             })
             .catch((error) => {
               this.handleAxiosError(error);

@@ -52,7 +52,7 @@ const property = {
     intermediate_circular_text:
         "Mittlere Umschrift",
     inner_circular_text:
-        "innere Umschrift",
+        "(innere) Umschrift",
     literature:
         "Literatur & Anmerkungen",
     material:
@@ -89,8 +89,8 @@ const property = {
         back:
             "Rückseite"
     },
-    special_features:
-        "Besonderheiten",
+    specialities_and_variants:
+        "Besonderheiten/Varianten",
     title:
         "Titel",
     type_id:
@@ -100,6 +100,8 @@ const property = {
         "Treadwell-ID | Treadwell-IDs",
     uncertain_location:
         "Verortung unsicher",
+    vassal:
+        "Vasallenmünze",
     varieties:
         "Varianten"
 }

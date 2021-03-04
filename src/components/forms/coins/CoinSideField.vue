@@ -2,9 +2,7 @@
   <div class="coin-side-field">
     <Heading v-if="title">{{ title }}</Heading>
     <LabeledInputContainer :label="$tc('property.field_text')">
-      <SimpleFormattedField
-        ref="fieldTextField"
-      />
+      <SimpleFormattedField ref="fieldTextField" />
     </LabeledInputContainer>
     <LabeledInputContainer :label="$t('property.inner_circular_text')">
       <input class="inscript" type="text" v-model="value.innerInscript" />
@@ -29,7 +27,7 @@
     </LabeledInputContainer>
 
     <LabeledInputContainer :label="$t('property.border_and_misc')">
-      <SimpleFormattedField ref="miscField" />
+      <input class="inscript" type="text" v-model="value.misc" />
     </LabeledInputContainer>
   </div>
 </template>
@@ -55,34 +53,40 @@ export default {
   methods: {
     setFieldContent({ fieldText = "", misc = "" } = {}) {
       this.$refs.fieldTextField.setContent(fieldText);
-      this.$refs.miscField.setContent(misc);
     },
     getFieldContent() {
       return {
         fieldText: this.$refs.fieldTextField.getContent(),
-        misc: this.$refs.miscField.getContent(),
       };
     },
-    changed: function ({
+    changed: function({
       innerInscript = this.innerInscript,
       outerInscript = this.outerInscript,
       intermediateInscript = this.intermediateInscript,
+      misc = this.misc,
     } = {}) {
+      console.log({
+        innerInscript,
+        outerInscript,
+        intermediateInscript,
+        misc,
+      });
       this.$emit("change", {
         innerInscript,
         outerInscript,
         intermediateInscript,
+        misc,
       });
     },
-    innerInscriptChanged: function (event) {
+    innerInscriptChanged: function(event) {
       const innerInscript = event.target.value;
       this.changed({ innerInscript });
     },
-    intermediateInscriptChanged: function (event) {
+    intermediateInscriptChanged: function(event) {
       const intermediateInscript = event.target.value;
       this.changed({ intermediateInscript });
     },
-    outerInscriptChanged: function (event) {
+    outerInscriptChanged: function(event) {
       const outerInscript = event.target.value;
       this.changed({ outerInscript });
     },
