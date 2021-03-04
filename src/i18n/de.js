@@ -54,7 +54,7 @@ const property = {
     inner_circular_text:
         "innere Umschrift",
     literature:
-        "Literatur",
+        "Literatur & Anmerkungen",
     material:
         "Material | Materialien",
     mint_year:
