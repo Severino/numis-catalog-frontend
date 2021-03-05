@@ -148,7 +148,9 @@ const error = {
 
 const warning = {
     list_is_empty:
-        "Bisher sind keine Werte in dieser Liste."
+        "Bisher sind keine Werte in dieser Liste.",
+    leave_without_saving:
+        "Wollen Sie ohne speichern das Dokument schließen? Alle Änderungen gehen hierbei verloren!"
 }
 
 const form = {

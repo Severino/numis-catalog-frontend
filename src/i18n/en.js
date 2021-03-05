@@ -143,7 +143,9 @@ const error = {
 
 const warning = {
     list_is_empty:
-        "So far, there are no items in this list."
+        "So far, there are no items in this list.",
+    leave_without_saving:
+        "Do you really want to leave without saving? All changes will be lost."
 }
 
 const form = {

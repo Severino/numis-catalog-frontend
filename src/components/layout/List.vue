@@ -93,3 +93,5 @@ export default {
   align-self: center;
 }
 </style>
+
+

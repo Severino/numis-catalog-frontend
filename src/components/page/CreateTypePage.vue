@@ -1,6 +1,6 @@
 <template>
   <form class="types-page" @submit.prevent="">
-    <div v-if="errorMessage" class="error">{{ errorMessage }}</div>
+    <div v-if="errorMessage" class="global error">{{ errorMessage }}</div>
     <Heading>{{ $tc("general.type") }}</Heading>
     <LoadingSpinner v-if="loading" />
     <div v-if="!loading" class="loading-area">
@@ -59,13 +59,17 @@
       </Row>
 
       <Row>
-        <LabeledInputContainer :label="$tc('property.donativ')">
-          <Checkbox id="donativ" v-model="coin.donativ" />
-        </LabeledInputContainer>
+        <Checkbox
+          id="donativ"
+          v-model="coin.donativ"
+          :label="$tc('property.donativ')"
+        />
 
-        <LabeledInputContainer :label="$tc('property.vassal')">
-          <Checkbox id="vassal" v-model="coin.vassal" />
-        </LabeledInputContainer>
+        <Checkbox
+          id="vassal"
+          v-model="coin.vassal"
+          :label="$tc('property.vassal')"
+        />
       </Row>
 
       <List v-on:add="addIssuer" :title="$t('property.issuer')">
@@ -448,7 +452,6 @@ export default {
             type.avers.fieldText = "";
             this.$refs.reverseField.setFieldContent(type.reverse);
             type.reverse.fieldText = "";
-
             Object.assign(this.$data.coin, type);
           }
         })
@@ -960,7 +963,7 @@ export default {
   }
 }
 
-.error {
+.global.error {
   position: fixed;
   top: 0;
   left: 50%;

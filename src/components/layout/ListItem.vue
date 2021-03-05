@@ -56,6 +56,11 @@ export default {
   display: flex;
   align-items: center;
   padding: 0;
+  border-bottom-width: 0;
+
+  &:last-of-type{
+    border-bottom-width: 1px;
+  }
 }
 
 .slot {

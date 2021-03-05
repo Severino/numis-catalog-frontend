@@ -86,16 +86,16 @@ export default {
     position: relative;
   }
 
-  .list-item:after {
-    position: absolute;
+  // .list-item:after {
+  //   position: absolute;
 
-    content: "";
-    border-bottom: 2px solid $gray;
-    width: $left + 1px;
-    left: 0;
-    top: calc(50% - 1px);
-    transform: translateX(-100%);
-  }
+  //   content: "";
+  //   border-bottom: 2px solid $gray;
+  //   width: $left + 1px;
+  //   left: 0;
+  //   top: calc(50% - 1px);
+  //   transform: translateX(-100%);
+  // }
 }
 
 .description {

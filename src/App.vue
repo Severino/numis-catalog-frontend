@@ -46,6 +46,7 @@ export default {
     if (lang) {
       this.language = lang;
       this.$i18n.locale = lang;
+      this.languageChanged(this.language)
     }
   },
   methods: {
