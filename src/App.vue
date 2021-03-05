@@ -201,7 +201,7 @@ main {
 .content-wrapper {
   box-sizing: border-box;
   width: 100%;
-  padding: 10px;
+  padding: 20px;
 }
 
 @media (min-width: 1080px) {

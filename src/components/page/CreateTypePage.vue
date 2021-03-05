@@ -63,7 +63,7 @@
           <Checkbox id="donativ" v-model="coin.donativ" />
         </LabeledInputContainer>
 
-         <LabeledInputContainer :label="$tc('property.vassal')">
+        <LabeledInputContainer :label="$tc('property.vassal')">
           <Checkbox id="vassal" v-model="coin.vassal" />
         </LabeledInputContainer>
       </Row>
@@ -282,20 +282,20 @@ export default {
     LoadingSpinner,
   },
   computed: {
-    productionLabels: function() {
+    productionLabels: function () {
       return [
         this.$t("property.procedures.pressed"),
         this.$t("property.procedures.cast"),
       ];
     },
   },
-  mounted: function() {
+  mounted: function () {
     window.onbeforeunload = (event) => {
       if (!this.submitted) return "ASD";
       else return true;
     };
   },
-  created: function() {
+  created: function () {
     let id = this.$route.params.id;
     if (id != null) {
       Query.raw(
@@ -379,7 +379,9 @@ export default {
                 cursiveScript
                 isolatedCharacters
                 literature
-                pieces
+                pieces,
+                vassal,
+                specials
         }
       }
       `
@@ -393,6 +395,10 @@ export default {
             this.errorMessage = obj.message.errors[0];
           } else {
             const type = obj.data.data.getCoinType;
+            console.log({
+              vassal: type.vassal,
+              specials: type.specials,
+            });
 
             // Sorts the overlords appropriately
             if (!type.overlords) type.overlords = [];
@@ -451,7 +457,6 @@ export default {
         })
         .finally((this.loading = false));
     } else {
-      this.addIssuer();
       this.loading = false;
     }
   },
@@ -460,7 +465,7 @@ export default {
       next();
     } else next(false);
   },
-  data: function() {
+  data: function () {
     return {
       coin: {
         id: null,
@@ -507,32 +512,32 @@ export default {
     };
   },
   methods: {
-    aversChanged: function(coinSideObject) {
+    aversChanged: function (coinSideObject) {
       this.coin.avers = coinSideObject;
     },
-    cancel: function() {
+    cancel: function () {
       this.$router.push("/type/");
     },
-    reverseChanged: function(coinSideObject) {
+    reverseChanged: function (coinSideObject) {
       this.coin.reverse = coinSideObject;
     },
-    issuerChanged: function(issuer, index) {
+    issuerChanged: function (issuer, index) {
       delete issuer.error;
       this.coin.issuers.splice(index, 1, issuer);
     },
-    addPiece: function() {
+    addPiece: function () {
       this.coin.pieces.push({
         key: "piece-" + this.key++,
         value: "",
       });
     },
-    pieceChanged: function(piece) {
+    pieceChanged: function (piece) {
       delete piece.error;
     },
-    removePiece: function(index) {
+    removePiece: function (index) {
       this.coin.pieces.splice(index, 1);
     },
-    addIssuer: function() {
+    addIssuer: function () {
       this.coin.issuers.push({
         key: "issuer-" + this.key++,
         person: {
@@ -544,7 +549,7 @@ export default {
         honorifics: [],
       });
     },
-    removeIssuer: function(item) {
+    removeIssuer: function (item) {
       const idx = this.coin.issuers.indexOf(item);
       if (idx != -1) {
         this.coin.issuers.splice(idx, 1);
@@ -553,7 +558,7 @@ export default {
         });
       }
     },
-    addOverlord: function() {
+    addOverlord: function () {
       this.coin.overlords.push({
         key: "overlord-" + this.key++,
         rank: this.coin.overlords.length + 1,
@@ -565,7 +570,7 @@ export default {
         honorifics: [],
       });
     },
-    addOtherPerson: function() {
+    addOtherPerson: function () {
       this.coin.otherPersons.push({
         id: null,
         key: this.key++,
@@ -573,13 +578,13 @@ export default {
         role: "",
       });
     },
-    overlordChanged: function(overlord, index) {
+    overlordChanged: function (overlord, index) {
       const old = this.coin.overlords[index];
       Object.assign(old, overlord);
       delete old.error;
       this.coin.overlords.splice(index, 1, old);
     },
-    removeOverlord: function(item) {
+    removeOverlord: function (item) {
       const idx = this.coin.overlords.indexOf(item);
       if (idx != -1) {
         this.coin.overlords.splice(idx, 1);
@@ -588,19 +593,19 @@ export default {
         });
       }
     },
-    removeOtherPerson: function(item) {
+    removeOtherPerson: function (item) {
       const idx = this.coin.otherPersons.indexOf(item);
       if (idx != -1) {
         this.coin.otherPersons.splice(idx, 1);
       }
     },
-    otherPersonChanged: function(otherPerson, index) {
+    otherPersonChanged: function (otherPerson, index) {
       const op = this.coin.otherPersons[index];
       Object.assign(op, otherPerson);
       delete op.error;
       this.coin.otherPersons.splice(index, 1, op);
     },
-    submitForm: function() {
+    submitForm: function () {
       function validateTitledPerson(titledPerson) {
         return !!titledPerson.person.id;
       }
@@ -682,10 +687,11 @@ export default {
           this.$refs.reverseField.getFieldContent()
         );
 
+        console.log(submitData);
         if (submitData.id == null) {
           this.addCoinType(submitData)
             .then((result) => {
-              if (result.data.errors.length > 0) {
+              if (result.data.errors && result.data.errors.length > 0) {
                 this.errorMessages = result.data.errors;
               } else {
                 this.submitted = true;
@@ -697,9 +703,13 @@ export default {
             });
         } else {
           this.updateCoinType(submitData)
-            .then(() => {
-              this.submitted = true;
-              this.$router.push({ name: "TypeOverview" });
+            .then((result) => {
+              if (result.data.errors && result.data.errors.length > 0) {
+                this.errorMessages = result.data.errors;
+              } else {
+                this.submitted = true;
+                this.$router.push({ name: "TypeOverview" });
+              }
             })
             .catch((error) => {
               this.handleAxiosError(error);
@@ -710,9 +720,27 @@ export default {
     addCoinType(data) {
       // TODO ADA
       const query = `
-        mutation ($projectId:String, $treadwellId:String, $mint:ID, $mintAsOnCoin:String, $material:ID, $nominal:ID, 
-        $yearOfMinting:String, $donativ:Boolean, $procedure:String, $issuers:[TitledPersonInput], $otherPersons:[ID], $overlords:[OverlordInput], 
-        $caliph:ID, $avers:CoinSideInformationInput, $reverse:CoinSideInformationInput, $cursiveScript:Boolean, $isolatedCharacters:String, $literature:String, $pieces:[String]){
+        mutation ($projectId:String,
+            $treadwellId:String,
+            $mint:ID,
+            $mintAsOnCoin:String,
+            $material:ID,
+            $nominal:ID,
+            $yearOfMinting:String,
+            $donativ:Boolean,
+            $procedure:String,
+            $issuers:[TitledPersonInput],
+            $otherPersons:[ID],
+            $overlords:[OverlordInput],
+            $caliph:ID,
+            $avers:CoinSideInformationInput,
+            $reverse:CoinSideInformationInput,
+            $cursiveScript:Boolean,
+            $isolatedCharacters:String,
+            $literature:String,
+            $pieces:[String],
+            $vassal:Boolean
+            $specials:String){
         addCoinType(data: {
             projectId: $projectId, 
             treadwellId: $treadwellId, 
@@ -732,7 +760,9 @@ export default {
             cursiveScript: $cursiveScript, 
             isolatedCharacters: $isolatedCharacters, 
             literature: $literature, 
-            pieces: $pieces
+            pieces: $pieces,
+                vassal: $vassal,
+                specials: $specials
          })
          }
    `;
@@ -770,6 +800,8 @@ export default {
         isolatedCharacters: data.isolatedCharacters,
         literature: data.literature,
         pieces: data.pieces.map((piece) => piece.value),
+        vassal: data.vassal || false,
+        specials: data.specials || "",
       };
 
       return Query.raw(query, variables);
@@ -777,9 +809,29 @@ export default {
     updateCoinType(data) {
       // TODO ADA
       const query = `
-        mutation ($id:ID, $projectId:String, $treadwellId:String, $mint:ID, $mintAsOnCoin:String, $material:ID, $nominal:ID, 
-        $yearOfMinting:String, $donativ:Boolean, $procedure:String, $issuers:[TitledPersonInput], $otherPersons:[ID], $overlords:[OverlordInput], 
-        $caliph:ID, $avers:CoinSideInformationInput, $reverse:CoinSideInformationInput, $cursiveScript:Boolean, $isolatedCharacters:String, $literature:String, $pieces:[String]){
+        mutation ($id:ID,
+         $projectId:String,
+         $treadwellId:String,
+         $mint:ID,
+         $mintAsOnCoin:String,
+         $material:ID,
+         $nominal:ID,
+         $yearOfMinting:String,
+         $donativ:Boolean,
+         $procedure:String,
+         $issuers:[TitledPersonInput],
+         $otherPersons:[ID],
+         $overlords:[OverlordInput],
+         $caliph:ID,
+         $avers:CoinSideInformationInput,
+         $reverse:CoinSideInformationInput,
+         $cursiveScript:Boolean,
+         $isolatedCharacters:String,
+         $literature:String,
+         $pieces:[String],
+        $vassal:Boolean,
+        $specials:String
+        ){
         updateCoinType(id: $id, data: {
             projectId: $projectId, 
             treadwellId: $treadwellId, 
@@ -800,6 +852,8 @@ export default {
             isolatedCharacters: $isolatedCharacters, 
             literature: $literature, 
             pieces: $pieces
+            vassal: $vassal,
+            specials: $specials
          })
          }
    `;
@@ -838,36 +892,43 @@ export default {
         isolatedCharacters: data.isolatedCharacters,
         literature: data.literature,
         pieces: data.pieces.map((piece) => piece.value),
+        vassal: data.vassal || false,
+        specials: data.specials || "",
       };
 
       return Query.raw(query, variables);
     },
-    handleAxiosError(error) {
-      if (error.response) {
+    handleAxiosError(req) {
+      if (req.errors) {
+        this.errorMessages.push(...req.errors);
+      } else if (req.response) {
         /*
          * The request was made and the server responded with a
          * status code that falls out of the range of 2xx
          */
 
-        this.errorMessages.push("Server hat Aufgabe abgelehnt.");
+        if (req.response.data.errors)
+          this.errorMessages.push(...req.response.data.errors);
 
-        console.log(error.response.data);
-        console.log(error.response.status);
-        console.log(error.response.headers);
-      } else if (error.request) {
+        console.log(req.response.data);
+        console.log(req.response.status);
+        console.log(req.response.headers);
+      } else if (req.request) {
         /*
-         * The request was made but no response was received, `error.request`
+         * The request was made but no response was received, `req.request`
          * is an instance of XMLHttpRequest in the browser and an instance
          * of http.ClientRequest in Node.js
          */
         this.errorMessages.push("Server war nicht erreichbar.");
 
-        console.log(error.request);
+        console.log(req.request);
       } else {
+        console.dir(req.message);
+
         this.errorMessages.push("Ausnahmefehler!");
 
         // Something happened in setting up the request and triggered an Error
-        console.log("Error", error.message);
+        console.log("Error", req.message);
       }
     },
   },
