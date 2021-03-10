@@ -5,7 +5,9 @@ import Inventory from "@/components/page/Inventory"
 import LandingPage from "@/components/page/LandingPage.vue"
 import Overview from "@/components/page/Overview.vue"
 import TypeOverview from "@/components/page/TypeOverview.vue"
-import TestPage from "@/components/page/TestPage.vue"
+import TreeExplorer from "@/components/page/TreeExplorer.vue"
+import TypePage from "@/components/page/TypePage.vue"
+import TypeList from "@/components/page/TypeList.vue"
 
 
 import MaterialForm from "@/components/page/property/MaterialForm"
@@ -20,17 +22,25 @@ Vue.use(VueRouter)
 
 const routes = [
   {
-    path: "/test",
-    component: TestPage
-  },
-  {
     path: '/',
     name: 'Home',
     component: LandingPage
   },
   {
+    path: '/explorer',
+    name: 'Explorer',
+    component: TreeExplorer
+  },
+  {
 
     path: "/type",
+    name: "TypeList",
+    component: TypeList
+
+  },
+  {
+
+    path: "/manage/type",
     name: "TypeOverview",
     component: TypeOverview
 
@@ -39,12 +49,19 @@ const routes = [
     path: "/:property",
     name: "Property",
     component: Overview
-  }, {
-    path: '/type/create',
+  },
+  {
+    path: '/type/:id',
+    name: 'TypePage',
+    component: TypePage
+  },
+  
+  {
+    path: '/manage/type/create',
     name: 'TypeCreationPage',
     component: CreateTypePage
   }, {
-    path: '/type/:id',
+    path: '/manage/type/:id',
     name: 'EditTypePage',
     component: CreateTypePage
   }, {

@@ -4,9 +4,12 @@
       <h2>{{ $t("general.administration") }}</h2>
       <ServerStatus />
     </header>
+    <router-link :to="{name:'TypeList' }">
+      Explorer
+    </router-link>
     <router-link
       class="button icon-button"
-      to="/type"
+      :to="{name: 'TypeOverview'}"
       draggable="false"
     >
       <PlusBox />

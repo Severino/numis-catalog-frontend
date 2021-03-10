@@ -1,9 +1,15 @@
 <template>
-  <div :class="`type-page`" >
+  <div :class="`type-page`">
     <BackHeader />
     <h1>{{ $t("attribute.test") }}</h1>
 
-    <div class="button" @click="create" tabindex="1" autofocus @keydown.enter="create">
+    <div
+      class="button"
+      @click="create"
+      tabindex="1"
+      autofocus
+      @keydown.enter="create"
+    >
       <PlusCircleOutline />
       <span>{{ $t("form.create") }}</span>
     </div>
@@ -24,7 +30,7 @@
 import PlusCircleOutline from "vue-material-design-icons/PlusCircleOutline";
 import List from "../layout/List.vue";
 import Query from "../../database/query.js";
-import BackHeader from '../layout/BackHeader.vue';
+import BackHeader from "../layout/BackHeader.vue";
 
 export default {
   name: "TypeOverviewPage",
@@ -36,7 +42,7 @@ export default {
   created: function () {
     new Query(`
      getReducedCoinTypeList`)
-      .list(["id", "projectId","treadwellId"])
+      .list(["id", "projectId", "treadwellId"])
       .then((obj) => {
         this.$data.items = obj.data.data["getReducedCoinTypeList"];
       })
@@ -62,7 +68,7 @@ export default {
 
   methods: {
     handleKeys(event) {
-      console.log(event.key)
+      console.log(event.key);
     },
     create() {
       this.$router.push({
@@ -86,7 +92,8 @@ export default {
     },
     edit(id) {
       this.$router.push({
-        path: `/type/${id}`,
+        name: "EditTypePage",
+        params: { id },
       });
     },
   },

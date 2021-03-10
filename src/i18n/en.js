@@ -52,7 +52,7 @@ const property = {
     intermediate_circular_text:
         "intermediate marginal inscription",
     inner_circular_text:
-        "(inner) marginal inscription",
+        "inner marginal inscription",
     literature_and_remarks:
         "literature & remarks",
     material:

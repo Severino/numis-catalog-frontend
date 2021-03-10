@@ -15,15 +15,30 @@
     </div>
 
     <LoadingSpinner class="loading-spinner" v-if="loading" />
+    <header v-if="properties">
+      <div
+        v-for="(label, idx) of ['id', ...properties]"
+        :key="`label-of-${label}-${idx}`"
+      >
+        {{ label }}
+      </div>
+    </header>
     <ListItem
       @click="listItemClicked"
       @remove="listItemRemoved"
       :noRemove="noRemove"
-      v-for="item of items"
+      v-for="(item, itemIdx) of items"
       :key="item.id"
       :id="item.id"
-      >{{ item[listText] }}</ListItem
     >
+      <div
+        v-for="(prop, propIdx) of properties"
+        :key="`${prop}-${itemIdx}-${propIdx}`"
+        class="div"
+      >
+        {{ item[prop] }}
+      </div>
+    </ListItem>
   </div>
 </template>
 
@@ -38,6 +53,10 @@ export default {
     listText: {
       type: String,
       default: "name",
+    },
+    properties: {
+      type: Array,
+      default: null,
     },
     loading: {
       type: Boolean,
@@ -54,11 +73,23 @@ export default {
     noRemove: Boolean,
   },
   methods: {
-    listItemClicked: function(id) {
+    listItemClicked: function (id) {
       this.$emit("select", id);
     },
-    listItemRemoved: function(id) {
+    listItemRemoved: function (id) {
       this.$emit("remove", id);
+    },
+    getListText: function (item) {
+      if (this.properties) {
+        const parts = [];
+        this.properties.forEach((lt) => {
+          parts.push(item[lt]);
+        });
+
+        return parts.join(" | ");
+      } else {
+        return item[this.listText];
+      }
     },
   },
 };
@@ -91,6 +122,36 @@ export default {
 
 .loading-spinner {
   align-self: center;
+}
+
+header {
+  display: flex;
+  align-items: center;
+  padding: 0;
+  border-bottom-width: 0;
+  background-color: rgb(224, 224, 224);
+  color: gray;
+  border: 1px solid #cccccc;
+  border-bottom: none;
+  font-weight: bold;
+  padding-right: 44px;
+
+  :first-child {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: $padding/3 $padding;
+    min-width: 16px;
+    margin-right: $padding * 2;
+  }
+
+  > :not(:first-child) {
+    flex: 1;
+  }
+
+  > * {
+    text-transform: uppercase;
+  }
 }
 </style>
 

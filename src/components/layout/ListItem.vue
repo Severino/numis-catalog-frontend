@@ -5,7 +5,7 @@
       <slot></slot>
     </div>
 
-    <DynamicDeleteButton @remove="triggerRemove" v-if="!noRemove" />
+    <DynamicDeleteButton class="removeBtn" @remove="triggerRemove" v-if="!noRemove" />
   </div>
 </template>
 
@@ -53,9 +53,11 @@ export default {
   @include interactive();
   @include input();
 
+position: relative;
   display: flex;
   align-items: center;
   padding: 0;
+  padding-right: 44px;
   border-bottom-width: 0;
 
   &:last-of-type{
@@ -63,9 +65,20 @@ export default {
   }
 }
 
+.removeBtn {
+  position: absolute;
+  right: 0;
+  max-height: 100%;
+}
+
 .slot {
   flex: 1;
-  padding: $padding;
+  // padding: $padding;
+  display: flex;
+
+  >*{
+    flex: 1;
+  }
 }
 
 #id {
