@@ -21,7 +21,7 @@
       :items="list"
       :loading="loading"
       :noRemove="true"
-      listText="projectId"
+      property="projectId"
     />
   </div>
 </template>

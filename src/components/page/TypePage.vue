@@ -2,37 +2,37 @@
   <div class="type">
     <div class="labeled-group">
       <h3>{{ $t("property.project_id") }}</h3>
-      <span>{{ this.type.projectId }}</span>
+      <span>{{ this.getTypeProperty("projectId") }}</span>
     </div>
 
     <div class="labeled-group">
       <h3>{{ $tc("property.treadwell_id") }}</h3>
-      <span>{{ this.type.treadwellId }}</span>
+      <span>{{ this.getTypeProperty("treadwellId") }}</span>
     </div>
 
     <div class="labeled-group">
       <h3>{{ $tc("property.mint") }}</h3>
-      <span>{{ this.type.mint.name }}</span>
+      <span>{{ this.getTypePropertyKey("mint") }}</span>
     </div>
 
     <div class="labeled-group">
       <h3>{{ $t("property.mint_as_on_coin") }}</h3>
-      <span>{{ this.type.mintAsOnCoin }}</span>
+      <span>{{ this.getTypeProperty("mintAsOnCoin") }}</span>
     </div>
 
     <div class="labeled-group">
       <h3>{{ $tc("property.material") }}</h3>
-      <span>{{ this.type.material.name }}</span>
+      <span>{{ this.getTypePropertyKey("material") }}</span>
     </div>
 
     <div class="labeled-group">
       <h3>{{ $tc("property.nominal") }}</h3>
-      <span>{{ this.type.nominal.name }}</span>
+      <span>{{ this.getTypePropertyKey("nominal") }}</span>
     </div>
 
     <div class="labeled-group">
       <h3>{{ $t("property.mint_year") }}</h3>
-      <span>{{ this.type.yearOfMinting }}</span>
+      <span>{{ this.getTypeProperty("yearOfMinting") }}</span>
     </div>
 
     <div class="labeled-group">
@@ -67,7 +67,7 @@
     </div>
     <div class="labeled-group">
       <h3>{{ $tc("role.caliph") }}</h3>
-      <span>{{ type.caliph.name }}</span>
+      <span>{{ this.getTypePropertyKey("caliph") }}</span>
     </div>
 
     <div class="labeled-group">
@@ -107,8 +107,8 @@
       </h4>
       <p v-if="type.avers.innerInscript">{{ type.avers.outerInscript }}</p>
 
-      <h4>{{ $t("property.border_and_misc") }}</h4>
-      <p>{{ type.avers.misc }}</p>
+      <h4 v-if="type.avers.misc">{{ $t("property.border_and_misc") }}</h4>
+      <p v-if="type.avers.misc">{{ getTypePropertykey(type.avers, "misc") }}</p>
     </div>
 
     <div class="backside">
@@ -136,8 +136,10 @@
       </h4>
       <p v-if="type.reverse.innerInscript">{{ type.reverse.outerInscript }}</p>
 
-      <h4>{{ $t("property.border_and_misc") }}</h4>
-      <p>{{ type.reverse.misc }}</p>
+      <h4 v-if="type.reverse.misc">{{ $t("property.border_and_misc") }}</h4>
+      <p v-if="type.reverse.misc">
+        {{ getTypePropertykey(type.reverse, "misc") }}
+      </p>
     </div>
 
     <div class="labeled-group">
@@ -147,18 +149,20 @@
 
     <div class="labeled-group">
       <h3>{{ $t("property.isolated_characters") }}</h3>
-      {{ type.isolatedCharacters }}
+      {{ getTypeProperty("isolatedCharacters") }}
     </div>
 
     <div class="labeled-group">
       <h3>{{ $t("property.pieces") }}</h3>
+      <p v-if="type.pieces || type.pieces.length == 0">
+        {{ $t("message.no_pieces_in_list") }}
+      </p>
       <ul>
         <li v-for="(piece, index) of type.pieces" :key="`piece-${index}`">
           <a :href="piece">{{ piece }}</a>
         </li>
       </ul>
     </div>
-
     <div class="labeled-group">
       <h3>{{ $t("property.specials") }}</h3>
       <div v-html="type.specials" />
@@ -166,12 +170,11 @@
   </div>
 </template>
 
-
 <script>
 import Query from "/src/database/query.js";
 export default {
   name: "TypePage",
-  data: function () {
+  data: function() {
     return {
       type: {
         id: null,
@@ -209,7 +212,7 @@ export default {
       },
     };
   },
-  created: function () {
+  created: function() {
     Query.raw(
       `{
             getCoinType(id:${this.$route.params.id}){
@@ -295,6 +298,24 @@ export default {
         Object.assign(this.type, result.data.data.getCoinType);
       })
       .catch(console.error);
+  },
+  methods: {
+    getUndefinedString() {
+      return "Nicht Erfasst";
+    },
+    getTypeProperty(name) {
+      if (!this.type || !this.type[name]) {
+        return this.getUndefinedString();
+      } else {
+        return this.type[name];
+      }
+    },
+    getTypePropertyKey(name, key = "name") {
+      let result = this.getTypeProperty(name);
+      if (!result[key]) {
+        return this.getUndefinedString();
+      } else return result[key];
+    },
   },
 };
 </script>

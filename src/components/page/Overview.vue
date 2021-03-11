@@ -11,6 +11,7 @@
     <List
       @select="edit"
       @remove="remove"
+      property="name"
       :error="error"
       :items="list"
       :loading="loading"

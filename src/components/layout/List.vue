@@ -31,6 +31,8 @@
       :key="item.id"
       :id="item.id"
     >
+      <div v-if="property">{{item[property]}}</div>
+
       <div
         v-for="(prop, propIdx) of properties"
         :key="`${prop}-${itemIdx}-${propIdx}`"
@@ -50,9 +52,9 @@ import LoadingSpinner from "../misc/LoadingSpinner.vue";
 export default {
   components: { ListItem, Information, LoadingSpinner },
   props: {
-    listText: {
+    property: {
       type: String,
-      default: "name",
+      default: null,
     },
     properties: {
       type: Array,
@@ -73,23 +75,11 @@ export default {
     noRemove: Boolean,
   },
   methods: {
-    listItemClicked: function (id) {
+    listItemClicked: function(id) {
       this.$emit("select", id);
     },
-    listItemRemoved: function (id) {
+    listItemRemoved: function(id) {
       this.$emit("remove", id);
-    },
-    getListText: function (item) {
-      if (this.properties) {
-        const parts = [];
-        this.properties.forEach((lt) => {
-          parts.push(item[lt]);
-        });
-
-        return parts.join(" | ");
-      } else {
-        return item[this.listText];
-      }
     },
   },
 };
@@ -154,5 +144,3 @@ header {
   }
 }
 </style>
-
-
