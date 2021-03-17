@@ -692,6 +692,7 @@ export default {
 
         console.log(submitData);
         if (submitData.id == null) {
+          
           this.addCoinType(submitData)
             .then((result) => {
               if (result.data.errors && result.data.errors.length > 0) {

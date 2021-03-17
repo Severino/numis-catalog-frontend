@@ -11,7 +11,8 @@
               id="language"
               :labels="['de', 'en']"
               :options="['de', 'en']"
-              v-model="language"
+              :value="language"
+              @input="this.languageChanged"
             />
           </nav>
         </div>
@@ -34,23 +35,21 @@ export default {
       language: "de",
     };
   },
-  watch: {
-    language: function (newLang) {
-      this.languageChanged(newLang);
-    },
-  },
   created: function () {
     this.version = require("../package.json").version;
-
+  },
+  mounted: function () {
     const lang = window.localStorage.getItem("language", this.$i18n.locale);
+    console.log(lang)
     if (lang) {
-      this.language = lang;
-      this.$i18n.locale = lang;
-      this.languageChanged(this.language)
+      this.languageChanged(lang);
+    }else{
+      this.languageChanged("de");
     }
   },
   methods: {
     languageChanged: function (lang) {
+      this.language = lang;
       this.$i18n.locale = lang;
       window.localStorage.setItem("language", this.$i18n.locale);
     },
@@ -90,7 +89,7 @@ body {
 }
 
 body {
-  font-family: 'Newsreader', serif;
+  font-family: "Newsreader", serif;
   font-size: 16px;
 
   -webkit-font-smoothing: antialiased;
@@ -116,7 +115,6 @@ button[type="submit"] {
 
 .button,
 button {
-
   text-transform: capitalize;
   @include input;
   @include interactive();
