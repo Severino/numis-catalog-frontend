@@ -32,7 +32,7 @@ const property = {
     backside:
         "reverse",
     border_and_misc:
-        "border and miscellaneous",
+        "border inscription",
     circular_text:
         "marginal inscription | marginal inscriptions",
     issuer:

@@ -32,7 +32,7 @@ const property = {
     backside:
         "Rückseite",
     border_and_misc:
-        "Rand und Sonstiges",
+        "Randbeschriftung",
     circular_text:
         "Umschrift | Umschriften",
     issuer:
@@ -52,7 +52,7 @@ const property = {
     intermediate_circular_text:
         "Mittlere Umschrift",
     inner_circular_text:
-        "(innere) Umschrift",
+        "innere Umschrift",
     literature:
         "Literatur & Anmerkungen",
     material:
