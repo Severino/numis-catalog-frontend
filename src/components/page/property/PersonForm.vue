@@ -106,6 +106,11 @@ export default {
           text: this.$tc("role.warden"),
           value: "warden",
         },
+        {
+          key: "role_option_04",
+          text: this.$tc("role.vassal"),
+          value: "vassal",
+        },
       ];
     },
   },

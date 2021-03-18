@@ -111,7 +111,8 @@ const role = {
     heir: "designierter Thronfolger des Kalifen | designierter Thronfolger des Kalifen",
     warden: "Münzwardein | Münzwardeien",
     buyid: "Būyide | Būyiden",
-    caliph: "Kalif | Kalifen"
+    caliph: "Kalif | Kalifen",
+    vassal: "Vasallendynastie"
 }
 
 const attribute = {

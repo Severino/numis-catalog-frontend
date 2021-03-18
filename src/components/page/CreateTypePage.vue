@@ -89,7 +89,7 @@
             :value="issuer"
             :key="`issuer-${issuer.key}`"
             @input="issuerChanged($event, issuer_idx)"
-            queryCommand="searchPersonsWithoutRole"
+            queryCommand="searchMintWardens"
             :queryParams="['id', 'name']"
           ></TitledPersonSelect>
           <div v-if="issuer.error" class="invalid-warning">

@@ -109,7 +109,8 @@ const role = {
     heir: "caliphal heir-apparent | caliphal heir-apparent",
     warden: "mint warden | mint wardens",
     buyid: "Būyid | Būyids",
-    caliph: "caliph | caliphs"
+    caliph: "caliph | caliphs",
+    vassal: "vassal dynastie"
 }
 
 const attribute = {
