@@ -40,6 +40,12 @@ export default {
   },
   methods: {
     setContent: function(str) {
+      if(!str){
+        str = '<div style="text-align: center;"><br></div>'
+      }
+
+      console.log("SETCONTEND", str)
+
       this.$refs.field.innerHTML = str;
     },
     getContent: function() {
@@ -147,6 +153,8 @@ export default {
   font-size: 1rem;
   min-height: 1em;
   // background-color: red;
+
+ 
 
   span {
     display: block;

@@ -288,20 +288,24 @@ export default {
     LoadingSpinner,
   },
   computed: {
-    productionLabels: function () {
+    productionLabels: function() {
       return [
         this.$t("property.procedures.pressed"),
         this.$t("property.procedures.cast"),
       ];
     },
   },
-  mounted: function () {
+  mounted: function() {
     window.onbeforeunload = (event) => {
       if (!this.submitted) return "ASD";
       else return true;
     };
+
+    
+    console.log(this.$refs.literatureField);
+    this.initFormattedFields.call(this);
   },
-  created: function () {
+  created: function() {
     let id = this.$route.params.id;
     if (id != null) {
       Query.raw(
@@ -447,13 +451,6 @@ export default {
             type.nominal = type.nominal ? type.nominal : { id: null, name: "" };
             type.caliph = type.caliph ? type.caliph : { id: null, name: "" };
 
-            this.$refs.literatureField.setContent(type.literature || "");
-            this.$refs.specialsField.setContent(type.specials || "");
-
-            this.$refs.aversField.setFieldContent(type.avers);
-            type.avers.fieldText = "";
-            this.$refs.reverseField.setFieldContent(type.reverse);
-            type.reverse.fieldText = "";
             Object.assign(this.$data.coin, type);
           }
         })
@@ -470,7 +467,7 @@ export default {
       next();
     } else next(false);
   },
-  data: function () {
+  data: function() {
     return {
       coin: {
         id: null,
@@ -517,32 +514,32 @@ export default {
     };
   },
   methods: {
-    aversChanged: function (coinSideObject) {
+    aversChanged: function(coinSideObject) {
       this.coin.avers = coinSideObject;
     },
-    cancel: function () {
+    cancel: function() {
       this.$router.push("/type/");
     },
-    reverseChanged: function (coinSideObject) {
+    reverseChanged: function(coinSideObject) {
       this.coin.reverse = coinSideObject;
     },
-    issuerChanged: function (issuer, index) {
+    issuerChanged: function(issuer, index) {
       delete issuer.error;
       this.coin.issuers.splice(index, 1, issuer);
     },
-    addPiece: function () {
+    addPiece: function() {
       this.coin.pieces.push({
         key: "piece-" + this.key++,
         value: "",
       });
     },
-    pieceChanged: function (piece) {
+    pieceChanged: function(piece) {
       delete piece.error;
     },
-    removePiece: function (index) {
+    removePiece: function(index) {
       this.coin.pieces.splice(index, 1);
     },
-    addIssuer: function () {
+    addIssuer: function() {
       this.coin.issuers.push({
         key: "issuer-" + this.key++,
         person: {
@@ -554,7 +551,7 @@ export default {
         honorifics: [],
       });
     },
-    removeIssuer: function (item) {
+    removeIssuer: function(item) {
       const idx = this.coin.issuers.indexOf(item);
       if (idx != -1) {
         this.coin.issuers.splice(idx, 1);
@@ -563,7 +560,15 @@ export default {
         });
       }
     },
-    addOverlord: function () {
+    initFormattedFields: function() {
+      this.$refs.literatureField.setContent(this.coin.literature);
+
+      this.$refs.specialsField.setContent(this.coin.specials);
+
+      this.$refs.aversField.setFieldContent(this.coin.avers);
+      this.$refs.reverseField.setFieldContent(this.coin.reverse);
+    },
+    addOverlord: function() {
       this.coin.overlords.push({
         key: "overlord-" + this.key++,
         rank: this.coin.overlords.length + 1,
@@ -575,7 +580,7 @@ export default {
         honorifics: [],
       });
     },
-    addOtherPerson: function () {
+    addOtherPerson: function() {
       this.coin.otherPersons.push({
         id: null,
         key: this.key++,
@@ -583,13 +588,13 @@ export default {
         role: "",
       });
     },
-    overlordChanged: function (overlord, index) {
+    overlordChanged: function(overlord, index) {
       const old = this.coin.overlords[index];
       Object.assign(old, overlord);
       delete old.error;
       this.coin.overlords.splice(index, 1, old);
     },
-    removeOverlord: function (item) {
+    removeOverlord: function(item) {
       const idx = this.coin.overlords.indexOf(item);
       if (idx != -1) {
         this.coin.overlords.splice(idx, 1);
@@ -598,19 +603,19 @@ export default {
         });
       }
     },
-    removeOtherPerson: function (item) {
+    removeOtherPerson: function(item) {
       const idx = this.coin.otherPersons.indexOf(item);
       if (idx != -1) {
         this.coin.otherPersons.splice(idx, 1);
       }
     },
-    otherPersonChanged: function (otherPerson, index) {
+    otherPersonChanged: function(otherPerson, index) {
       const op = this.coin.otherPersons[index];
       Object.assign(op, otherPerson);
       delete op.error;
       this.coin.otherPersons.splice(index, 1, op);
     },
-    submitForm: function () {
+    submitForm: function() {
       function validateTitledPerson(titledPerson) {
         return !!titledPerson.person.id;
       }
@@ -694,7 +699,6 @@ export default {
 
         console.log(submitData);
         if (submitData.id == null) {
-          
           this.addCoinType(submitData)
             .then((result) => {
               if (result.data.errors && result.data.errors.length > 0) {
@@ -748,24 +752,24 @@ export default {
             $vassal:Boolean
             $specials:String){
         addCoinType(data: {
-            projectId: $projectId, 
-            treadwellId: $treadwellId, 
-            mint: $mint, 
-            mintAsOnCoin: $mintAsOnCoin, 
-            material: $material, 
-            nominal: $nominal, 
-            yearOfMinting: $yearOfMinting, 
-            donativ: $donativ, 
-            procedure: $procedure, 
-            issuers: $issuers, 
-            otherPersons: $otherPersons, 
-            overlords: $overlords, 
-            caliph: $caliph, 
-            avers: $avers, 
-            reverse: $reverse, 
-            cursiveScript: $cursiveScript, 
-            isolatedCharacters: $isolatedCharacters, 
-            literature: $literature, 
+            projectId: $projectId,
+            treadwellId: $treadwellId,
+            mint: $mint,
+            mintAsOnCoin: $mintAsOnCoin,
+            material: $material,
+            nominal: $nominal,
+            yearOfMinting: $yearOfMinting,
+            donativ: $donativ,
+            procedure: $procedure,
+            issuers: $issuers,
+            otherPersons: $otherPersons,
+            overlords: $overlords,
+            caliph: $caliph,
+            avers: $avers,
+            reverse: $reverse,
+            cursiveScript: $cursiveScript,
+            isolatedCharacters: $isolatedCharacters,
+            literature: $literature,
             pieces: $pieces,
                 vassal: $vassal,
                 specials: $specials
@@ -839,24 +843,24 @@ export default {
         $specials:String
         ){
         updateCoinType(id: $id, data: {
-            projectId: $projectId, 
-            treadwellId: $treadwellId, 
-            mint: $mint, 
-            mintAsOnCoin: $mintAsOnCoin, 
-            material: $material, 
-            nominal: $nominal, 
-            yearOfMinting: $yearOfMinting, 
-            donativ: $donativ, 
-            procedure: $procedure, 
-            issuers: $issuers, 
-            otherPersons: $otherPersons, 
-            overlords: $overlords, 
-            caliph: $caliph, 
-            avers: $avers, 
-            reverse: $reverse, 
-            cursiveScript: $cursiveScript, 
-            isolatedCharacters: $isolatedCharacters, 
-            literature: $literature, 
+            projectId: $projectId,
+            treadwellId: $treadwellId,
+            mint: $mint,
+            mintAsOnCoin: $mintAsOnCoin,
+            material: $material,
+            nominal: $nominal,
+            yearOfMinting: $yearOfMinting,
+            donativ: $donativ,
+            procedure: $procedure,
+            issuers: $issuers,
+            otherPersons: $otherPersons,
+            overlords: $overlords,
+            caliph: $caliph,
+            avers: $avers,
+            reverse: $reverse,
+            cursiveScript: $cursiveScript,
+            isolatedCharacters: $isolatedCharacters,
+            literature: $literature,
             pieces: $pieces
             vassal: $vassal,
             specials: $specials

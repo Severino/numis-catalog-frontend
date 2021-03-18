@@ -56,7 +56,9 @@ export default {
   },
   methods: {
     setFieldContent({ fieldText = "", misc = "" } = {}) {
-      this.$refs.fieldTextField.setContent(fieldText);
+      const content = fieldText || "<div style='text-align: center;'>a</div>"
+      this.$refs.fieldTextField.setContent(content);
+      console.log(content)
     },
     getFieldContent() {
       return {
