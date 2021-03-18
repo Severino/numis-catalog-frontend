@@ -132,7 +132,8 @@ const info = {
 }
 
 const message = {
-    list_empty: "Keine Elemente in der Liste."
+    list_empty: "Keine Elemente in der Liste.",
+    filter_list: "Text eingeben um Liste zu filtern ..."
 }
 
 const error = {
@@ -147,6 +148,8 @@ const error = {
 
 
 const warning = {
+    filtered_list_is_empty:
+        "Es gibt keine Treffer mit dem angegebenen Filter!",
     list_is_empty:
         "Bisher sind keine Werte in dieser Liste.",
     leave_without_saving:

@@ -129,7 +129,8 @@ const info = {
 }
 
 const message = {
-    list_empty: "No items in list."
+    list_empty: "No items in list.",
+    filter_list: "Insert Text to filter the list ..."
 }
 
 const error = {
@@ -142,6 +143,8 @@ const error = {
 };
 
 const warning = {
+    filtered_list_is_empty:
+        "There are no items matching with this filter query!",
     list_is_empty:
         "So far, there are no items in this list.",
     leave_without_saving:

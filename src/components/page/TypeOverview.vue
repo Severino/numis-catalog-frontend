@@ -1,5 +1,5 @@
 <template>
-  <div :class="`type-page`">
+  <div :class="`overview type-page`">
     <BackHeader />
     <h1>{{ $t("attribute.test") }}</h1>
 
@@ -14,6 +14,8 @@
       <span>{{ $t("form.create") }}</span>
     </div>
 
+    <SearchField v-model="filter"/>
+
     <List
       @select="edit"
       @remove="remove"
@@ -21,6 +23,7 @@
       :items="list"
       :loading="loading"
       :noRemove="true"
+      :filter="filter"
       property="projectId"
     />
   </div>
@@ -31,6 +34,7 @@ import PlusCircleOutline from "vue-material-design-icons/PlusCircleOutline";
 import List from "../layout/List.vue";
 import Query from "../../database/query.js";
 import BackHeader from "../layout/BackHeader.vue";
+import SearchField from '../forms/SearchField.vue';
 
 export default {
   name: "TypeOverviewPage",
@@ -38,6 +42,7 @@ export default {
     PlusCircleOutline,
     List,
     BackHeader,
+    SearchField,
   },
   created: function () {
     new Query(`
@@ -63,6 +68,7 @@ export default {
       loading: true,
       items: [],
       error: "",
+      filter: ""
     };
   },
 
@@ -153,5 +159,9 @@ export default {
   > * {
     margin-right: $padding;
   }
+}
+
+.overview > * {
+  margin-bottom: $padding;
 }
 </style>

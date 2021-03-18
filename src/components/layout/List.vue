@@ -13,8 +13,18 @@
         {{ $t("warning.list_is_empty") }}
       </p>
     </div>
+    <div
+      v-else-if="filteredItems.length == 0 && !loading && error == ''"
+      class="info"
+    >
+      <Information />
+      <p>
+        {{ $t("warning.filtered_list_is_empty") }}
+      </p>
+    </div>
 
     <LoadingSpinner class="loading-spinner" v-if="loading" />
+
     <header v-if="properties">
       <div
         v-for="(label, idx) of ['id', ...properties]"
@@ -27,11 +37,11 @@
       @click="listItemClicked"
       @remove="listItemRemoved"
       :noRemove="noRemove"
-      v-for="(item, itemIdx) of items"
+      v-for="(item, itemIdx) of filteredItems"
       :key="item.id"
       :id="item.id"
     >
-      <div v-if="property">{{item[property]}}</div>
+      <div v-if="property">{{ item[property] }}</div>
 
       <div
         v-for="(prop, propIdx) of properties"
@@ -48,6 +58,7 @@
 import Information from "vue-material-design-icons/Information";
 import ListItem from "./ListItem.vue";
 import LoadingSpinner from "../misc/LoadingSpinner.vue";
+var deburr = require("lodash.deburr");
 
 export default {
   components: { ListItem, Information, LoadingSpinner },
@@ -72,14 +83,28 @@ export default {
       type: String,
       default: "",
     },
+    filter: {
+      type: String,
+      default: "",
+    },
     noRemove: Boolean,
   },
   methods: {
-    listItemClicked: function(id) {
+    listItemClicked: function (id) {
       this.$emit("select", id);
     },
-    listItemRemoved: function(id) {
+    listItemRemoved: function (id) {
       this.$emit("remove", id);
+    },
+  },
+  computed: {
+    filteredItems: function () {
+      console.log("FILTER");
+      return this.items.filter((item) => {
+        return deburr(item[this.property].toLowerCase()).match(
+          deburr(this.filter.toLowerCase())
+        );
+      });
     },
   },
 };
@@ -141,6 +166,13 @@ header {
 
   > * {
     text-transform: uppercase;
+  }
+}
+
+.search {
+  display: flex;
+  > input {
+    flex: 1;
   }
 }
 </style>
