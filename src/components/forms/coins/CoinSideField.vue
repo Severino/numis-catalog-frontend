@@ -1,16 +1,16 @@
 <template>
   <div class="coin-side-field">
     <Heading v-if="title">{{ title }}</Heading>
-    <LabeledInputContainer :label="$tc('property.field_text')">
+    <LabeledInputContainer :label="prefix+$tc('property.field_text')">
       <SimpleFormattedField ref="fieldTextField" />
     </LabeledInputContainer>
-    <LabeledInputContainer :label="$t('property.inner_circular_text')">
+    <LabeledInputContainer :label="prefix+$t('property.inner_circular_text')">
       <input class="inscript" type="text" v-model="value.innerInscript" />
     </LabeledInputContainer>
 
     <LabeledInputContainer
       v-if="value.outerInscript || value.intermediateInscript"
-      :label="$t('property.intermediate_circular_text')"
+      :label="prefix+$t('property.intermediate_circular_text')"
     >
       <input
         class="inscript"
@@ -21,12 +21,12 @@
 
     <LabeledInputContainer
       v-if="value.innerInscript || value.outerInscript"
-      :label="$t('property.outer_circular_text')"
+      :label="prefix+$t('property.outer_circular_text')"
     >
       <input class="inscript" type="text" v-model="value.outerInscript" />
     </LabeledInputContainer>
 
-    <LabeledInputContainer :label="$t('property.border_and_misc')">
+    <LabeledInputContainer :label="prefix+$t('property.border_and_misc')">
       <input class="inscript" type="text" v-model="value.misc" />
     </LabeledInputContainer>
   </div>
@@ -49,6 +49,10 @@ export default {
       type: Object,
       required: true,
     },
+    prefix: {
+      type: String,
+      default:""
+    }
   },
   methods: {
     setFieldContent({ fieldText = "", misc = "" } = {}) {

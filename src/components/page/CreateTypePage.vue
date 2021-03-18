@@ -175,6 +175,7 @@
           :value="coin.avers"
           ref="aversField"
           @change="aversChanged"
+          prefix="Av.-"
         />
       </Section>
 
@@ -185,6 +186,7 @@
           :value="coin.reverse"
           ref="reverseField"
           @change="reverseChanged"
+          prefix="Rev.-"
         />
       </Section>
 
