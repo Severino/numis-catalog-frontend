@@ -1,33 +1,26 @@
 <template>
   <div class="coin-side-field">
     <Heading v-if="title">{{ title }}</Heading>
-    <LabeledInputContainer :label="prefix+$tc('property.field_text')">
+    <LabeledInputContainer :label="prefix + $tc('property.field_text')">
       <SimpleFormattedField ref="fieldTextField" />
     </LabeledInputContainer>
-    <LabeledInputContainer :label="prefix+$t('property.inner_circular_text')">
-      <input class="inscript" type="text" v-model="value.innerInscript" />
+
+    <LabeledInputContainer :label="prefix + $t('property.inner_circular_text')">
+      <SimpleFormattedField ref="innerInscriptField" />
     </LabeledInputContainer>
 
     <LabeledInputContainer
-      v-if="value.outerInscript || value.intermediateInscript"
-      :label="prefix+$t('property.intermediate_circular_text')"
+      :label="prefix + $t('property.intermediate_circular_text')"
     >
-      <input
-        class="inscript"
-        type="text"
-        v-model="value.intermediateInscript"
-      />
+      <SimpleFormattedField ref="intermediateInscriptField" />
     </LabeledInputContainer>
 
-    <LabeledInputContainer
-      v-if="value.innerInscript || value.outerInscript"
-      :label="prefix+$t('property.outer_circular_text')"
-    >
-      <input class="inscript" type="text" v-model="value.outerInscript" />
+    <LabeledInputContainer :label="prefix + $t('property.outer_circular_text')">
+      <SimpleFormattedField ref="outerInscriptField" />
     </LabeledInputContainer>
 
-    <LabeledInputContainer :label="prefix+$t('property.border_and_misc')">
-      <input class="inscript" type="text" v-model="value.misc" />
+    <LabeledInputContainer :label="prefix + $t('property.border_and_misc')">
+      <SimpleFormattedField ref="miscField" />
     </LabeledInputContainer>
   </div>
 </template>
@@ -41,60 +34,45 @@ import SimpleFormattedField from "../SimpleFormattedField.vue";
 export default {
   components: { LabeledInputContainer, Heading, SimpleFormattedField },
   name: "CoinSideField",
+  data: function () {
+    return {};
+  },
   props: {
     title: {
       type: String,
     },
-    value: {
-      type: Object,
-      required: true,
-    },
     prefix: {
       type: String,
-      default:""
-    }
+      default: "",
+    },
   },
   methods: {
-    setFieldContent({ fieldText = "", misc = "" } = {}) {
-      const content = fieldText || "<div style='text-align: center;'>a</div>"
-      this.$refs.fieldTextField.setContent(content);
-      console.log(content)
+    setFieldContent({
+      fieldText = "",
+      innerInscript = "",
+      intermediateInscript = "",
+      outerInscript = "",
+      misc = "",
+    } = {}) {
+      function centerWhenEmpty(text) {
+        return text || "<div style='text-align: center;'><br></div>";
+      }
+      this.$refs.fieldTextField.setContent(centerWhenEmpty(fieldText));
+      this.$refs.innerInscriptField.setContent(centerWhenEmpty(innerInscript));
+      this.$refs.intermediateInscriptField.setContent(
+        centerWhenEmpty(intermediateInscript)
+      );
+      this.$refs.outerInscriptField.setContent(centerWhenEmpty(outerInscript));
+      this.$refs.miscField.setContent(centerWhenEmpty(misc));
     },
     getFieldContent() {
       return {
         fieldText: this.$refs.fieldTextField.getContent(),
+        innerInscript: this.$refs.innerInscriptField.getContent(),
+        intermediateInscript: this.$refs.intermediateInscriptField.getContent(),
+        outerInscript: this.$refs.outerInscriptField.getContent(),
+        misc: this.$refs.miscField.getContent(),
       };
-    },
-    changed: function({
-      innerInscript = this.innerInscript,
-      outerInscript = this.outerInscript,
-      intermediateInscript = this.intermediateInscript,
-      misc = this.misc,
-    } = {}) {
-      console.log({
-        innerInscript,
-        outerInscript,
-        intermediateInscript,
-        misc,
-      });
-      this.$emit("change", {
-        innerInscript,
-        outerInscript,
-        intermediateInscript,
-        misc,
-      });
-    },
-    innerInscriptChanged: function(event) {
-      const innerInscript = event.target.value;
-      this.changed({ innerInscript });
-    },
-    intermediateInscriptChanged: function(event) {
-      const intermediateInscript = event.target.value;
-      this.changed({ intermediateInscript });
-    },
-    outerInscriptChanged: function(event) {
-      const outerInscript = event.target.value;
-      this.changed({ outerInscript });
     },
   },
 };
