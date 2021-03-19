@@ -35,6 +35,8 @@ const property = {
         "Randbeschriftung",
     circular_text:
         "Umschrift | Umschriften",
+    coin_mark:
+        "Mzz. und Einzelworte",
     issuer:
         "Münzherr",
     cursive_script:

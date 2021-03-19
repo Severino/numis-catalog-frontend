@@ -193,7 +193,7 @@
       />
 
       <List
-        :title="$tc('property.coin-mark', 2)"
+        :title="$t('property.coin_mark')"
         @add="addCoinMark"
         class="coin-mark-list"
       >

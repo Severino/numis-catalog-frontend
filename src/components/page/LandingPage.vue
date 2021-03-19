@@ -26,7 +26,7 @@
         draggable="false"
       >
         <PlusBox />
-        <span>{{ $tc("property.coin-mark") }}</span>
+        <span>{{ $tc("property.coin_mark") }}</span>
       </router-link>
       <router-link class="button icon-button" to="/material" draggable="false">
         <PlusBox />
