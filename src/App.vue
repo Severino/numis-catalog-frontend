@@ -7,13 +7,13 @@
           <span class="subtitle">{{ $t("general.type_catalogue") }}</span>
           <div class="version">version: {{ version }}</div>
           <nav>
-            <ButtonGroup
+            <!-- <ButtonGroup
               id="language"
               :labels="['de', 'en']"
               :options="['de', 'en']"
               :value="language"
               @input="this.languageChanged"
-            />
+            /> -->
           </nav>
         </div>
       </div>
@@ -40,7 +40,6 @@ export default {
   },
   mounted: function () {
     const lang = window.localStorage.getItem("language", this.$i18n.locale);
-    console.log(lang)
     if (lang) {
       this.languageChanged(lang);
     }else{

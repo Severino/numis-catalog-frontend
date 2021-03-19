@@ -3,7 +3,7 @@
     "nominal": {"id":11, "name": "Dirham"},
     "avers": {
         "fieldText": "<div style='text-align: center;'>لا إله إلا</div><div style='text-align: center;'>الله وحده</div><div style='text-align: center;'>لا شريك له</div>",
-        "innerInscript": "<div data-v-47449800='' contenteditable='true' class='formatted-text-area'><div style='text-align: center;'>بسم الله ضرب هذا الدرهم<br></div></div>",
+        "innerInscript": "<div style='text-align: center;'>بسم الله ضرب هذا الدرهم<br></div>",
         "outerInscript": "<div style='text-align: center;'>Koran 30:4-5<br></div>"
     },
     "reverse": {

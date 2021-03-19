@@ -1,6 +1,8 @@
 import Vue from "vue"
 import VueRouter from 'vue-router'
+
 import CreateTypePage from "@/components/page/CreateTypePage.vue"
+import CoinMarkOverview from "@/components/page/CoinMarkOverview.vue"
 import Inventory from "@/components/page/Inventory"
 import LandingPage from "@/components/page/LandingPage.vue"
 import Overview from "@/components/page/Overview.vue"
@@ -9,13 +11,13 @@ import TreeExplorer from "@/components/page/TreeExplorer.vue"
 import TypePage from "@/components/page/TypePage.vue"
 import TypeList from "@/components/page/TypeList.vue"
 
-
-import MaterialForm from "@/components/page/property/MaterialForm"
-import PersonForm from "@/components/page/property/PersonForm"
-import TitleForm from "@/components/page/property/TitleForm"
+import CoinMarkForm from "@/components/page/property/CoinMarkForm"
 import HonorificForm from "@/components/page/property/HonorificForm"
+import MaterialForm from "@/components/page/property/MaterialForm"
 import MintForm from "@/components/page/property/MintForm"
 import NominalForm from "@/components/page/property/NominalForm"
+import PersonForm from "@/components/page/property/PersonForm"
+import TitleForm from "@/components/page/property/TitleForm"
 
 
 Vue.use(VueRouter)
@@ -42,10 +44,22 @@ const routes = [
 
     path: "/manage/type",
     name: "TypeOverview",
-    component: TypeOverview
-
+    component: TypeOverview 
+  },
+  {
+    path: '/manage/type/create',
+    name: 'TypeCreationPage',
+    component: CreateTypePage
+  }, {
+    path: '/manage/type/edit/:id',
+    name: 'EditTypePage',
+    component: CreateTypePage
   }
   , {
+    path: "/manage/coinmark",
+    name: "CoinMarkOverview",
+    component: CoinMarkOverview
+  }, {
     path: "/:property",
     name: "Property",
     component: Overview
@@ -55,15 +69,14 @@ const routes = [
     name: 'TypePage',
     component: TypePage
   },
-  
   {
-    path: '/manage/type/create',
-    name: 'TypeCreationPage',
-    component: CreateTypePage
+    path: "/coinmark/create",
+    name: "CreateCoinMark",
+    component: CoinMarkForm
   }, {
-    path: '/manage/type/:id',
-    name: 'EditTypePage',
-    component: CreateTypePage
+    path: "/coinmark/:id",
+    name: "EditCoinMark",
+    component: CoinMarkForm
   }, {
     path: "/material/create",
     name: "CreateMaterial",

@@ -47,10 +47,12 @@ const property = {
         "Avers",
     honorific:
         "Ehrenname | Ehrennamen",
-    isolated_character:
+    isolated_characters:
         "isolierter Buchstabe | isolierte Buchstaben",
     intermediate_circular_text:
         "Mittlere Umschrift",
+    internal_notes:
+        "Interne Notizen",
     inner_circular_text:
         "innere Umschrift",
     literature:
@@ -100,8 +102,10 @@ const property = {
         "Treadwell-ID | Treadwell-IDs",
     uncertain_location:
         "Verortung unsicher",
-    vassal:
-        "Vasallenmünze",
+    excludeFromTypeCatalogue:
+        "Nicht für Typenkatalog",
+    excludeFromMapApp:
+        "Nicht für Kartenanwendung",
     varieties:
         "Varianten"
 }

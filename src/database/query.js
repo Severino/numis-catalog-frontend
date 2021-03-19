@@ -1,5 +1,4 @@
 import axios from "axios"
-console.log(process.env)
 const baseURL = process.env.VUE_APP_DATABASE_URL || "http://localhost:4000/graphql"
 const host = baseURL
 
@@ -14,7 +13,6 @@ export default class Query {
     }
 
     async get(id, properties) {
-
         let locationIndex = properties.indexOf("location")
         if (locationIndex != -1) {
             properties[locationIndex] = "location{lat,lon}"
@@ -115,7 +113,6 @@ export default class Query {
           }
         }
       `
-        console.log(query)
 
         return axios({
             url: host,

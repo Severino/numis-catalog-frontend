@@ -99,9 +99,9 @@ export default {
   },
   computed: {
     filteredItems: function () {
-      console.log("FILTER");
       return this.items.filter((item) => {
-        return deburr(item[this.property].toLowerCase()).match(
+        let str = !item[this.property] ? "" : item[this.property];
+        return deburr(str.toLowerCase()).match(
           deburr(this.filter.toLowerCase())
         );
       });

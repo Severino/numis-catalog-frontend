@@ -148,8 +148,15 @@
     </div>
 
     <div class="labeled-group">
-      <h3>{{ $t("property.isolated_characters") }}</h3>
-      {{ getTypeProperty("isolatedCharacters") }}
+      <h3>{{ $tc("property.coin_mark", 2) }}</h3>
+      <p v-if="type.coinMarks || type.coinMarks.length == 0">
+        {{ $t("message.no_pieces_in_list") }}
+      </p>
+      <ul>
+        <li v-for="(coinMark, index) of type.coinMarks" :key="`coinMark-${index}`">
+          <a :href="coinMark">{{ coinMark }}</a>
+        </li>
+      </ul>
     </div>
 
     <div class="labeled-group">
@@ -174,7 +181,7 @@
 import Query from "/src/database/query.js";
 export default {
   name: "TypePage",
-  data: function() {
+  data: function () {
     return {
       type: {
         id: null,
@@ -206,13 +213,13 @@ export default {
           misc: "",
         },
         cursiveScript: false,
-        isolatedCharacters: "",
+        coinMarks: [],
         pieces: [],
         specials: "",
       },
     };
   },
-  created: function() {
+  created: function () {
     Query.raw(
       `{
             getCoinType(id:${this.$route.params.id}){
@@ -287,7 +294,7 @@ export default {
                   misc
                 }
                 cursiveScript
-                isolatedCharacters
+                coinMarks
                 literature
                 pieces 
                 specials

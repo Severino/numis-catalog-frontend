@@ -9,7 +9,7 @@
     />
     <label :for="id" tabindex="0">
       <Row>
-        <span v-if="label">{{label}}</span>
+        <span v-if="label">{{ label }}</span>
         <CheckboxBlankOutline v-if="!value" />
         <CheckboxMarked v-if="value" />
       </Row>
@@ -40,7 +40,7 @@ export default {
     label: String,
   },
   methods: {
-    input: function(event) {
+    input: function (event) {
       const checked = event.target.checked;
       this.$emit("input", checked);
     },
@@ -57,29 +57,18 @@ input {
 
 .checkbox {
   display: flex;
-}
 
-// input:checked + label {
-//   background-color: $primary-color;
-//   // color: $white;
-//   // border-color: $white;
-// }
+  .material-design-icon {
+    flex: 0;
+  }
+}
 
 label {
   margin: 0;
   flex: 1;
 
-  // display: flex;
-  // align-items: center;
-  // justify-content: center;
-  // border: 1px solid black;
-  // border-radius: $border-radius;
-
   span {
     display: block;
   }
-
-  // @include interactive();
-  // @include input();
 }
 </style>

@@ -4,12 +4,10 @@
       <h2>{{ $t("general.administration") }}</h2>
       <ServerStatus />
     </header>
-    <router-link :to="{name:'TypeList' }">
-      Explorer
-    </router-link>
+    <!-- <router-link :to="{ name: 'TypeList' }"> Explorer </router-link> -->
     <router-link
       class="button icon-button"
-      :to="{name: 'TypeOverview'}"
+      :to="{ name: 'TypeOverview' }"
       draggable="false"
     >
       <PlusBox />
@@ -18,11 +16,17 @@
 
     <h3>{{ $t("general.manage_properties") }}</h3>
     <div class="button-list">
-      
-
       <router-link class="button icon-button" to="/honorific" draggable="false">
         <PlusBox />
         <span>{{ $tc("property.honorific") }}</span>
+      </router-link>
+      <router-link
+        class="button icon-button"
+        :to="{name: 'CoinMarkOverview'}"
+        draggable="false"
+      >
+        <PlusBox />
+        <span>{{ $tc("property.coin-mark") }}</span>
       </router-link>
       <router-link class="button icon-button" to="/material" draggable="false">
         <PlusBox />
@@ -79,7 +83,7 @@ h3 {
   position: relative;
 }
 
-.draft::before{
+.draft::before {
   content: "DRAFT";
   font-family: Arial, Helvetica, sans-serif;
   font-size: 0.5rem;
@@ -88,7 +92,7 @@ h3 {
   background-color: $red;
   padding: 5px 20px;
   position: absolute;
-  top:0;
+  top: 0;
   transform: translate(20px, -50%);
 }
 </style>

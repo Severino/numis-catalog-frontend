@@ -1,15 +1,20 @@
 <template>
-  <div :class="`overview ${this.property}-page`" >
+  <div :class="`overview ${this.property}-page`">
     <BackHeader />
     <h1>{{ $tc(`property.${property}`) }}</h1>
 
-    <div class="button" @click="create" tabindex="1" autofocus @keydown.enter="create">
+    <div
+      class="button"
+      @click="create"
+      tabindex="1"
+      autofocus
+      @keydown.enter="create"
+    >
       <PlusCircleOutline />
       <span>{{ $t("form.create") }}</span>
     </div>
 
     <SearchField v-model="filter" />
-
 
     <List
       @select="edit"
@@ -28,9 +33,8 @@ import PlusCircleOutline from "vue-material-design-icons/PlusCircleOutline";
 
 import List from "../layout/List.vue";
 import Query from "../../database/query.js";
-import BackHeader from '../layout/BackHeader.vue';
-import SearchField from '../forms/SearchField.vue';
-
+import BackHeader from "../layout/BackHeader.vue";
+import SearchField from "../forms/SearchField.vue";
 
 export default {
   name: "OverviewPage",
@@ -41,10 +45,10 @@ export default {
     SearchField,
   },
   created: function () {
-    new Query(this.property)
+    new Query(this.queryName)
       .list(["id", "name"])
       .then((obj) => {
-        this.$data.items = obj.data.data[this.property];
+        this.$data.items = obj.data.data[this.queryName];
       })
       .catch(() => {
         this.error = this.$t("error.loading_list");
@@ -53,9 +57,19 @@ export default {
         this.$data.loading = false;
       });
   },
+  props: {
+    query: String,
+    overrideProperty: String,
+    createPage: String,
+  },
   computed: {
+    queryName: function () {
+      return this.query ? this.query : this.property;
+    },
     property: function () {
-      return this.$route.params.property.toLowerCase();
+      return this.overrideProperty
+        ? this.overrideProperty
+        : this.$route.params.property.toLowerCase();
     },
     list: function () {
       return this.$data.items;
@@ -66,24 +80,25 @@ export default {
       loading: true,
       items: [],
       error: "",
-      filter: ""
+      filter: "",
     };
   },
 
   methods: {
-    handleKeys(event) {
-      console.log(event.key)
-    },
     create() {
-      this.$router.push({
-        path: `${this.property}/create`,
-      });
+      if (this.createPage) {
+        this.$router.push({ name: this.createPage });
+      } else {
+        this.$router.push({
+          path: `${this.property}/create`,
+        });
+      }
     },
     remove(id) {
       if (this.$store.getters.local) {
         this.$store.commit(`${this.property}/remove`, id);
       } else {
-        new Query(this.property)
+        new Query(this.queryName)
           .delete(id)
           .then(() => {
             const idx = this.$data.items.findIndex((item) => item.id == id);
@@ -157,8 +172,6 @@ export default {
     margin-right: $padding;
   }
 }
-
-
 
 .overview > * {
   margin-bottom: $padding;

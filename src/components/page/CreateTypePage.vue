@@ -7,7 +7,7 @@
       <!-- <input :value="coin.id" type="text" readonly /> -->
       <Row>
         <LabeledInputContainer :label="$tc('property.type_id')">
-          <input v-model="coin.projectId" />
+          <input v-model="coin.projectId" required />
         </LabeledInputContainer>
 
         <LabeledInputContainer :label="$tc('property.treadwell_id')">
@@ -63,12 +63,6 @@
           id="donativ"
           v-model="coin.donativ"
           :label="$tc('property.donativ')"
-        />
-
-        <Checkbox
-          id="vassal"
-          v-model="coin.vassal"
-          :label="$tc('property.vassal')"
         />
       </Row>
 
@@ -192,15 +186,37 @@
         <SimpleFormattedField ref="specialsField" />
       </LabeledInputContainer>
 
-      <Row>
-        <LabeledInputContainer :label="$t('property.cursive_script') + ' (?)'">
-          <Checkbox id="cursive" v-model="coin.cursiveScript" />
-        </LabeledInputContainer>
+      <Checkbox
+        id="cursive"
+        :label="$t('property.cursive_script') + ' (?)'"
+        v-model="coin.cursiveScript"
+      />
 
-        <LabeledInputContainer :label="$tc('property.isolated_character', 2)">
-          <input type="text" v-model="coin.isolatedCharacters" />
-        </LabeledInputContainer>
-      </Row>
+      <List
+        :title="$tc('property.coin-mark', 2)"
+        @add="addCoinMark"
+        class="coin-mark-list"
+      >
+        <div v-if="coin.coinMarks.length == 0" class="info">
+          {{ $t("warning.list_is_empty") }}
+        </div>
+        <ListItem
+          v-for="(coinmark, idx) in coin.coinMarks"
+          :key="coinmark.key"
+          :object="coinmark"
+          @remove="removeCoinMark(idx)"
+        >
+          <DataSelectField
+            type="text"
+            table="CoinMark"
+            attribute="name"
+            v-model="coin.coinMarks[idx]"
+          />
+          <div v-if="coinmark.error" class="invalid-warning">
+            {{ coinmark.error }}
+          </div>
+        </ListItem>
+      </List>
 
       <List
         :title="$tc('property.piece', 2)"
@@ -231,6 +247,25 @@
         <SimpleFormattedField ref="literatureField" />
         <!-- <textarea v-model="coin.literature"></textarea> -->
       </LabeledInputContainer>
+
+      <LabeledInputContainer :label="$t('property.internal_notes')">
+        <SimpleFormattedField ref="internalNotesField" />
+        <!-- <textarea v-model="coin.literature"></textarea> -->
+      </LabeledInputContainer>
+
+      <Row>
+        <Checkbox
+          id="exclude-from-type-catalog"
+          v-model="coin.excludeFromTypeCatalogue"
+          :label="$tc('property.excludeFromTypeCatalogue')"
+        />
+
+        <Checkbox
+          id="exclude-from-map-app"
+          v-model="coin.excludeFromMapApp"
+          :label="$tc('property.excludeFromMapApp')"
+        />
+      </Row>
 
       <div class="submit-error-window">
         <div class="submit-error" v-for="err in errorMessages" :key="err.key">
@@ -388,17 +423,21 @@ export default {
                   misc
                 }
                 cursiveScript
-                isolatedCharacters
+                coinMarks {
+                  id
+                  name
+                }
                 literature
-                pieces,
-                vassal,
+                pieces
                 specials
+                excludeFromTypeCatalogue
+                excludeFromMapApp
+                internalNotes
         }
       }
       `
       )
         .then((obj) => {
-          console.log(obj);
           if (
             obj.message &&
             obj.message.errors &&
@@ -408,7 +447,6 @@ export default {
           } else {
             const type = obj.data.data.getCoinType;
 
-            console.log(obj);
             // Sorts the overlords appropriately
             if (!type.overlords) type.overlords = [];
             type.overlords.sort((a, b) => (a.rank > b.rank ? 1 : -1));
@@ -440,6 +478,13 @@ export default {
               type.pieces[index] = { key: this.key++, value: piece };
             });
 
+            if (!type.coinMarks) type.coinMarks = [];
+            type.coinMarks.forEach((coinMark, index) => {
+              if (coinMark == null)
+                type.coinMarks[index] = { id: null, name: "" };
+              type.coinMarks[index].key = this.key++;
+            });
+
             /**
              * Provide them with an initial value.
              */
@@ -455,7 +500,15 @@ export default {
           }
         })
         .catch((error) => {
-          this.errorMessage = error;
+          console.dir();
+          if (
+            error.response &&
+            error.response.data &&
+            error.response.data.errors
+          ) {
+            const errors = error.response.data.errors;
+            this.errorMessage = errors.map((err) => err.message).join("\n");
+          } else this.errorMessage = error;
         })
         .finally((this.loading = false));
     } else {
@@ -499,10 +552,12 @@ export default {
           misc: "",
         },
         cursiveScript: false,
-        isolatedCharacters: "",
+        coinMarks: [],
         pieces: [],
-        vassal: false,
         specials: "",
+        excludeFromTypeCatalogue: false,
+        excludeFromMapApp: false,
+        internalNotes: "",
       },
       errorMessages: [],
       submitted: false,
@@ -515,7 +570,7 @@ export default {
   },
   methods: {
     cancel: function () {
-      this.$router.push("/type/");
+      this.$router.push({ name: "TypeOverview" });
     },
     reverseChanged: function (coinSideObject) {
       this.coin.reverse = coinSideObject;
@@ -523,6 +578,16 @@ export default {
     issuerChanged: function (issuer, index) {
       delete issuer.error;
       this.coin.issuers.splice(index, 1, issuer);
+    },
+    addCoinMark: function () {
+      this.coin.coinMarks.push({
+        key: "coin-mark-" + this.key++,
+        value: 0,
+        name: "",
+      });
+    },
+    removeCoinMark: function (index) {
+      this.coin.coinMarks.splice(index, 1);
     },
     addPiece: function () {
       this.coin.pieces.push({
@@ -558,11 +623,9 @@ export default {
       }
     },
     initFormattedFields: function () {
+      this.$refs.internalNotesField.setContent(this.coin.internalNotes);
       this.$refs.literatureField.setContent(this.coin.literature);
-
       this.$refs.specialsField.setContent(this.coin.specials);
-
-      console.log("INIT", this.$data.coin.avers);
 
       this.$refs.aversField.setFieldContent(this.$data.coin.avers);
       this.$refs.reverseField.setFieldContent(this.coin.reverse);
@@ -684,6 +747,7 @@ export default {
       } else {
         const submitData = this.$data.coin;
 
+        submitData.internalNotes = this.$refs.internalNotesField.getContent();
         submitData.literature = this.$refs.literatureField.getContent();
         submitData.specials = this.$refs.specialsField.getContent();
 
@@ -700,6 +764,7 @@ export default {
           this.addCoinType(submitData)
             .then((result) => {
               if (result.data.errors && result.data.errors.length > 0) {
+                console.error(result);
                 this.errorMessages = result.data.errors;
               } else {
                 this.submitted = true;
@@ -713,6 +778,7 @@ export default {
           this.updateCoinType(submitData)
             .then((result) => {
               if (result.data.errors && result.data.errors.length > 0) {
+                console.error(result);
                 this.errorMessages = result.data.errors;
               } else {
                 this.submitted = true;
@@ -744,11 +810,14 @@ export default {
             $avers:CoinSideInformationInput,
             $reverse:CoinSideInformationInput,
             $cursiveScript:Boolean,
-            $isolatedCharacters:String,
+            $coinMarks:[ID],
             $literature:String,
             $pieces:[String],
-            $vassal:Boolean
-            $specials:String){
+            $specials:String,
+            $excludeFromTypeCatalogue: Boolean
+            $excludeFromMapApp: Boolean,
+            $internalNotes: String
+            ){
         addCoinType(data: {
             projectId: $projectId,
             treadwellId: $treadwellId,
@@ -766,11 +835,13 @@ export default {
             avers: $avers,
             reverse: $reverse,
             cursiveScript: $cursiveScript,
-            isolatedCharacters: $isolatedCharacters,
+            coinMarks: $coinMarks,
             literature: $literature,
             pieces: $pieces,
-                vassal: $vassal,
-                specials: $specials
+            specials: $specials,
+            excludeFromTypeCatalogue:$excludeFromTypeCatalogue,
+            excludeFromMapApp:$excludeFromMapApp
+            internalNotes:$internalNotes
          })
          }
    `;
@@ -805,11 +876,16 @@ export default {
         avers: data.avers,
         reverse: data.reverse,
         cursiveScript: data.cursiveScript,
-        isolatedCharacters: data.isolatedCharacters,
+        coinMarks: data.coinMarks.map((coinMark) => coinMark.id),
         literature: data.literature,
-        pieces: data.pieces.map((piece) => piece.value),
-        vassal: data.vassal || false,
+        pieces: data.pieces.map((piece) => {
+          console.log(piece.value);
+          return piece.value;
+        }),
         specials: data.specials || "",
+        excludeFromTypeCatalogue: data.excludeFromTypeCatalogue,
+        excludeFromMapApp: data.excludeFromMapApp,
+        internalNotes: data.internalNotes,
       };
 
       return Query.raw(query, variables);
@@ -834,11 +910,13 @@ export default {
          $avers:CoinSideInformationInput,
          $reverse:CoinSideInformationInput,
          $cursiveScript:Boolean,
-         $isolatedCharacters:String,
+         $coinMarks:[ID],
          $literature:String,
          $pieces:[String],
-        $vassal:Boolean,
-        $specials:String
+          $specials:String,
+          $excludeFromTypeCatalogue:Boolean,
+          $excludeFromMapApp:Boolean
+          $internalNotes: String
         ){
         updateCoinType(id: $id, data: {
             projectId: $projectId,
@@ -857,11 +935,13 @@ export default {
             avers: $avers,
             reverse: $reverse,
             cursiveScript: $cursiveScript,
-            isolatedCharacters: $isolatedCharacters,
+            coinMarks: $coinMarks,
             literature: $literature,
-            pieces: $pieces
-            vassal: $vassal,
-            specials: $specials
+            pieces: $pieces,
+            specials: $specials,
+            excludeFromTypeCatalogue: $excludeFromTypeCatalogue,
+            excludeFromMapApp: $excludeFromMapApp
+            internalNotes: $internalNotes
          })
          }
    `;
@@ -897,11 +977,20 @@ export default {
         avers: data.avers,
         reverse: data.reverse,
         cursiveScript: data.cursiveScript,
-        isolatedCharacters: data.isolatedCharacters,
+        coinMarks: data.coinMarks.map((coinMark) => coinMark.id),
         literature: data.literature,
-        pieces: data.pieces.map((piece) => piece.value),
-        vassal: data.vassal || false,
+        pieces: data.pieces.map((piece) => {
+          console.log(piece.value);
+          return piece.value;
+        }),
         specials: data.specials || "",
+        excludeFromTypeCatalogue:
+          data.excludeFromTypeCatalogue == null
+            ? false
+            : data.excludeFromTypeCatalogue,
+        excludeFromMapApp:
+          data.excludeFromMapApp == null ? false : data.excludeFromMapApp,
+        internalNotes: data.internalNotes,
       };
 
       return Query.raw(query, variables);
@@ -982,10 +1071,6 @@ textarea {
   width: 100%;
   resize: none;
   min-height: 200px;
-}
-
-input[required] {
-  border-color: red;
 }
 
 h3,
