@@ -153,7 +153,7 @@
             @input="otherPersonChanged($event, index)"
             text="${name} (${role})"
             queryCommand="searchPersonsWithRole"
-            :additionalParameters="{ filter: ['caliph'] }"
+            :additionalParameters="{ filter: ['caliph', 'vassal'] }"
             :queryParams="['id', 'role', 'name']"
           />
           <div v-if="otherPerson.error" class="invalid-warning">

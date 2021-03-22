@@ -164,7 +164,6 @@ export default {
       }
       }`;
 
-
       Query.raw(query)
         .then((result) => {
           console.log(result.data.data[queryCommand])

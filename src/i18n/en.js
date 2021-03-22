@@ -35,6 +35,8 @@ const property = {
         "border inscription",
     circular_text:
         "marginal inscription | marginal inscriptions",
+    coin_mark:
+        "mint marks and single words",
     issuer:
         "minting authority",
     cursive_script:
@@ -126,7 +128,7 @@ const attribute = {
 
 
 const info = {
-    overlords: "Notiz: Die Oberherren werden von oben (dem niedrigsten), bis unten (dem höchsten) eingetragen."
+    overlords: "Note: Overlords are entered beginning with the lowest authority (no. 1), which means that no. 2 would be the overlord of no. 1 etc."
 }
 
 const message = {

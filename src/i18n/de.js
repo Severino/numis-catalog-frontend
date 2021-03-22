@@ -54,10 +54,10 @@ const property = {
     intermediate_circular_text:
         "Mittlere Umschrift",
     internal_notes:
-        "Interne Notizen",
+        "Interne Anmerkungen",
     inner_circular_text:
         "innere Umschrift",
-    literature:
+    literature_and_remarks:
         "Literatur & Anmerkungen",
     material:
         "Material | Materialien",
@@ -134,7 +134,7 @@ const attribute = {
 
 
 const info = {
-    overlords: "Note: The overlords are entered from top (the lowest), to bottom (the highest)."
+    overlords: "Notiz: Bei der Oberherren-Eingabe geht man in der Hierarchie von unten (1.) nach oben, d. h. Nr. 2. steht über Nr. 1, Nr. 3 über Nr. 2 usw."
 
 }
 

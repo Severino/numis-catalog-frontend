@@ -44,8 +44,6 @@ export default {
         str = '<div style="text-align: center;"><br></div>'
       }
 
-      console.log("SETCONTEND", str)
-
       this.$refs.field.innerHTML = str;
     },
     getContent: function() {
