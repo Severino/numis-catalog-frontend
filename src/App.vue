@@ -62,6 +62,13 @@ export default {
 <style lang="scss">
 @import "./scss/_import.scss";
 
+
+
+.label{
+  font-weight: bold;
+  margin-bottom: 0.5rem;
+}
+
 #app-name {
   color: $primary-color;
   margin-right: $padding;
@@ -69,6 +76,10 @@ export default {
   font-weight: 800;
 
   @include interactive();
+}
+
+.property-group{
+  margin-bottom: 1rem;
 }
 
 .subtitle {
@@ -202,12 +213,12 @@ main {
   padding: 20px;
 }
 
-@media (min-width: 1080px) {
-  .content-wrapper {
-    margin: 0 auto;
-    width: 50vw;
-  }
-}
+// @media (min-width: 1080px) {
+//   .content-wrapper {
+//     margin: 0 auto;
+//     width: 50vw;
+//   }
+// }
 
 a {
   text-decoration: none;

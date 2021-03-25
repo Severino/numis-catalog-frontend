@@ -51,7 +51,7 @@ export default {
     },
     isCollapsible: function (twig) {
       return twig.loadChildren || (twig.children && twig.children.length) > 0;
-    },
+    }
   },
 };
 </script>

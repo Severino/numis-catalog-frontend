@@ -1,7 +1,12 @@
 <template>
   <div class="tree-explorer">
     <h1>Explorer</h1>
-    <TreeView :children="twigs" />
+    <main>
+
+    <nav><TreeView :children="twigs" /></nav>
+    <div class="content"></div>
+    </main>
+    
   </div>
 </template>
 
@@ -144,4 +149,6 @@ export default {
 .tree-explorer > .tree-view > .tree-item::before {
   content: none;
 }
+
+
 </style>
