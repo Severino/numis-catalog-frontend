@@ -36,6 +36,7 @@ export default class Query {
     }
 
     static async raw(query, variables) {
+        console.log(query)
         return new Query().raw(query, variables)
     }
 

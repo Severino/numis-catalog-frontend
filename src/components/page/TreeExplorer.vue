@@ -6,25 +6,128 @@
 </template>
 
 <script>
+import Query from "../../database/query.js";
 import TreeView from "../layout/TreeView.vue";
 export default {
   components: { TreeView },
-  props: {
-    categories: {
-      type: Array,
-      default: function () {
-        return ["Material", "Nominal"];
-      },
-    },
-  },
-  created: function () {
-    this.categories.forEach((name) => {
-      this.twigs.push({
+  created: async function () {
+    let persons = await Query.raw(`{
+      searchPersonsWithoutRole(text:""){
+        name
+        id
+      }
+    }`);
+
+    persons = persons.data.data.searchPersonsWithoutRole;
+
+    persons.forEach(({ id, name } = {}) => {
+      const twig = {
+        key: this.twigId++,
         name,
-        id: this.twigId++,
         collapsed: true,
-        children: [],
-      });
+        loadChildren: async () => {
+          let children = await Query.raw(
+            `{
+                getTypesByOverlord(id:${id}){
+                  id
+                projectId
+                treadwellId
+                mint {
+                  id,
+                  name
+                }
+                mintAsOnCoin
+                material {
+                  id,
+                  name
+                }
+                nominal {
+                  id,
+                  name
+                }
+                yearOfMinting
+                donativ
+                procedure
+                issuers {
+                  id
+                  person {
+                    id,
+                    name,
+                    role
+                  }
+                  titles {
+                    id,
+                    name
+                  }
+                  honorifics{
+                    id,
+                    name}
+                }
+                overlords {
+                  id
+                  person {
+                    id,
+                    name,
+                    role
+                  }
+                  titles {
+                    id,
+                    name
+                  }
+                  honorifics{
+                    id,
+                    name}
+                }
+                otherPersons {
+                  id
+                  name
+                  role
+                }
+                caliph {
+                  id
+                  name
+                  role
+                }
+                avers {
+                  fieldText
+                  innerInscript
+                  intermediateInscript
+                  outerInscript
+                  misc
+                }
+                reverse {
+                  fieldText
+                  innerInscript
+                  intermediateInscript
+                  outerInscript
+                  misc
+                }
+                cursiveScript
+                literature
+                pieces 
+                }
+              }`
+          );
+
+          const data = children.data.data.getTypesByOverlord;
+          console.log(children);
+          if (!data || data.length == 0) {
+            return [{ name: "KEINE EINTRÄGE!", key: this.twigId++ }];
+          }
+
+          return data.map((type) => {
+            console.log(type);
+            return {
+              key: this.twigId++,
+              name: type.projectId,
+              leaf: "TypeLeaf",
+              data: type,
+            };
+          });
+        },
+      };
+
+      this.twigs.push(twig);
     });
   },
   data: function () {

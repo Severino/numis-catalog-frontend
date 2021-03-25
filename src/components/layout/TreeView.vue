@@ -1,9 +1,21 @@
 <template>
   <div class="tree-view">
     <div v-for="twig in children" :key="twig.id" class="tree-item">
-      <PlusBoxOutline /> {{ twig.name }}
-      <div class="children">
+      <header
+        :class="isCollapsible(twig) && twig.collapsed ? 'collabsible' : ''"
+        @click.stop="toggleCollapsed(twig)"
+      >
+        <PlusBoxOutline v-if="isCollapsible(twig) && twig.collapsed" />
+        <MinusBoxOutline v-if="isCollapsible(twig) && !twig.collapsed" />
+
+        {{ twig.name }}
+      </header>
+
+      <div v-if="!twig.collapsed" class="children">
+        <component v-if="twig.leaf" v-bind:is="twig.leaf" :data="twig.data" />
+
         <TreeView
+          :collapsible="isCollapsible(twig)"
           v-if="twig.children && twig.children.length > 0"
           :children="twig.children"
         />
@@ -14,16 +26,31 @@
 
 <script>
 import PlusBoxOutline from "/node_modules/vue-material-design-icons/PlusBoxOutline";
+import MinusBoxOutline from "/node_modules/vue-material-design-icons/MinusBoxOutline";
+import TypeLeaf from "../type/TypeLeaf.vue";
 
 export default {
   name: "TreeView",
   components: {
     PlusBoxOutline,
+    MinusBoxOutline,
+    TypeLeaf,
   },
   props: {
     children: {
       required: true,
       type: Array,
+    },
+    loadChildren: Object,
+  },
+  methods: {
+    toggleCollapsed: async function (twig) {
+      if (twig.loadChildren) twig.children = await twig.loadChildren();
+
+      twig.collapsed = !twig.collapsed;
+    },
+    isCollapsible: function (twig) {
+      return twig.loadChildren || (twig.children && twig.children.length) > 0;
     },
   },
 };
@@ -40,32 +67,22 @@ export default {
   background-color: whitesmoke;
   border: 1px solid gray;
   user-select: none;
-  border-radius: 5px; 
-  padding: 5px;
+  border-radius: 5px;
+  // padding: 5px;
   margin-bottom: 5px;
 
-  &::before {
-    position: absolute;
-    content: "";
-    border-top: 2px dotted red;
-    top: 11px;
-    left: -26px;
-    width: 30px;
+  header {
+    color: white;
+    background-color: gray;
+  }
+
+  &.collapsible {
+    background-color: red;
   }
 }
 
 .children {
   position: relative;
   padding-left: 30px;
-
-  &::after {
-    position: absolute;
-    content: "";
-    left: 11px;
-    top: -10px;
-    bottom: -20px;
-    border-left: dotted 2px black;
-    z-index: 1;
-  }
 }
 </style>
