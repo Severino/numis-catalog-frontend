@@ -9,7 +9,6 @@ import Overview from "@/components/page/Overview.vue"
 import TypeOverview from "@/components/page/TypeOverview.vue"
 import TreeExplorer from "@/components/page/TreeExplorer.vue"
 import TypePage from "@/components/page/TypePage.vue"
-import TypeList from "@/components/page/TypeList.vue"
 
 import CoinMarkForm from "@/components/page/property/CoinMarkForm"
 import HonorificForm from "@/components/page/property/HonorificForm"
@@ -32,13 +31,6 @@ const routes = [
     path: '/explorer',
     name: 'Explorer',
     component: TreeExplorer
-  },
-  {
-
-    path: "/type",
-    name: "TypeList",
-    component: TypeList
-
   },
   {
 

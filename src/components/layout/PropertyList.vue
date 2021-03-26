@@ -14,7 +14,7 @@
       </p>
     </div>
     <div
-      v-else-if="(filteredItems && filteredItems.length == 0) && !loading && error == ''"
+      v-else-if="filteredItems.length == 0 && !loading && error == ''"
       class="info"
     >
       <Information />
@@ -33,7 +33,24 @@
         {{ label }}
       </div>
     </header>
-    <slot></slot>
+    <ListItem
+      @click="listItemClicked"
+      @remove="listItemRemoved"
+      :noRemove="noRemove"
+      v-for="(item, itemIdx) of filteredItems"
+      :key="item.id"
+      :id="item.id"
+    >
+      <div v-if="property">{{ item[property] }}</div>
+
+      <div
+        v-for="(prop, propIdx) of properties"
+        :key="`${prop}-${itemIdx}-${propIdx}`"
+        class="div"
+      >
+        {{ item[prop] }}
+      </div>
+    </ListItem>
   </div>
 </template>
 
@@ -41,6 +58,7 @@
 import Information from "vue-material-design-icons/Information";
 import ListItem from "./ListItem.vue";
 import LoadingSpinner from "../misc/LoadingSpinner.vue";
+var deburr = require("lodash.deburr");
 
 export default {
   components: { ListItem, Information, LoadingSpinner },
@@ -65,9 +83,9 @@ export default {
       type: String,
       default: "",
     },
-    filteredItems: {
-      type: Array,
-      default: null,
+    filter: {
+      type: String,
+      default: "",
     },
     noRemove: Boolean,
   },
@@ -78,7 +96,17 @@ export default {
     listItemRemoved: function (id) {
       this.$emit("remove", id);
     },
-  }
+  },
+  computed: {
+    filteredItems: function () {
+      return this.items.filter((item) => {
+        let str = !item[this.property] ? "" : item[this.property];
+        return deburr(str.toLowerCase()).match(
+          deburr(this.filter.toLowerCase())
+        );
+      });
+    },
+  },
 };
 </script>
 

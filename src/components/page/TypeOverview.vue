@@ -14,18 +14,34 @@
       <span>{{ $t("form.create") }}</span>
     </div>
 
-    <SearchField v-model="filter"/>
+    <ListFilterContainer>
+      <SearchField v-model="textFilter" />
+      <ButtonGroup
+        id="completeFilterButtonGroup"
+        v-model="completeFilter"
+        :labels="['work', 'completed', 'none']"
+        :options="['work', 'completed', 'none']"
+      />
+    </ListFilterContainer>
 
-    <List
-      @select="edit"
-      @remove="remove"
-      :error="error"
-      :items="list"
-      :loading="loading"
-      :noRemove="true"
-      :filter="filter"
-      property="projectId"
-    />
+    <List :error="error" :items="list" :filteredItems="filteredList" :loading="loading">
+      <ListItem
+        v-for="item of filteredList"
+        v-bind:key="item.key"
+        @click="edit(item.id)"
+        :class="item.completed ? 'completed' : 'incomplete'"
+      >
+        <ListItemIdField :value="item.id" />
+        <ListItemCell>
+          {{ item.projectId }}
+        </ListItemCell>
+        <CompletedToggle
+          :value="item.completed"
+          @input="changeCompleteState($event, item)"
+        />
+        <!-- <DynamicDeleteButton @click="remove(item.id)" /> -->
+      </ListItem>
+    </List>
   </div>
 </template>
 
@@ -34,7 +50,16 @@ import PlusCircleOutline from "vue-material-design-icons/PlusCircleOutline";
 import List from "../layout/List.vue";
 import Query from "../../database/query.js";
 import BackHeader from "../layout/BackHeader.vue";
-import SearchField from '../forms/SearchField.vue';
+import SearchField from "../forms/SearchField.vue";
+import ListItem from "../layout/ListItem.vue";
+import CompletedToggle from "../layout/buttons/CompletedToggle.vue";
+import DynamicDeleteButton from "../layout/DynamicDeleteButton.vue";
+import ListItemIdField from "../layout/list/ListItemIdField.vue";
+import ListItemCell from "../layout/list/ListItemCell.vue";
+import ListFilterContainer from "../layout/list/ListFilterContainer.vue";
+import ButtonGroup from "../forms/ButtonGroup.vue";
+
+var deburr = require("lodash.deburr");
 
 export default {
   name: "TypeOverviewPage",
@@ -43,11 +68,18 @@ export default {
     List,
     BackHeader,
     SearchField,
+    ListItem,
+    CompletedToggle,
+    DynamicDeleteButton,
+    ListItemIdField,
+    ListItemCell,
+    ListFilterContainer,
+    ButtonGroup,
   },
   created: function () {
     new Query(`
      getReducedCoinTypeList`)
-      .list(["id", "projectId", "treadwellId"])
+      .list(["id", "projectId", "treadwellId", "completed"])
       .then((obj) => {
         this.$data.items = obj.data.data["getReducedCoinTypeList"];
       })
@@ -59,6 +91,25 @@ export default {
       });
   },
   computed: {
+    filteredList: function () {
+      let list = this.$data.items;
+
+      if (this.textFilter) {
+        list = list.filter((item) => {
+          let str = !item.projectId ? "" : item.projectId;
+          return deburr(str.toLowerCase()).match(
+            deburr(this.textFilter.toLowerCase())
+          );
+        });
+      }
+
+      if (this.completeFilter == "work" || this.completeFilter == "completed") {
+        const state = this.completeFilter == "completed";
+        list = list.filter((item) => item.completed == state);
+      }
+
+      return list;
+    },
     list: function () {
       return this.$data.items;
     },
@@ -68,10 +119,10 @@ export default {
       loading: true,
       items: [],
       error: "",
-      filter: ""
+      textFilter: "",
+      completeFilter: "none",
     };
   },
-
   methods: {
     handleKeys(event) {
       console.log(event.key);
@@ -81,20 +132,43 @@ export default {
         name: `TypeCreationPage`,
       });
     },
+    changeCompleteState(state, item) {
+      console.log(state, item);
+
+      Query.raw(
+        `
+        mutation{
+          setTypeComplete(id: ${item.id}, completed: ${state})
+        }
+      `
+      )
+        .then((result) => {
+          if (result.status >= 200 && result.status <= 200) {
+            item.completed = state;
+          }
+        })
+        .catch((err) => {
+          this.error = err;
+        });
+    },
     remove(id) {
-      if (this.$store.getters.local) {
-        this.$store.commit(`${this.property}/remove`, id);
-      } else {
-        new Query(this.property)
-          .delete(id)
-          .then(() => {
-            const idx = this.$data.items.findIndex((item) => item.id == id);
-            if (idx != -1) this.$data.items.splice(idx, 1);
-          })
-          .catch((err) => {
-            console.error(err);
-          });
-      }
+      Query.raw(
+        `mutation{
+  removeCoinType(id: ${id})
+}`
+      )
+        .then(() => {
+          console.log("HALLO");
+          const idx = this.$data.items.findIndex((item) => item.id == id);
+          if (idx != -1) this.$data.items.splice(idx, 1);
+        })
+        .catch((answer) => {
+          console.dir(
+            answer.response.data.errors.map((item) => item.message).join("\n")
+          );
+          // this.error =
+          // console.error(err);
+        });
     },
     edit(id) {
       this.$router.push({
@@ -127,6 +201,10 @@ export default {
   display: flex;
 
   transition: background-color 0.15s;
+
+  &.completed {
+    background-color: rgb(243, 242, 242);
+  }
 
   > :first-child {
     flex: 1;

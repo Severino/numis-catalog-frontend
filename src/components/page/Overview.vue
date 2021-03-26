@@ -19,22 +19,33 @@
     <List
       @select="edit"
       @remove="remove"
-      property="name"
       :error="error"
-      :items="list"
       :loading="loading"
-      :filter="filter"
-    />
+      :items="list"
+    >
+      <ListItem v-for="item of list" v-bind:key="item.key" id=":item.id">
+        <ListItemIdField :value="item.id" />
+        <ListItemCell>{{ item.name }}</ListItemCell>
+        <DynamicDeleteButton @click="remove(item.id)" />
+      </ListItem>
+    </List>
   </div>
 </template>
 
 <script>
+import AxiosHelper from "../../utils/AxiosHelper.js";
+
 import PlusCircleOutline from "vue-material-design-icons/PlusCircleOutline";
 
 import List from "../layout/List.vue";
 import Query from "../../database/query.js";
 import BackHeader from "../layout/BackHeader.vue";
 import SearchField from "../forms/SearchField.vue";
+import ListItemIdField from "../layout/list/ListItemIdField.vue";
+
+import ListItemCell from "../layout/list/ListItemCell.vue";
+import ListItem from "../layout/ListItem.vue";
+import DynamicDeleteButton from "../layout/DynamicDeleteButton.vue";
 
 export default {
   name: "OverviewPage",
@@ -43,6 +54,10 @@ export default {
     List,
     BackHeader,
     SearchField,
+    ListItemIdField,
+    ListItem,
+    ListItemCell,
+    DynamicDeleteButton,
   },
   created: function () {
     new Query(this.queryName)
@@ -95,19 +110,21 @@ export default {
       }
     },
     remove(id) {
-      if (this.$store.getters.local) {
-        this.$store.commit(`${this.property}/remove`, id);
-      } else {
-        new Query(this.queryName)
-          .delete(id)
-          .then(() => {
+      new Query(this.queryName)
+        .delete(id)
+        .then((answer) => {
+          if (AxiosHelper.ok(answer)) {
             const idx = this.$data.items.findIndex((item) => item.id == id);
             if (idx != -1) this.$data.items.splice(idx, 1);
-          })
-          .catch((err) => {
-            console.error(err);
-          });
-      }
+          } else {
+            const errors = AxiosHelper.getErrors(answer);
+            this.error = errors.join("\n");
+            console.error(errors);
+          }
+        })
+        .catch((err) => {
+          console.error(err);
+        });
     },
     edit(id) {
       this.$router.push({

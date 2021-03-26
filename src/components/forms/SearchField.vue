@@ -43,9 +43,10 @@ export default {
 
   .material-design-icon {
     position: absolute;
-    right: $padding;
     top: 7px;
+    left: $padding;
     color: gray;
+    pointer-events: none;
   }
 }
 </style>

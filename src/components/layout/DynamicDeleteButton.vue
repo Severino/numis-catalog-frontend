@@ -31,7 +31,7 @@ export default {
       if (!this.active) {
         this.open();
       } else {
-        this.$emit("remove");
+        this.$emit("click");
       }
     },
     open: function () {

@@ -4,7 +4,6 @@
     <Heading>{{ $tc("general.type") }}</Heading>
     <LoadingSpinner v-if="loading" />
     <div v-if="!loading" class="loading-area">
-      <!-- <input :value="coin.id" type="text" readonly /> -->
       <Row>
         <LabeledInputContainer :label="$tc('property.type_id')">
           <input v-model="coin.projectId" required />
@@ -17,11 +16,16 @@
 
       <Row>
         <LabeledInputContainer :label="$tc('property.mint')">
-          <DataSelectField table="Mint" attribute="name" v-model="coin.mint" />
+          <DataSelectField
+            table="Mint"
+            attribute="name"
+            v-model="coin.mint"
+            @input="mintSelected"
+          />
         </LabeledInputContainer>
 
         <LabeledInputContainer :label="$t('property.mint_as_on_coin')">
-          <input v-model="coin.mintAsOnCoin" />
+          <RemovableInputField v-model="coin.mintAsOnCoin" @remove="removeMintAsOnCoin" />
         </LabeledInputContainer>
       </Row>
       <Row>
@@ -301,6 +305,7 @@ import Query from "../../database/query.js";
 import LoadingSpinner from "../misc/LoadingSpinner.vue";
 
 import baseTemplate from "@/assets/template_types/base.json";
+import RemovableInputField from "../forms/RemovableInputField.vue";
 
 export default {
   name: "CreateTypePage",
@@ -319,6 +324,7 @@ export default {
     BackHeader,
     SimpleFormattedField,
     LoadingSpinner,
+    RemovableInputField,
   },
   computed: {
     productionLabels: function () {
@@ -669,6 +675,14 @@ export default {
       const idx = this.coin.otherPersons.indexOf(item);
       if (idx != -1) {
         this.coin.otherPersons.splice(idx, 1);
+      }
+    },
+    removeMintAsOnCoin: function(){
+      this.coin.mintAsOnCoin = ""
+    },
+    mintSelected: function (mint) {
+      if (!this.coin.mintAsOnCoin) {
+        this.coin.mintAsOnCoin = mint.name;
       }
     },
     otherPersonChanged: function (otherPerson, index) {
