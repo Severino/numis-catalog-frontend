@@ -25,7 +25,10 @@
         </LabeledInputContainer>
 
         <LabeledInputContainer :label="$t('property.mint_as_on_coin')">
-          <RemovableInputField v-model="coin.mintAsOnCoin" @remove="removeMintAsOnCoin" />
+          <RemovableInputField
+            v-model="coin.mintAsOnCoin"
+            @remove="removeMintAsOnCoin"
+          />
         </LabeledInputContainer>
       </Row>
       <Row>
@@ -341,7 +344,18 @@ export default {
     };
 
     if (!this.$data.coin.id) {
-      Object.assign(this.$data.coin, baseTemplate);
+
+      /**
+       * Somehow the child object is not empties correctly.
+       * Therefore we clone it here.
+       */
+      const reverse = Object.assign({}, baseTemplate.reverse);
+      const avers = Object.assign({}, baseTemplate.avers);
+
+      Object.assign(this.$data.coin, baseTemplate, {
+        avers,
+        reverse,
+      });
 
       this.initFormattedFields.call(this);
     }
@@ -633,7 +647,7 @@ export default {
       this.$refs.literatureField.setContent(this.coin.literature);
       this.$refs.specialsField.setContent(this.coin.specials);
 
-      this.$refs.aversField.setFieldContent(this.$data.coin.avers);
+      this.$refs.aversField.setFieldContent(this.coin.avers);
       this.$refs.reverseField.setFieldContent(this.coin.reverse);
     },
     addOverlord: function () {
@@ -677,8 +691,8 @@ export default {
         this.coin.otherPersons.splice(idx, 1);
       }
     },
-    removeMintAsOnCoin: function(){
-      this.coin.mintAsOnCoin = ""
+    removeMintAsOnCoin: function () {
+      this.coin.mintAsOnCoin = "";
     },
     mintSelected: function (mint) {
       if (!this.coin.mintAsOnCoin) {

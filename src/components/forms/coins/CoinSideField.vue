@@ -57,6 +57,7 @@ export default {
       function centerWhenEmpty(text) {
         return text || "<div style='text-align: center;'><br></div>";
       }
+
       this.$refs.fieldTextField.setContent(centerWhenEmpty(fieldText));
       this.$refs.innerInscriptField.setContent(centerWhenEmpty(innerInscript));
       this.$refs.intermediateInscriptField.setContent(
