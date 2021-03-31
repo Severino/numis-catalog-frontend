@@ -1,14 +1,14 @@
 <template>
   <div class="tree-view">
-    <div v-for="twig in children" :key="twig.id" class="tree-item">
+    <div v-for="(twig, index) in children" :key="twig.id" class="tree-item">
       <header
         :class="isCollapsible(twig) && twig.collapsed ? 'collabsible' : ''"
-        @click.stop="toggleCollapsed(twig)"
+        @click.stop="toggleCollapsed(twig, index)"
       >
         <PlusBoxOutline v-if="isCollapsible(twig) && twig.collapsed" />
         <MinusBoxOutline v-if="isCollapsible(twig) && !twig.collapsed" />
 
-        {{ twig.name }}
+        {{ twig.name }} {{ twig.collapsed }}
       </header>
 
       <div v-if="!twig.collapsed" class="children">
@@ -18,6 +18,7 @@
           :collapsible="isCollapsible(twig)"
           v-if="twig.children && twig.children.length > 0"
           :children="twig.children"
+          @changed="changed($event, index)"
         />
       </div>
     </div>
@@ -28,6 +29,8 @@
 import PlusBoxOutline from "/node_modules/vue-material-design-icons/PlusBoxOutline";
 import MinusBoxOutline from "/node_modules/vue-material-design-icons/MinusBoxOutline";
 import TypeLeaf from "../type/TypeLeaf.vue";
+
+const nodepath = require("path");
 
 export default {
   name: "TreeView",
@@ -44,14 +47,25 @@ export default {
     loadChildren: Object,
   },
   methods: {
-    toggleCollapsed: async function (twig) {
+    toggleCollapsed: async function(twig, index) {
       if (twig.loadChildren) twig.children = await twig.loadChildren();
 
       twig.collapsed = !twig.collapsed;
+      console.log(index);
+      this.changed({ path: "", object: twig }, index);
     },
-    isCollapsible: function (twig) {
+    isCollapsible: function(twig) {
       return twig.loadChildren || (twig.children && twig.children.length) > 0;
-    }
+    },
+    changed({ path = "", object = {} } = {}, index) {
+      // this.$set(this.children, index, object)
+
+      console.log(index);
+      this.$emit("changed", {
+        object,
+        path: nodepath.join(path, index.toString()),
+      });
+    },
   },
 };
 </script>

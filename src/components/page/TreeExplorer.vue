@@ -22,8 +22,13 @@
           </p>
         </template>
       </tabs>
-      
-      <!-- <nav><TreeView :children="twigs.filter(twig => )" /></nav> -->
+
+      <nav>
+        <TreeView
+          :children="twigs.filter((twig) => twig.name.match(/^Rukn/g))"
+          @changed="treeviewchanged"
+        />
+      </nav>
       <div class="content"></div>
     </main>
   </div>
@@ -94,9 +99,10 @@ export default {
                 }
                 overlords {
                   id
+                  rank
                   person {
-                    id,
-                    name,
+                    id
+                    name
                     role
                   }
                   titles {
@@ -133,26 +139,73 @@ export default {
                 }
                 cursiveScript
                 literature
-                pieces 
+                pieces
                 }
               }`
           );
 
           const data = children.data.data.getTypesByOverlord;
-          console.log(children);
+
           if (!data || data.length == 0) {
             return [{ name: "KEINE EINTRÄGE!", key: this.twigId++ }];
           }
 
-          return data.map((type) => {
-            console.log(type);
+          let output = {};
+          data.forEach((type) => {
+            if (!output[type.yearOfMinting]) {
+              output[type.yearOfMinting] = [];
+            }
+
+            output[type.yearOfMinting] = output[type.yearOfMinting]
+              ? output[type.yearOfMinting]
+              : {};
+
+            const mint =
+              type.mint && type.mint.name ? type.mint.name : "NO MINT";
+
+            output[type.yearOfMinting][mint] = output[type.yearOfMinting][mint]
+              ? output[type.yearOfMinting][mint]
+              : {};
+
+            output[type.yearOfMinting][mint][type.projectId] = type;
+          });
+
+          let that = this;
+          function mapMints(mint) {
+            return Object.entries(mint).map(([name, project]) => {
+              return {
+                name,
+                collapsed: false,
+                key: that.twigId++,
+                children: Object.entries(project).map(([name, data]) => {
+                  return { name, collapsed: true, type: "TypeLeaf", data };
+                }),
+              };
+            });
+          }
+
+          const mapped = Object.entries(output).map(([name, mint]) => {
+            console.log(mapMints(mint));
+
             return {
+              name,
               key: this.twigId++,
-              name: type.projectId,
-              leaf: "TypeLeaf",
-              data: type,
+              collapsed: false,
+              children: mapMints(mint),
             };
           });
+
+          console.log(mapped);
+
+          return mapped;
+
+          // return data.map((type) => {
+          //   return {
+          //     key: this.twigId++,
+          //     name: type.year,
+          //     children: type.filter(type => type.year ==)
+          //   };
+          // });
         },
       };
 
@@ -164,6 +217,33 @@ export default {
       twigId: 0,
       twigs: [],
     };
+  },
+  methods: {
+    treeviewchanged: function({ path = "", object = {} } = {}) {
+      console.log(path);
+
+      const parts = path.split("/");
+      const root = parts.shift();
+      // let target = this.twigs[root];
+
+      let part = parts.shift();
+      let target = this.twigs[part];
+      console.log(target, part);
+
+      while (parts.length > 1) {
+        let part = parts.shift();
+        console.log(parts, target.children)
+        target = target.children[part];
+        console.log(target, part);
+      }
+
+      console.log(object.collapsed, target);
+
+      // console.log(target.collapsed);
+      // this.twigs.splice(root, 1, this.twigs[root]);
+
+      // this.twigs[+changed].splice(1,1,this.twigs[+changed])
+    },
   },
 };
 </script>

@@ -31,16 +31,82 @@
       </div>
     </section>
 
-    <section class="avers">
-      <TypeLeafCoinContent :value="data.avers" />
-    </section>
-    <section class="reverse">
-      <TypeLeafCoinContent :value="data.reverse" />
+    <section class="column persons-column">
+      <div class="property-group">
+        <div class="label">Kalif</div>
+        <div class="value">
+          {{
+            this.data.caliph && this.data.caliph.name
+              ? this.data.caliph.name
+              : "Kein Eintrag"
+          }}
+        </div>
+      </div>
+
+      <div class="property-group" v-if="this.heir">
+        <div class="label">Designierter Thronfolger</div>
+        <div class="value">
+          {{ this.heir ? this.heir.name : "Kein Eintrag" }}
+        </div>
+      </div>
+
+      <div class="property-group">
+        <div class="label">Münzherr</div>
+
+        <div v-if="issuers.length == 1">{{ issuers[0].person.name }}</div>
+
+        <ol v-if="issuers.length > 1">
+          <li v-for="(issuer, index) in issuers" :key="'issuer-' + index">
+            {{ issuer.person ? issuer.person.name : "Keine Person angegeben" }}
+          </li>
+        </ol>
+      </div>
+
+      <div class="property-group">
+        <div class="label">Oberherren</div>
+        <ol>
+          <li v-for="(overlord, index) in overlords" :key="'overlord-' + index">
+            {{
+              overlord.person ? overlord.person.name : "Keine Person angegeben"
+            }}
+            ({{ overlord.rank }})
+          </li>
+        </ol>
+      </div>
+
+      <div class="property-group" v-if="this.cutter">
+        <div class="label">Münzschneider</div>
+        <div class="value">
+          {{ this.cutter ? this.cutter.name : "Kein Eintrag" }}
+        </div>
+      </div>
+
+      <div class="property-group" v-if="this.warden">
+        <div class="label">Münzwardei</div>
+        <div class="value">
+          {{ this.warden ? this.warden.name : "Kein Eintrag" }}
+        </div>
+      </div>
+
+
+    </section >
+
+    <section class="column coin-side-column">
+    <Tabs :tabs="[$t('property.frontside'), $t('property.backside')]">
+      <template #tab-0>
+        <TypeLeafCoinContent :value="data.avers" />
+      </template>
+
+      <template #tab-1>
+        <TypeLeafCoinContent :value="data.reverse" />
+      </template>
+    </Tabs>
     </section>
   </div>
 </template>
 
 <script>
+import Tabs from "../layout/tabs/Tabs.vue";
 import TypeLeafCoinContent from "./TypeLeafCoinContent.vue";
 
 export default {
@@ -50,6 +116,45 @@ export default {
   },
   components: {
     TypeLeafCoinContent,
+    Tabs,
+  },
+  computed: {
+    heir: function() {
+      let res = null;
+      if (this.data && this.data.otherPersons) {
+        res = this.data.otherPersons.find((person) => person.role == "heir");
+      }
+
+      return res;
+    },
+    overlords: function() {
+      let overlords = [];
+
+      if (this.data && this.data.overlords) {
+        overlords = this.data.overlords;
+      }
+
+      return overlords;
+    },
+    issuers: function() {
+      let issuers = [];
+
+      if (this.data && this.data.issuers) {
+        issuers = this.data.issuers;
+      }
+      return issuers;
+    },
+    cutter: function() {
+      console.log(this.data.otherPersons)
+      return this.data && this.data.otherPersons
+        ? this.data.otherPersons.find((person) => person.role == "cutter")
+        : null;
+    },
+    warden: function() {
+      return this.data && this.data.otherPersons
+        ? this.data.otherPersons.find((person) => person.role == "warden")
+        : null;
+    },
   },
 };
 </script>
@@ -78,11 +183,12 @@ export default {
 .leaf {
   display: grid;
   padding: 20px;
-  
+
   grid-gap: 30px;
-  grid-template-columns: 1fr 1fr 1fr;
+  grid-template-columns: 1fr 2fr 2fr;
 }
 section {
-  margin:0;
+  margin: 0;
 }
+
 </style>

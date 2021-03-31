@@ -16,8 +16,6 @@ new Vue({
   created: function () {
     this.loadData()
     window.addEventListener('beforeunload', this.beforeLeave)
-
-  
   },
   methods: {
     saveData: function () {

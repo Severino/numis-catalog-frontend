@@ -30,7 +30,7 @@ const property = {
     additional_persons:
         "Sonstige Personen",
     backside:
-        "Rückseite",
+        "revers",
     border_and_misc:
         "Randbeschriftung",
     circular_text:
