@@ -2,20 +2,44 @@
   <div class="tree-explorer">
     <h1>Explorer</h1>
     <main>
-
-    <nav><TreeView :children="twigs" /></nav>
-    <div class="content"></div>
+      <tabs :tabs="['avers', 'revers']" selected="avers">
+        <template #tab-0>
+          <h1>Hello world</h1>
+          <p>
+            Lorem ipsum dolor sit, amet consectetur adipisicing elit. Non
+            obcaecati et maiores repellat veritatis in inventore totam, dicta
+            porro eum! Earum perspiciatis odio, quod maxime hic amet quidem
+            autem quas.
+          </p>
+        </template>
+        <template #tab-1>
+          <h1>Tab2</h1>
+          <p>
+            Lorem ipsum dolor sit, amet consectetur adipisicing elit. Non
+            obcaecati et maiores repellat veritatis in inventore totam, dicta
+            porro eum! Earum perspiciatis odio, quod maxime hic amet quidem
+            autem quas.
+          </p>
+        </template>
+      </tabs>
+      
+      <!-- <nav><TreeView :children="twigs.filter(twig => )" /></nav> -->
+      <div class="content"></div>
     </main>
-    
   </div>
 </template>
 
 <script>
 import Query from "../../database/query.js";
 import TreeView from "../layout/TreeView.vue";
+import Tabs from "../layout/tabs/Tabs.vue";
+
 export default {
-  components: { TreeView },
-  created: async function () {
+  components: {
+    TreeView,
+    Tabs,
+  },
+  created: async function() {
     let persons = await Query.raw(`{
       searchPersonsWithoutRole(text:""){
         name
@@ -135,7 +159,7 @@ export default {
       this.twigs.push(twig);
     });
   },
-  data: function () {
+  data: function() {
     return {
       twigId: 0,
       twigs: [],
@@ -144,11 +168,8 @@ export default {
 };
 </script>
 
-
 <style lang="scss">
 .tree-explorer > .tree-view > .tree-item::before {
   content: none;
 }
-
-
 </style>

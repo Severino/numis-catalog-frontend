@@ -7,7 +7,7 @@
       </p>
     </div>
 
-    <div v-if="items.length == 0 && !loading && error == ''" class="info">
+    <div v-if="items && items.length == 0 && !loading && error == ''" class="info">
       <Information />
       <p>
         {{ $t("warning.list_is_empty") }}

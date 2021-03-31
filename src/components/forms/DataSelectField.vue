@@ -100,6 +100,7 @@ export default {
       value.id = target.getAttribute("data-id", this.id);
       value[this.attribute] = target.textContent;
       this.$emit("input", value);
+      this.$emit("select", value)
     },
     input: function (event) {
       const value = this.value;

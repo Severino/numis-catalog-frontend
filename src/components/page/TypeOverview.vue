@@ -24,7 +24,12 @@
       />
     </ListFilterContainer>
 
-    <List :error="error" :items="list" :filteredItems="filteredList" :loading="loading">
+    <List
+      :error="error"
+      :items="list"
+      :filteredItems="filteredList"
+      :loading="loading"
+    >
       <ListItem
         v-for="item of filteredList"
         v-bind:key="item.key"
@@ -58,6 +63,7 @@ import ListItemIdField from "../layout/list/ListItemIdField.vue";
 import ListItemCell from "../layout/list/ListItemCell.vue";
 import ListFilterContainer from "../layout/list/ListFilterContainer.vue";
 import ButtonGroup from "../forms/ButtonGroup.vue";
+import AxiosHelper from "@/utils/AxiosHelper.js";
 
 var deburr = require("lodash.deburr");
 
@@ -76,12 +82,16 @@ export default {
     ListFilterContainer,
     ButtonGroup,
   },
-  created: function () {
+  created: function() {
     new Query(`
      getReducedCoinTypeList`)
       .list(["id", "projectId", "treadwellId", "completed"])
-      .then((obj) => {
-        this.$data.items = obj.data.data["getReducedCoinTypeList"];
+      .then((result) => {
+        if (AxiosHelper.ok(result)) {
+          this.$data.items = result.data.data["getReducedCoinTypeList"];
+        } else {
+          this.error = AxiosHelper.getErrors(result).join("\n");
+        }
       })
       .catch(() => {
         this.error = this.$t("error.loading_list");
@@ -91,7 +101,7 @@ export default {
       });
   },
   computed: {
-    filteredList: function () {
+    filteredList: function() {
       let list = this.$data.items;
 
       if (this.textFilter) {
@@ -110,11 +120,11 @@ export default {
 
       return list;
     },
-    list: function () {
+    list: function() {
       return this.$data.items;
     },
   },
-  data: function () {
+  data: function() {
     return {
       loading: true,
       items: [],
