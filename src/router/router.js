@@ -6,16 +6,20 @@ import CoinMarkOverview from "@/components/page/CoinMarkOverview.vue"
 import Inventory from "@/components/page/Inventory"
 import LandingPage from "@/components/page/LandingPage.vue"
 import Overview from "@/components/page/Overview.vue"
+import SideTree from "@/components/page/SideTree.vue"
+
 import TypeOverview from "@/components/page/TypeOverview.vue"
 import TreeExplorer from "@/components/page/TreeExplorer.vue"
 import TypePage from "@/components/page/TypePage.vue"
 
 import CoinMarkForm from "@/components/page/property/CoinMarkForm"
 import HonorificForm from "@/components/page/property/HonorificForm"
+import DynastyForm from "@/components/page/property/DynastyForm"
 import MaterialForm from "@/components/page/property/MaterialForm"
 import MintForm from "@/components/page/property/MintForm"
 import NominalForm from "@/components/page/property/NominalForm"
 import PersonForm from "@/components/page/property/PersonForm"
+import RoleForm from "@/components/page/property/RoleForm"
 import TitleForm from "@/components/page/property/TitleForm"
 
 
@@ -31,12 +35,16 @@ const routes = [
     path: '/explorer',
     name: 'Explorer',
     component: TreeExplorer
+  }, {
+    path: '/explorer2',
+    name: 'Explorer2',
+    component: SideTree
   },
   {
 
     path: "/manage/type",
     name: "TypeOverview",
-    component: TypeOverview 
+    component: TypeOverview
   },
   {
     path: '/manage/type/create',
@@ -117,12 +125,23 @@ const routes = [
     path: "/nominal/:id",
     name: "EditNominal",
     component: NominalForm
+  }, {
+    path: "/role/create",
+    name: "CreateRole",
+    component: RoleForm
+  }, {
+    path: "/role/:id",
+    name: "EditRole",
+    component: RoleForm
+  }, {
+    path: "/dynasty/create",
+    name: "CreateDynasty",
+    component: DynastyForm
+  }, {
+    path: "/dynasty/:id",
+    name: "EditDynasty",
+    component: DynastyForm
   },
-  {
-    path: "/inventory",
-    name: "Inventory",
-    component: Inventory
-  }
 ]
 
 const router = new VueRouter({

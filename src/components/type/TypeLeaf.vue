@@ -1,5 +1,5 @@
 <template>
-  <div class=".tree-item leaf">
+  <div class="tree-item leaf">
     <section>
       <div class="property-group">
         <div class="label">Treadwell-ID</div>
@@ -145,7 +145,6 @@ export default {
       return issuers;
     },
     cutter: function() {
-      console.log(this.data.otherPersons)
       return this.data && this.data.otherPersons
         ? this.data.otherPersons.find((person) => person.role == "cutter")
         : null;
@@ -163,10 +162,9 @@ export default {
 .tree-item {
   position: relative;
   cursor: pointer;
-  background-color: red;
-  border: 1px solid gray;
+  // border: 1px solid gray;
   user-select: none;
-  border-radius: 5px;
+  // border-radius: 5px;
   // padding: 5px;
   margin-bottom: 5px;
 
@@ -175,9 +173,6 @@ export default {
     background-color: gray;
   }
 
-  &.collapsible {
-    background-color: red;
-  }
 }
 
 .leaf {

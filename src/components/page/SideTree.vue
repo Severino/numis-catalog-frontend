@@ -1,27 +1,31 @@
 <template>
   <div class="tree-explorer">
-    <h1>Explorer</h1>
-    <main>
+    <h1>Side Explorer</h1>
+
+    <div class="main">
       <nav>
-        <TreeView
-          :children="twigs"
-          @changed="treeviewchanged"
-        />
+        <h2>Typen Nach Personen</h2>
+        <TreeView :children="twigs" @select="setData" />
       </nav>
-      <div class="content"></div>
-    </main>
+      <div class="content">
+        <TypeView :type="selected" />
+      </div>
+    </div>
   </div>
 </template>
 
 <script>
 import Query from "../../database/query.js";
 import TreeView from "../layout/TreeView.vue";
+import TypeView from "./TypeView.vue";
 import Tabs from "../layout/tabs/Tabs.vue";
 
 export default {
+  name: "SideTree",
   components: {
     TreeView,
     Tabs,
+    TypeView,
   },
   created: async function () {
     let persons = await Query.raw(`{
@@ -159,7 +163,13 @@ export default {
                 inline: true,
                 key: that.twigId++,
                 children: Object.entries(project).map(([name, data]) => {
-                  return { name, collapsed: true, leaf: "TypeLeaf", data };
+                  return {
+                    name,
+                    preventCollapse: true,
+                    collapsed: true,
+                    leaf: "TypeLeaf",
+                    data,
+                  };
                 }),
               };
             });
@@ -197,45 +207,63 @@ export default {
     return {
       twigId: 0,
       twigs: [],
+      selected: null,
     };
   },
   methods: {
-    treeviewchanged: function ({ path = "", object = {} } = {}) {
-      console.log(path);
+    setData: function (data) {
+      console.log("SETDATA: " + data);
 
-      const parts = path.split("/");
-      const root = parts.shift();
-      // let target = this.twigs[root];
-
-      let part = parts.shift();
-      let target = this.twigs[part];
-      console.log(target, part);
-
-      while (parts.length > 1) {
-        let part = parts.shift();
-        console.log(parts, target.children);
-        target = target.children[part];
-        console.log(target, part);
-      }
-
-      console.log(object.collapsed, target);
-
-      // console.log(target.collapsed);
-      // this.twigs.splice(root, 1, this.twigs[root]);
-
-      // this.twigs[+changed].splice(1,1,this.twigs[+changed])
+      this.$data.selected = data;
     },
   },
 };
 </script>
 
+<style scoped>
+.tree-item.leaf {
+  display: none !important;
+}
+</style>
+
 <style lang="scss">
+body {
+  height: 100%;
+}
 .tree-explorer > .tree-view > .tree-item::before {
   content: none;
 }
 
+.main {
+  display: flex;
+  width: 100%;
+  margin-top: 50px;
+  position: relative;
+}
+
 nav {
-  width: unset;
+  width: 420px;
   margin-right: 100px;
+  max-height: 80vh;
+  overflow: auto;
+}
+.content {
+  flex: 1;
+  width: 67%;
+  min-height: 100px;
+}
+
+h1 {
+  margin-top: 0;
+}
+
+.leafItem {
+  box-sizing: border-box;
+  border: 1px solid black;
+  display: inline-block;
+
+  header {
+    background-color: whitesmoke;
+  }
 }
 </style>

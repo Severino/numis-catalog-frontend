@@ -22,7 +22,7 @@
       </router-link>
       <router-link
         class="button icon-button"
-        :to="{name: 'CoinMarkOverview'}"
+        :to="{ name: 'CoinMarkOverview' }"
         draggable="false"
       >
         <PlusBox />
@@ -48,6 +48,26 @@
       <router-link class="button icon-button" to="/title" draggable="false">
         <PlusBox />
         <span>{{ $tc("property.title") }}</span>
+      </router-link>
+
+
+      <router-link
+        class="button icon-button"
+        :to="{ name: 'Property', params: { property: 'dynasty' } }"
+        draggable="false"
+      >
+        <PlusBox />
+        <span>{{ $tc("property.dynasty") }}</span>
+      </router-link>
+
+      
+           <router-link
+        class="button icon-button"
+        :to="{ name: 'Property', params: { property: 'role' } }"
+        draggable="false"
+      >
+        <PlusBox />
+        <span>{{ $tc("property.role") }}</span>
       </router-link>
     </div>
   </div>

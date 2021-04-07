@@ -14,8 +14,6 @@
     "node-sass": "^5.0.0",
     "sass-loader": "^10.1.1",
     "showdown": "^1.9.1",
-    "tiptap": "^1.32.1",
-    "tiptap-extensions": "^1.35.1",
     "vue": "^2.6.11",
     "vue-i18n": "^8.24.2",
     "vue-material-design-icons": "^4.11.0",

@@ -1,6 +1,7 @@
 import axios from "axios"
 const baseURL = process.env.VUE_APP_DATABASE_URL || "http://localhost:4000/graphql"
 const host = baseURL
+import AxiosHelper from "@/utils/AxiosHelper.js";
 
 export default class Query {
 
@@ -36,19 +37,28 @@ export default class Query {
     }
 
     static async raw(query, variables) {
-        console.log(query)
         return new Query().raw(query, variables)
     }
 
 
     async raw(query, variables = {}) {
-        return axios({
-            url: host,
-            method: "post",
-            data: {
-                query,
-                variables
-            },
+        console.log(query)
+        return new Promise((resolve, reject) => {
+            axios({
+                url: host,
+                method: "post",
+                data: {
+                    query,
+                    variables
+                },
+            }).then(result => {
+                console.log(result)
+                if (AxiosHelper.ok(result)) {
+                    resolve(result)
+                } else {
+                    reject(AxiosHelper.getErrors(result))
+                }
+            }).catch(reject)
         })
     }
 

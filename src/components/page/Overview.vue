@@ -17,13 +17,12 @@
     <SearchField v-model="filter" />
 
     <List
-      @select="edit"
       @remove="remove"
       :error="error"
       :loading="loading"
       :items="list"
     >
-      <ListItem v-for="item of list" v-bind:key="item.key" id=":item.id">
+      <ListItem v-for="item of list" v-bind:key="item.key" :id="item.id" @click="edit(item.id)"> 
         <ListItemIdField :value="item.id" />
         <ListItemCell>{{ item.name }}</ListItemCell>
         <DynamicDeleteButton @click="remove(item.id)" />
