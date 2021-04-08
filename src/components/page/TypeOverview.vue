@@ -64,8 +64,7 @@ import ListItemCell from "../layout/list/ListItemCell.vue";
 import ListFilterContainer from "../layout/list/ListFilterContainer.vue";
 import ButtonGroup from "../forms/ButtonGroup.vue";
 import AxiosHelper from "@/utils/AxiosHelper.js";
-
-var deburr = require("lodash.deburr");
+import SearchUtils from "@/utils/SearchUtils.js";
 
 export default {
   name: "TypeOverviewPage",
@@ -82,7 +81,7 @@ export default {
     ListFilterContainer,
     ButtonGroup,
   },
-  created: function() {
+  created: function () {
     new Query(`
      getReducedCoinTypeList`)
       .list(["id", "projectId", "treadwellId", "completed"])
@@ -101,17 +100,10 @@ export default {
       });
   },
   computed: {
-    filteredList: function() {
+    filteredList: function () {
       let list = this.$data.items;
 
-      if (this.textFilter) {
-        list = list.filter((item) => {
-          let str = !item.projectId ? "" : item.projectId;
-          return deburr(str.toLowerCase()).match(
-            deburr(this.textFilter.toLowerCase())
-          );
-        });
-      }
+      list = SearchUtils.filter(this.textFilter, list, "projectId");
 
       if (this.completeFilter == "work" || this.completeFilter == "completed") {
         const state = this.completeFilter == "completed";
@@ -120,11 +112,11 @@ export default {
 
       return list;
     },
-    list: function() {
+    list: function () {
       return this.$data.items;
     },
   },
-  data: function() {
+  data: function () {
     return {
       loading: true,
       items: [],

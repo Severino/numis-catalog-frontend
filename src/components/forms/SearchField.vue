@@ -1,5 +1,5 @@
 <template>
-  <div class="search">
+  <div class="search" :class="{ active }">
     <input
       type="search"
       name=""
@@ -13,21 +13,25 @@
 </template>
 
 <script>
-
 import Magnify from "vue-material-design-icons/Magnify";
 export default {
-    components:{
-        Magnify
+  components: {
+    Magnify,
+  },
+  props: {
+    value: String,
+  },
+  methods: {
+    filterChanged(evt) {
+      this.$emit("input", evt.target.value);
     },
-    props: {
-        value: String
+  },
+  computed: {
+    active: function () {
+      return this.value != "";
     },
-    methods: {
-        filterChanged(evt){
-            this.$emit("input", evt.target.value)
-        }
-    }
-}
+  },
+};
 </script>
 
 <style lang="scss" scoped>
@@ -35,10 +39,24 @@ export default {
 .search {
   display: flex;
   position: relative;
+
+  &.active {
+    input {
+      border-color: $primary-color;
+      box-shadow: inset 0 0 5px $primary-color;
+    }
+    .material-design-icon {
+      color: $primary-color;
+    }
+  }
+
   > input {
+    box-sizing: border-box;
     flex: 1;
     border-radius: 25px;
     padding-left: 45px;
+
+    transition: all 0.3s;
   }
 
   .material-design-icon {
@@ -47,6 +65,7 @@ export default {
     left: $padding;
     color: gray;
     pointer-events: none;
+    transition: all 0.3s;
   }
 }
 </style>

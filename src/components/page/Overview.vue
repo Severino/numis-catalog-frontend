@@ -14,15 +14,21 @@
       <span>{{ $t("form.create") }}</span>
     </div>
 
-    <SearchField v-model="filter" />
+    <SearchField v-model="textFilter" />
 
     <List
       @remove="remove"
       :error="error"
       :loading="loading"
       :items="list"
+      :filteredItems="filteredItems"
     >
-      <ListItem v-for="item of list" v-bind:key="item.key" :id="item.id" @click="edit(item.id)"> 
+      <ListItem
+        v-for="item of filteredItems"
+        v-bind:key="item.key"
+        :id="item.id"
+        @click="edit(item.id)"
+      >
         <ListItemIdField :value="item.id" />
         <ListItemCell>{{ item.name }}</ListItemCell>
         <DynamicDeleteButton @click="remove(item.id)" />
@@ -32,6 +38,7 @@
 </template>
 
 <script>
+import SearchUtils from "../../utils/SearchUtils.js";
 import AxiosHelper from "../../utils/AxiosHelper.js";
 
 import PlusCircleOutline from "vue-material-design-icons/PlusCircleOutline";
@@ -88,13 +95,20 @@ export default {
     list: function () {
       return this.$data.items;
     },
+    filteredItems: function () {
+      let list = this.$data.items;
+
+      list = SearchUtils.filter(this.textFilter, list);
+
+      return list;
+    },
   },
   data: function () {
     return {
       loading: true,
       items: [],
       error: "",
-      filter: "",
+      textFilter: "",
     };
   },
 
