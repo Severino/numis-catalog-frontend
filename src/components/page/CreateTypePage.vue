@@ -90,7 +90,7 @@
             :value="issuer"
             :key="`issuer-${issuer.key}`"
             @input="issuerChanged($event, issuer_idx)"
-            queryCommand="searchMintWardens"
+            queryCommand="searchPersonsWithoutRole"
             :queryParams="['id', 'name']"
           ></TitledPersonSelect>
           <div v-if="issuer.error" class="invalid-warning">
@@ -134,8 +134,8 @@
           attribute="name"
           table="person"
           queryCommand="searchPersonsWithRole"
-          :queryParams="['id', 'role', 'name']"
-          :additionalParameters="{ filter: ['heir', 'cutter', 'warden'] }"
+          :queryParams="['id', { role: ['id', 'name'] }, 'name']"
+          :additionalParameters="{ include: ['caliph'] }"
         />
       </LabeledInputContainer>
       <List
@@ -158,10 +158,10 @@
             attribute="name"
             :value="otherPerson"
             @input="otherPersonChanged($event, index)"
-            text="${name} (${role})"
+            text="${name} (${role.name})"
             queryCommand="searchPersonsWithRole"
-            :additionalParameters="{ filter: ['caliph', 'vassal'] }"
-            :queryParams="['id', 'role', 'name']"
+            :additionalParameters="{ exclude: ['caliph'] }"
+            :queryParams="['id', { role: ['id', 'name'] }, 'name']"
           />
           <div v-if="otherPerson.error" class="invalid-warning">
             {{ otherPerson.error }}
@@ -394,7 +394,9 @@ export default {
                   person {
                     id,
                     name,
-                    role
+                    role {
+                      id, name
+                    }
                   }
                   titles {
                     id,
@@ -410,7 +412,9 @@ export default {
                   person {
                     id,
                     name,
-                    role
+                    role {
+                      id, name
+                    }
                   }
                   titles {
                     id,
@@ -423,12 +427,16 @@ export default {
                 otherPersons {
                   id
                   name
-                  role
+                  role {
+                    id, name
+                  }
                 }
                 caliph {
                   id
                   name
-                  role
+                  role {
+                    id, name
+                  }
                 }
                 avers {
                   fieldText

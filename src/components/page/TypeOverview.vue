@@ -14,7 +14,7 @@
       <span>{{ $t("form.create") }}</span>
     </div>
 
-    <ListFilterContainer>
+    <ListFilterContainer :filtered="isListFiltered">
       <SearchField v-model="textFilter" />
       <ButtonGroup
         id="completeFilterButtonGroup"
@@ -100,6 +100,9 @@ export default {
       });
   },
   computed: {
+    isListFiltered: function () {
+      return !(this.completeFilter == "none" && !this.textFilter);
+    },
     filteredList: function () {
       let list = this.$data.items;
 

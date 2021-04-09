@@ -19,7 +19,9 @@
     <ul :class="'search-box ' + (listVisible ? 'visible' : 'hidden')">
       <li v-if="error" class="error non-selectable">{{ error }}</li>
       <li
-        v-if="!error && !loading && !searchResults || searchResults.length == 0"
+        v-if="
+          (!error && !loading && !searchResults) || searchResults.length == 0
+        "
         class="non-selectable"
       >
         {{ $t("message.list_empty") }}
@@ -39,6 +41,7 @@
 </template>
 
 <script>
+import GraphQLUtils from "../../utils/GraphQLUtils";
 import Query from "../../../src/database/query";
 
 export default {
@@ -100,7 +103,7 @@ export default {
       value.id = target.getAttribute("data-id", this.id);
       value[this.attribute] = target.textContent;
       this.$emit("input", value);
-      this.$emit("select", value)
+      this.$emit("select", value);
     },
     input: function (event) {
       const value = this.value;
@@ -161,13 +164,13 @@ export default {
             )
           : ""
       } ){
-        ${this.queryParams.join(",")}
+        ${GraphQLUtils.buildQueryParams(this.queryParams)}
       }
       }`;
 
       Query.raw(query)
         .then((result) => {
-          console.log(result.data.data[queryCommand])
+          console.log(result.data.data[queryCommand]);
           this.searchResults = result.data.data[queryCommand];
           this.error = "";
         })
@@ -182,7 +185,13 @@ export default {
     transformTextContent: function (search) {
       if (this.text) {
         return this.text.replace(/\${(.+?)}/g, function (match, name) {
-          return search[name] || "";
+          const path = name.split(".");
+          let target = search;
+          for (let i = 0; i < path.length && target != null; i++) {
+            target = target[path[i]];
+          }
+
+          return target ? target : "";
         });
       } else {
         return search[this.attribute] || "";
