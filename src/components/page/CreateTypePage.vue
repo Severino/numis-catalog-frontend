@@ -25,10 +25,7 @@
         </LabeledInputContainer>
 
         <LabeledInputContainer :label="$t('property.mint_as_on_coin')">
-          <RemovableInputField
-            v-model="coin.mintAsOnCoin"
-            @remove="removeMintAsOnCoin"
-          />
+          <RemovableInputField v-model="coin.mintAsOnCoin" />
         </LabeledInputContainer>
       </Row>
       <Row>
@@ -93,7 +90,7 @@
             queryCommand="searchPersonsWithoutRole"
             :queryParams="['id', 'name']"
           ></TitledPersonSelect>
-          <div v-if="issuer.error" class="invalid-warning">
+          <div v-if="issuer.error" class="error invalid-error">
             {{ issuer.error }}
           </div>
         </ListItem>
@@ -122,7 +119,7 @@
             queryCommand="searchPersonsWithoutRole"
             :queryParams="['id', 'name']"
           />
-          <div v-if="overlord.error" class="invalid-warning">
+          <div v-if="overlord.error" class="error invalid-error">
             {{ overlord.error }}
           </div>
         </ListItem>
@@ -163,7 +160,7 @@
             :additionalParameters="{ exclude: ['caliph'] }"
             :queryParams="['id', { role: ['id', 'name'] }, 'name']"
           />
-          <div v-if="otherPerson.error" class="invalid-warning">
+          <div v-if="otherPerson.error" class="error invalid-error">
             {{ otherPerson.error }}
           </div>
         </ListItem>
@@ -219,7 +216,7 @@
             attribute="name"
             v-model="coin.coinMarks[idx]"
           />
-          <div v-if="coinmark.error" class="invalid-warning">
+          <div v-if="coinmark.error" class="error invalid-error">
             {{ coinmark.error }}
           </div>
         </ListItem>
@@ -244,7 +241,7 @@
             v-model="coin.pieces[idx].value"
             @input="pieceChanged(piece)"
           />
-          <div v-if="piece.error" class="invalid-warning">
+          <div v-if="piece.error" class="error invalid-error">
             {{ piece.error }}
           </div>
         </ListItem>
@@ -275,7 +272,7 @@
       </Row>
 
       <div class="submit-error-window">
-        <div class="submit-error" v-for="err in errorMessages" :key="err.key">
+        <div class="error submit-error" v-for="err in errorMessages" :key="err.key">
           {{ err.message }}
         </div>
       </div>
@@ -309,6 +306,7 @@ import LoadingSpinner from "../misc/LoadingSpinner.vue";
 
 import baseTemplate from "@/assets/template_types/base.json";
 import RemovableInputField from "../forms/RemovableInputField.vue";
+import AxiosHelper from "../../utils/AxiosHelper";
 
 export default {
   name: "CreateTypePage",
@@ -330,14 +328,14 @@ export default {
     RemovableInputField,
   },
   computed: {
-    productionLabels: function () {
+    productionLabels: function() {
       return [
         this.$t("property.procedures.pressed"),
         this.$t("property.procedures.cast"),
       ];
     },
   },
-  mounted: function () {
+  mounted: function() {
     window.onbeforeunload = (event) => {
       if (!this.submitted) return "ASD";
       else {
@@ -362,7 +360,7 @@ export default {
       this.initFormattedFields.call(this);
     }
   },
-  created: function () {
+  created: function() {
     let id = this.$route.params.id;
     if (id != null) {
       this.$data.coin.id = id;
@@ -551,7 +549,7 @@ export default {
       next();
     } else next(false);
   },
-  data: function () {
+  data: function() {
     return {
       coin: {
         id: null,
@@ -600,39 +598,45 @@ export default {
     };
   },
   methods: {
-    cancel: function () {
+    addError(msg) {
+      this.errorMessages.push({
+        message: msg,
+        key: "error-" + this.key++,
+      });
+    },
+    cancel: function() {
       this.$router.push({ name: "TypeOverview" });
     },
-    reverseChanged: function (coinSideObject) {
+    reverseChanged: function(coinSideObject) {
       this.coin.reverse = coinSideObject;
     },
-    issuerChanged: function (issuer, index) {
+    issuerChanged: function(issuer, index) {
       delete issuer.error;
       this.coin.issuers.splice(index, 1, issuer);
     },
-    addCoinMark: function () {
+    addCoinMark: function() {
       this.coin.coinMarks.push({
         key: "coin-mark-" + this.key++,
-        value: 0,
-        name: "",
+        id: null,
+        name: ""
       });
     },
-    removeCoinMark: function (index) {
+    removeCoinMark: function(index) {
       this.coin.coinMarks.splice(index, 1);
     },
-    addPiece: function () {
+    addPiece: function() {
       this.coin.pieces.push({
         key: "piece-" + this.key++,
         value: "",
       });
     },
-    pieceChanged: function (piece) {
+    pieceChanged: function(piece) {
       delete piece.error;
     },
-    removePiece: function (index) {
+    removePiece: function(index) {
       this.coin.pieces.splice(index, 1);
     },
-    addIssuer: function () {
+    addIssuer: function() {
       this.coin.issuers.push({
         key: "issuer-" + this.key++,
         person: {
@@ -644,7 +648,7 @@ export default {
         honorifics: [],
       });
     },
-    removeIssuer: function (item) {
+    removeIssuer: function(item) {
       const idx = this.coin.issuers.indexOf(item);
       if (idx != -1) {
         this.coin.issuers.splice(idx, 1);
@@ -653,7 +657,7 @@ export default {
         });
       }
     },
-    initFormattedFields: function () {
+    initFormattedFields: function() {
       this.$refs.internalNotesField.setContent(this.coin.internalNotes);
       this.$refs.literatureField.setContent(this.coin.literature);
       this.$refs.specialsField.setContent(this.coin.specials);
@@ -661,7 +665,7 @@ export default {
       this.$refs.aversField.setFieldContent(this.coin.avers);
       this.$refs.reverseField.setFieldContent(this.coin.reverse);
     },
-    addOverlord: function () {
+    addOverlord: function() {
       this.coin.overlords.push({
         key: "overlord-" + this.key++,
         rank: this.coin.overlords.length + 1,
@@ -673,7 +677,7 @@ export default {
         honorifics: [],
       });
     },
-    addOtherPerson: function () {
+    addOtherPerson: function() {
       this.coin.otherPersons.push({
         id: null,
         key: this.key++,
@@ -681,13 +685,13 @@ export default {
         role: "",
       });
     },
-    overlordChanged: function (overlord, index) {
+    overlordChanged: function(overlord, index) {
       const old = this.coin.overlords[index];
       Object.assign(old, overlord);
       delete old.error;
       this.coin.overlords.splice(index, 1, old);
     },
-    removeOverlord: function (item) {
+    removeOverlord: function(item) {
       const idx = this.coin.overlords.indexOf(item);
       if (idx != -1) {
         this.coin.overlords.splice(idx, 1);
@@ -696,27 +700,24 @@ export default {
         });
       }
     },
-    removeOtherPerson: function (item) {
+    removeOtherPerson: function(item) {
       const idx = this.coin.otherPersons.indexOf(item);
       if (idx != -1) {
         this.coin.otherPersons.splice(idx, 1);
       }
     },
-    removeMintAsOnCoin: function () {
-      this.coin.mintAsOnCoin = "";
-    },
-    mintSelected: function (mint) {
+    mintSelected: function(mint) {
       if (!this.coin.mintAsOnCoin) {
         this.coin.mintAsOnCoin = mint.name;
       }
     },
-    otherPersonChanged: function (otherPerson, index) {
+    otherPersonChanged: function(otherPerson, index) {
       const op = this.coin.otherPersons[index];
       Object.assign(op, otherPerson);
       delete op.error;
       this.coin.otherPersons.splice(index, 1, op);
     },
-    submitForm: function () {
+    submitForm: function() {
       function validateTitledPerson(titledPerson) {
         return !!titledPerson.person.id;
       }
@@ -760,10 +761,19 @@ export default {
         }
       });
 
+      const elementError="Das Element ist nicht valide. Geben Sie ein Element an oder löschen Sie das Element."
+
+      this.coin.coinMarks.forEach((coinMark, index) =>{
+        if(coinMark.id == null){
+          coinMark.error = elementError
+          invalid = true
+          this.coin.coinMarks.splice(index, 1, coinMark);
+        }
+      })
+
       this.coin.pieces.forEach((piece, index) => {
         if (piece.value == "") {
-          piece.error =
-            "Person ist nicht valide. Geben Sie eine Person an oder löschen Sie das Element.";
+          piece.error =elementError
           invalid = true;
           this.coin.pieces.splice(index, 1, piece);
         } else {
@@ -773,7 +783,7 @@ export default {
 
       if (invalid) {
         setTimeout(() => {
-          const target = document.querySelector(".invalid-warning");
+          const target = document.querySelector(".invalid-error");
           if (target) {
             target.scrollIntoView({
               block: "start",
@@ -799,37 +809,26 @@ export default {
           this.$refs.reverseField.getFieldContent()
         );
 
-        if (submitData.id == null) {
-          this.addCoinType(submitData)
-            .then((result) => {
-              if (result.data.errors && result.data.errors.length > 0) {
-                console.error(result);
-                this.errorMessages = result.data.errors;
-              } else {
-                this.submitted = true;
-                this.$router.push({ name: "TypeOverview" });
-              }
-            })
-            .catch((error) => {
-              this.handleAxiosError(error);
-            });
-        } else {
-          this.updateCoinType(submitData)
-            .then((result) => {
-              if (result.data.errors && result.data.errors.length > 0) {
-                console.error(result);
-                this.errorMessages = result.data.errors;
-              } else {
-                this.submitted = true;
-                this.$router.push({ name: "TypeOverview" });
-              }
-            })
-            .catch((error) => {
-              this.handleAxiosError(error);
-            });
-        }
+        const operation =
+          submitData.id == null ? this.addCoinType : this.updateCoinType;
+
+        operation(submitData)
+          .then((result) => {
+            if (AxiosHelper.ok(result)) {
+              this.submitted = true;
+              this.$router.push({ name: "TypeOverview" });
+            } else {
+              AxiosHelper.getErrors(result).forEach((err) =>
+                this.addError(err)
+              );
+            }
+          })
+          .catch((errors) => {
+            errors.forEach((err) => this.addError(err));
+          });
       }
     },
+
     addCoinType(data) {
       // TODO ADA
       const query = `
@@ -1034,39 +1033,6 @@ export default {
 
       return Query.raw(query, variables);
     },
-    handleAxiosError(req) {
-      if (req.errors) {
-        this.errorMessages.push(...req.errors);
-      } else if (req.response) {
-        /*
-         * The request was made and the server responded with a
-         * status code that falls out of the range of 2xx
-         */
-
-        if (req.response.data.errors)
-          this.errorMessages.push(...req.response.data.errors);
-
-        console.log(req.response.data);
-        console.log(req.response.status);
-        console.log(req.response.headers);
-      } else if (req.request) {
-        /*
-         * The request was made but no response was received, `req.request`
-         * is an instance of XMLHttpRequest in the browser and an instance
-         * of http.ClientRequest in Node.js
-         */
-        this.errorMessages.push("Server war nicht erreichbar.");
-
-        console.log(req.request);
-      } else {
-        console.dir(req.message);
-
-        this.errorMessages.push("Ausnahmefehler!");
-
-        // Something happened in setting up the request and triggered an Error
-        console.log("Error", req.message);
-      }
-    },
   },
 };
 </script>
@@ -1079,20 +1045,39 @@ export default {
   margin-bottom: $padding * 2;
 }
 
+.invalid-error  {
+  position: absolute;
+  z-index: 10;
+  font-size: 0.85rem;
+  top: 0;
+  left: 0;
+  width: 100%;
+  padding: 5px 10px;
+  box-sizing: border-box;
+  transform: translateY(-100%);
+}
+
+.error {
+  color: white;
+  font-weight: bold;
+  background-color: $red;
+}
+
 .submit-error {
-  padding: 10px;
+  padding: 3px 10px;
   font-size: 0.75rem;
-  background-color: tomato;
-  border: 1px solid rgb(160, 14, 14);
+  background-color: $red;
+  color: $white;
+  border: 1px solid $red-dark;
 
   &:first-of-type {
-    border-top-left-radius: 20px;
-    border-top-right-radius: 20px;
+    border-top-left-radius: 3px;
+    border-top-right-radius: 3px;
   }
 
   &:last-of-type {
-    border-bottom-left-radius: 20px;
-    border-bottom-right-radius: 20px;
+    border-bottom-left-radius: 3px;
+    border-bottom-right-radius: 3px;
   }
 }
 
@@ -1102,7 +1087,7 @@ export default {
   left: 50%;
   transform: translateX(-50%);
   padding: 20px 100px;
-  background-color: red;
+  background-color: $red;
   z-index: 100000;
 }
 
@@ -1158,16 +1143,5 @@ label {
   align-items: center;
 }
 
-.invalid-warning {
-  position: absolute;
-  z-index: 10;
-  font-size: 0.85rem;
-  top: 0;
-  left: 0;
-  width: 100%;
-  padding: 5px 10px;
-  background-color: $red;
-  box-sizing: border-box;
-  transform: translateY(-100%);
-}
+
 </style>

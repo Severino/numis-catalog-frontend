@@ -5,11 +5,18 @@ $padding: 10px;
 
 $white: #FEFEFE;
 $gray: rgb(126, 126, 126);
+
+
+$text-color: #111;
+$background-color: rgb(220, 228, 221);
+
 $primary-color: #3CB8FF;
 
 $yellow: #F9D939;
 $green: #18F2B2;
-$red: #EE4266;
+$red: #da4133;
+
+$red-dark: darken($red, 10%);
 
 $large-font: 1.2em;
 $regular-font: 1em;

@@ -1,6 +1,6 @@
 <template>
   <div class="removable-input">
-    <input type="text" v-model="value" />
+    <input type="text" :value="value" @input="input"/>
     <div class="button">
       <Close @click="remove" />
     </div>
@@ -24,7 +24,10 @@ export default {
   },
   methods: {
       remove: function(){
-          this.$emit("remove")
+          this.$emit("input", "")
+      },
+      input: function(event){
+          this.$emit("input", event.target.value)
       }
   }
 };

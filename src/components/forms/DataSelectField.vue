@@ -115,7 +115,9 @@ export default {
     focus: function () {
       const obj = this.value;
       obj.id = null;
-      obj[this.attribute] = "";
+      //TODO remove this just empties the elemnt on selection. 
+      // Feels kinda weird!
+      // obj[this.attribute] = "";
       this.$emit("input", obj);
       this.showList();
       this.searchEntry("");
@@ -215,8 +217,8 @@ export default {
 
 .data-select {
   display: flex;
-  background-color: red;
   position: relative;
+  color: #000000;
 }
 
 .error {
